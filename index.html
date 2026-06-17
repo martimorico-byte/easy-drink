@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Easy Drink and Food — Beverage Cost</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#ffffff;--bg2:#f8f8f8;--bg3:#f0f0f0;--bg4:#e8e8e8;
+  --bo:#ddd;--bo2:#bbb;--text:#1a1a1a;--t2:#555;--t3:#999;
+  --gold:#9a6e1a;--gold2:#7a5010;--gold3:#fdf3e3;
+  --green:#1a7a45;--green2:#e8f5ee;
+  --red:#c0392b;--red2:#fdecea;
+  --amb:#b56a00;--amb2:#fff3e0;
+  --blue:#2255bb;--blue2:#e8eef8;
+  --r:8px;--r2:12px;--f:"DM Sans",sans-serif;--m:"DM Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f);background:var(--bg);color:var(--text);font-size:14px}
+.app{display:flex;min-height:100vh}
+.sb{width:200px;min-width:200px;background:var(--bg2);border-right:1px solid var(--bo);display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100}
+.logo{padding:1.2rem 1rem .75rem;border-bottom:1px solid var(--bo)}
+.logo-n{font-size:14px;font-weight:600;color:var(--gold)}
+.logo-s{font-size:10px;color:var(--t3);margin-top:2px;font-family:var(--m)}
+.nav{padding:.75rem 0;flex:1;overflow-y:auto}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 1rem;cursor:pointer;color:var(--t2);font-size:12px;transition:all .15s;border-left:3px solid transparent;user-select:none}
+.ni:hover{background:var(--bg3);color:var(--text)}
+.ni.on{background:var(--bg3);color:var(--gold);border-left-color:var(--gold)}
+.ni svg{width:15px;height:15px;opacity:.7;flex-shrink:0}.ni.on svg{opacity:1}
+.sb-ft{padding:.75rem 1rem;border-top:1px solid var(--bo);font-size:10px;color:var(--t3);font-family:var(--m)}
+.main{margin-left:200px;padding:1.75rem;flex:1}
+.pg{display:none}.pg.on{display:block}
+.pt{font-size:20px;font-weight:600;margin-bottom:.2rem}
+.ps{font-size:12px;color:var(--t2);margin-bottom:1.25rem}
+.card{background:var(--bg2);border:1px solid var(--bo);border-radius:var(--r2);padding:1.1rem 1.25rem;margin-bottom:1rem}
+.ct{font-size:13px;font-weight:500;margin-bottom:.9rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.9rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:.9rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:.9rem}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:.9rem}
+.met{background:var(--bg3);border-radius:var(--r);padding:.9rem;border:1px solid var(--bo)}
+.ml{font-size:10px;color:var(--t3);font-family:var(--m);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.mv{font-size:22px;font-weight:500;font-family:var(--m)}
+.mv.g{color:var(--green)}.mv.w{color:var(--amb)}.mv.r{color:var(--red)}
+label{font-size:11px;color:var(--t2);display:block;margin-bottom:3px;font-family:var(--m);text-transform:uppercase;letter-spacing:.3px}
+input,select,textarea{width:100%;background:var(--bg3);border:1px solid var(--bo);border-radius:var(--r);padding:7px 9px;color:var(--text);font-family:var(--f);font-size:13px;outline:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+select option{background:var(--bg2)}
+button{background:var(--bg3);border:1px solid var(--bo2);border-radius:var(--r);padding:7px 13px;color:var(--text);font-family:var(--f);font-size:12px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+button:hover{background:var(--bg4);border-color:var(--gold3)}
+button.pr{background:var(--gold);border-color:var(--gold2);color:#fff;font-weight:500}
+button.pr:hover{background:var(--gold2);color:#fff}
+.bx{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-family:var(--m)}
+.bg{background:var(--green2);color:var(--green)}.bb{background:var(--blue2);color:var(--blue)}
+.bw{background:var(--amb2);color:var(--amb)}.br{background:var(--red2);color:var(--red)}
+.bgo{background:var(--gold3);color:var(--gold)}.bp{background:#ede8f5;color:#5533aa}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:7px 9px;font-size:10px;font-weight:500;color:var(--t3);border-bottom:1px solid var(--bo);font-family:var(--m);text-transform:uppercase;letter-spacing:.3px}
+td{padding:7px 9px;border-bottom:1px solid var(--bo);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.em{text-align:center;padding:2.5rem;color:var(--t3);font-family:var(--m)}
+.fb{display:flex;gap:7px;margin-bottom:.9rem;flex-wrap:wrap}
+.sep{border:none;border-top:1px solid var(--bo);margin:1rem 0}
+.ok{font-size:10px;color:var(--green);opacity:0;transition:opacity .3s;font-family:var(--m);margin-left:6px}
+.ok.s{opacity:1}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center}
+.modal.on{display:flex}
+.mbox{background:var(--bg2);border:1px solid var(--bo2);border-radius:var(--r2);padding:1.4rem;max-width:600px;width:95%;max-height:85vh;overflow-y:auto}
+.mhd{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.psum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.pb{background:var(--bg3);border-radius:var(--r);padding:9px;text-align:center;border:1px solid var(--bo)}
+.pb.hi{border-color:var(--gold)}
+.pbl{font-size:9px;color:var(--t3);font-family:var(--m);text-transform:uppercase;margin-bottom:3px}
+.pbv{font-size:16px;font-weight:500;font-family:var(--m)}
+.ib{background:transparent;border:none;padding:3px 6px;cursor:pointer;color:var(--t3);font-size:14px;border-radius:4px;display:inline-flex;align-items:center}
+.ib:hover{color:var(--gold);background:var(--bg3)}
+.ib.d:hover{color:var(--red)}
+/* --- INGREDIENT ROW --- */
+.ing-row{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--bo);border-radius:var(--r);padding:7px 10px;margin-bottom:6px;position:relative}
+.ing-row.linked{border-color:var(--gold3)}
+/* --- AUTOCOMPLETE --- */
+.ac-wrap{position:relative;flex:1;min-width:0}
+.ac-inp{width:100%;background:var(--bg4);border:1px solid var(--bo);border-radius:var(--r);padding:6px 9px;color:var(--text);font-size:13px;font-family:var(--f);outline:none}
+.ac-inp:focus{border-color:var(--gold)}
+.ac-inp.linked{border-color:var(--gold3);color:var(--gold2)}
+.ac-dd{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--bo2);border-radius:var(--r);z-index:500;max-height:240px;overflow-y:auto;display:none;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.ac-dd.open{display:block}
+.ac-item{padding:8px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--bo);display:flex;justify-content:space-between;align-items:center}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover,.ac-item.focused{background:var(--bg3);color:var(--text)}
+.qty-inp{width:75px;flex-shrink:0;font-family:var(--m);text-align:right}
+.um-lbl{font-size:11px;color:var(--t3);font-family:var(--m);width:24px;flex-shrink:0;text-align:left}
+.cost-bar{display:flex;height:6px;border-radius:4px;overflow:hidden;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sb">
+  <div class="logo"><div class="logo-n">Easy Drink & Food</div><div class="logo-s">beverage cost v4.0</div></div>
+  <nav class="nav">
+    <div class="ni on" onclick="go('ing',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11"/><path d="M3 9h18M5 20h14a2 2 0 002-2v-7H3v7a2 2 0 002 2z"/></svg>Ingredienti</div>
+    <div class="ni" onclick="go('forn',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Fornitori</div>
+    <div class="ni" onclick="go('home',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5a2 2 0 00-2 2v4m6-6h10m0 0v4a2 2 0 01-2 2H5"/></svg>Homemade</div>
+    <div class="ni" onclick="go('ric',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Ricette</div>
+    <div class="ni" onclick="go('list',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Listino</div>
+    <div class="ni" onclick="go('dash',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</div>
+    <div class="ni" onclick="go('costi',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Costi fissi</div>
+    <div class="ni" onclick="go('anal',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analisi</div>
+    <div class="ni" onclick="go('rep',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Report</div>
+  </nav>
+  <div class="sb-ft">
+  Capriate S.G. (BG)
+  <div style="display:flex;flex-direction:column;gap:5px;margin-top:8px">
+    <button onclick="exportBackup()" style="width:100%;font-size:10px;padding:5px 8px;justify-content:center">💾 Esporta backup</button>
+    <label style="width:100%;cursor:pointer;display:block">
+      <input type="file" id="backup-file" accept=".json" style="display:none" onchange="importBackup(this)"/>
+      <span style="display:flex;align-items:center;justify-content:center;gap:5px;background:var(--bg3);border:1px solid var(--bo2);border-radius:var(--r);padding:5px 8px;font-size:10px;font-family:var(--f);cursor:pointer;color:var(--text)">📂 Importa backup</span>
+    </label>
+  </div>
+  <div id="backup-ok" class="ok" style="margin-top:4px;display:block;text-align:center"></div>
+</div>
+</div>
+<main class="main">
+
+<!-- INGREDIENTI -->
+<div id="pg-ing" class="pg on">
+  <div class="pt">Ingredienti</div>
+  <div style="display:flex;gap:0;margin-bottom:1.2rem;border-bottom:2px solid var(--bo)">
+    <button id="tab-mag" onclick="switchIngTab('mag')" style="background:none;border:none;border-bottom:3px solid var(--gold);margin-bottom:-2px;padding:8px 20px;font-weight:600;color:var(--gold);cursor:pointer;font-size:13px;font-family:var(--f)">Magazzino</button>
+    <button id="tab-wine" onclick="switchIngTab('wine')" style="background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:8px 20px;font-weight:400;color:var(--t2);cursor:pointer;font-size:13px;font-family:var(--f)">🍷 Vini al calice</button>
+  </div>
+  <div id="sub-mag">
+  <div class="ps">213 prodotti · costo ricette = media pond. ult. 3 fatture · IVA 22% già scorporata</div>
+  <div class="card">
+    <div class="ct" id="itit">Aggiungi ingrediente</div>
+    <input type="hidden" id="iid"/>
+    <div class="g3"><div><label>Nome</label><input type="text" id="inome" placeholder="es. Gin Beefeater 1LT"/></div><div><label>Categoria</label><select id="icat"><option>Spirits base</option><option>Liquori</option><option>Vermouth / Aperitivi</option><option>Birra</option><option>Vino</option><option>Succhi / Puree</option><option>Sciroppi</option><option>Soft drink / Mixer</option><option>Freschi</option><option>Guarnizioni</option><option>Altro</option></select></div><div><label>Unità</label><select id="ium"><option value="ml">ml</option><option value="g">g</option><option value="cl">cl</option><option value="pz">pz</option></select></div></div>
+    <div class="g4"><div><label>Qtà conf.</label><input type="number" id="iqty" placeholder="700"/></div><div><label>Costo netto €</label><input type="number" id="icosto" step="0.01" placeholder="15.49"/></div><div><label>Data fattura</label><input type="date" id="idata"/></div><div><label>Fornitore</label><select id="iforn"><option value="">-- seleziona --</option></select></div></div>
+    <div style="display:flex;gap:8px;align-items:center"><button class="pr" id="ibtn" onclick="saveI()">+ Aggiungi</button><button id="ican" style="display:none" onclick="cancelI()">Annulla</button><span class="ok" id="iok">✓ Salvato</span></div>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem"><div class="ct" style="margin:0">Magazzino (<span id="icnt">0</span>)</div></div>
+    <div class="fb">
+      <input type="text" id="is" placeholder="🔍 Cerca nome, categoria, fornitore..." style="flex:3;width:auto" oninput="rI()"/>
+      <select id="ifc" onchange="rI()" style="flex:1;min-width:130px;width:auto"><option value="">Tutte le categorie</option><option>Spirits base</option><option>Liquori</option><option>Vermouth / Aperitivi</option><option>Birra</option><option>Vino</option><option>Succhi / Puree</option><option>Sciroppi</option><option>Soft drink / Mixer</option><option>Freschi</option><option>Guarnizioni</option><option>Altro</option></select>
+      <select id="iff" onchange="rI()" style="flex:1;min-width:110px;width:auto"><option value="">Tutti i fornitori</option></select>
+    </div>
+    <div id="iw"><div class="em">Caricamento...</div></div>
+  </div>
+  </div><!-- /sub-mag -->
+
+  <div id="sub-wine" style="display:none">
+    <div class="ps">125ml per calice · 6 calici da 750ml · 12 calici da Magnum 1500ml</div>
+    <div class="card">
+      <div class="ct" id="wine-form-tit">Aggiungi vino al calice</div>
+      <input type="hidden" id="wine-edit-id"/>
+
+      <!-- Selezione da magazzino -->
+      <div style="margin-bottom:.9rem">
+        <label>Seleziona dal magazzino vini</label>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <select id="wine-pick" onchange="pickWineFromMag()" style="flex:1">
+            <option value="">— oppure scegli un vino già presente nel magazzino —</option>
+          </select>
+        </div>
+        <div style="font-size:10px;color:var(--t3);margin-top:3px;font-family:var(--m)">Selezionando un vino dal magazzino i campi sotto si compilano automaticamente</div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="g3">
+        <div><label>Nome vino</label><input type="text" id="wine-nome" placeholder="es. Barolo Riserva"/></div>
+        <div><label>Fornitore</label><select id="wine-forn"><option value="">-- seleziona --</option></select></div>
+        <div><label>Formato bottiglia</label><select id="wine-ml"><option value="750">750ml</option><option value="1500">1500ml Magnum</option><option value="500">500ml</option><option value="375">375ml mezza</option></select></div>
+      </div>
+      <div class="g4">
+        <div><label>Costo acquisto €</label><input type="number" id="wine-costo" step="0.01" placeholder="12.50"/></div>
+        <div><label>Data acquisto</label><input type="date" id="wine-data"/></div>
+        <div><label>Prezzo calice € (IVA 10%)</label><input type="number" id="wine-prezzo" step="0.5" placeholder="6.00" oninput="upWinePreview()"/></div>
+        <div><label>Prezzo bottiglia intera € (IVA 10%)</label><input type="number" id="wine-prezzo-bott" step="0.5" placeholder="25.00" oninput="upWinePreview()"/></div>
+      </div>
+
+      <!-- Preview costi -->
+      <div id="wine-preview" style="display:none;background:var(--bg3);border:1px solid var(--bo);border-radius:var(--r);padding:10px;margin-bottom:10px">
+        <div class="g4" style="font-family:var(--m);font-size:12px">
+          <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;margin-bottom:3px">Costo calice</div><div id="wprev-cc" style="color:var(--gold);font-weight:600">—</div></div>
+          <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;margin-bottom:3px">Bev.cost calice</div><div id="wprev-bc">—</div></div>
+          <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;margin-bottom:3px">Margine calice</div><div id="wprev-mg">—</div></div>
+          <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;margin-bottom:3px">Bev.cost bottiglia</div><div id="wprev-bcb">—</div></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="pr" id="wine-btn" onclick="saveWine()">+ Aggiungi</button>
+        <button id="wine-can" style="display:none" onclick="cancelWine()">Annulla</button>
+        <span class="ok" id="wine-ok">✓ Salvato</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="fb">
+        <input type="text" id="wine-s" placeholder="🔍 Cerca vino..." style="flex:3;width:auto" oninput="rWine()"/>
+        <select id="wine-ff" onchange="rWine()" style="flex:1;min-width:120px;width:auto"><option value="">Tutti i fornitori</option></select>
+        <button onclick="exportWineXLSX()">📊 Excel</button>
+        <button onclick="exportWinePDF()">📄 PDF</button>
+      </div>
+      <div id="wine-wrap"><div class="em">Caricamento...</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FORNITORI -->
+<div id="pg-forn" class="pg">
+  <div class="pt">Fornitori</div><div class="ps">Anagrafica completa</div>
+  <div class="card">
+    <div class="ct" id="ftit">Aggiungi fornitore</div><input type="hidden" id="fid"/>
+    <div class="g3"><div><label>Nome</label><input type="text" id="fnome"/></div><div><label>Tel</label><input type="text" id="ftel"/></div><div><label>Email</label><input type="text" id="femail"/></div></div>
+    <div class="g2"><div><label>P.IVA</label><input type="text" id="fpiva"/></div><div><label>Note</label><input type="text" id="fnote"/></div></div>
+    <div style="display:flex;gap:8px;align-items:center"><button class="pr" id="fbtn" onclick="saveF()">+ Aggiungi</button><button id="fcan" style="display:none" onclick="cancelF()">Annulla</button><span class="ok" id="fok">✓ Salvato</span></div>
+  </div>
+  <div class="card"><div class="ct">Fornitori (<span id="fcnt">0</span>)</div><div id="fw"><div class="em">Nessun fornitore.</div></div></div>
+</div>
+
+<!-- HOMEMADE -->
+<div id="pg-home" class="pg">
+  <div class="pt">Preparazioni Homemade</div>
+  <div class="ps">Sciroppi · infusi · cordiali · bitter · tutto fatto in casa · costo = ingredienti + lavoro + energia</div>
+  <div class="card">
+    <div class="ct">👥 Personale — tariffe orarie</div>
+    <div class="g4"><div><label>Nome / Ruolo</label><input type="text" id="st-nome" placeholder="es. Marco - Barback"/></div><div><label>Tariffa €/ora (lorda)</label><input type="number" id="st-tariffa" placeholder="14.00" step="0.5" min="1"/></div><div style="display:flex;align-items:flex-end"><button class="pr" onclick="addStaff()">+ Aggiungi</button></div><div></div></div>
+    <div id="staff-list"><div class="em" style="padding:1rem">Nessun dipendente ancora.</div></div>
+    <div class="sep"></div>
+    <div class="g2">
+      <div><label>Coefficiente energia (%)</label><input type="number" id="hm-energia" value="3" step="0.5" min="0" max="20" oninput="saveCFG()"/><div style="font-size:10px;color:var(--t3);margin-top:3px;font-family:var(--m)">% sul costo ingredienti — default 3%</div></div>
+      <div style="background:var(--bg3);border-radius:var(--r);padding:.9rem;border:1px solid var(--bo)"><div style="font-size:10px;color:var(--t3);font-family:var(--m);text-transform:uppercase;margin-bottom:5px">Nota costi</div><div style="font-size:12px;color:var(--t2)">Costo lavoro ed energia separati dal bev.cost classico. In dashboard: bev.cost standard e bev.cost esteso.</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct" id="hm-tit">Nuova preparazione</div><input type="hidden" id="hm-id"/>
+    <div class="g3"><div><label>Nome</label><input type="text" id="hm-nome" placeholder="es. Sciroppo al basilico"/></div><div><label>Tipo</label><select id="hm-tipo"><option>Sciroppo</option><option>Infuso</option><option>Cordiale</option><option>Bitter</option><option>Tintura</option><option>Purea</option><option>Shrub</option><option>Oleo saccharum</option><option>Altro homemade</option></select></div><div><label>Resa finale</label><div style="display:flex;gap:6px"><input type="number" id="hm-resa" placeholder="500" style="flex:2"/><select id="hm-resa-um" style="flex:1;min-width:55px"><option value="ml">ml</option><option value="g">g</option><option value="pz">pz</option></select></div></div></div>
+    <div class="g3"><div><label>Preparato da</label><select id="hm-staff"><option value="">-- seleziona --</option></select></div><div><label>Tempo (minuti)</label><input type="number" id="hm-min" placeholder="30" min="0" oninput="upHMPrev()"/></div><div><label>Note / ricetta</label><input type="text" id="hm-note"/></div></div>
+    <label style="display:block;margin-bottom:8px">Ingredienti della preparazione</label>
+    <div id="hm-rings"></div>
+    <button onclick="addRow('hm-rings','upHMPrev()')" style="margin-bottom:1rem">+ Aggiungi ingrediente</button>
+    <div id="hm-prev" style="display:none;background:var(--bg3);border:1px solid var(--bo);border-radius:var(--r);padding:12px;margin-bottom:10px">
+      <div class="g5" style="font-family:var(--m);font-size:12px">
+        <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;margin-bottom:4px">Costo ing.</div><div id="hmp-ing">—</div></div>
+        <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;margin-bottom:4px">Lavoro</div><div id="hmp-lav" style="color:var(--amb)">—</div></div>
+        <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;margin-bottom:4px">Energia</div><div id="hmp-en" style="color:var(--t2)">—</div></div>
+        <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;margin-bottom:4px">Totale</div><div id="hmp-tot">—</div></div>
+        <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;margin-bottom:4px">Costo/unità</div><div id="hmp-pu" style="color:var(--gold);font-size:15px;font-weight:500">—</div></div>
+      </div>
+      <div class="cost-bar" id="hmp-bar" style="margin-top:8px"></div>
+    </div>
+    <div class="sep"></div>
+    <div style="display:flex;gap:8px;align-items:center"><button class="pr" id="hm-btn" onclick="saveHM()">Salva preparazione</button><button id="hm-can" style="display:none" onclick="cancelHM()">Annulla</button><span class="ok" id="hm-ok">✓ Salvata</span></div>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem"><div class="ct" style="margin:0">Preparazioni (<span id="hm-cnt">0</span>)</div></div>
+    <div class="fb"><input type="text" id="hm-s" placeholder="🔍 Cerca..." style="flex:3;width:auto" oninput="rHM()"/><select id="hm-ft" onchange="rHM()" style="flex:1;min-width:130px;width:auto"><option value="">Tutti i tipi</option><option>Sciroppo</option><option>Infuso</option><option>Cordiale</option><option>Bitter</option><option>Tintura</option><option>Purea</option><option>Shrub</option><option>Oleo saccharum</option><option>Altro homemade</option></select></div>
+    <div id="hm-wrap"><div class="em">Nessuna preparazione ancora.</div></div>
+  </div>
+</div>
+
+<!-- RICETTE -->
+<div id="pg-ric" class="pg">
+  <div class="pt">Ricette</div>
+  <div class="ps">Cerca l'ingrediente digitando il nome — seleziona dalla lista — inserisci la quantità</div>
+  <div class="card">
+    <div class="ct" id="rtit">Nuova ricetta</div><input type="hidden" id="rid"/>
+    <div class="g2"><div><label>Nome cocktail</label><input type="text" id="rnome" placeholder="es. Negroni"/></div><div><label>Categoria</label><select id="rcat"><option>Cocktail classico IBA</option><option>Signature cocktail</option><option>Mocktail</option><option>Shot</option><option>Long drink</option><option>Vino al bicchiere</option><option>Birra</option><option>Spirits liscio</option></select></div></div>
+    <label style="display:block;margin-bottom:8px">Ingredienti</label>
+    <div id="rings"></div>
+    <button onclick="addRow('rings','upRP()')" style="margin-bottom:1rem">+ Aggiungi ingrediente</button>
+    <div id="rprev" style="display:none;background:var(--bg3);border-radius:var(--r);padding:10px;margin-bottom:10px;border:1px solid var(--bo);font-family:var(--m);font-size:12px"></div>
+    <div class="sep"></div>
+    <div style="display:flex;gap:8px;align-items:center"><button class="pr" id="rbtn" onclick="saveR()">Salva ricetta</button><button id="rcan" style="display:none" onclick="cancelR()">Annulla</button><span class="ok" id="rok">✓ Salvata</span></div>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem"><div class="ct" style="margin:0">Ricette (<span id="rcnt">0</span>)</div><button onclick="doIBA()">↓ Importa IBA</button></div>
+    <div class="fb"><input type="text" id="rs" placeholder="🔍 Cerca ricetta..." style="flex:3;width:auto" oninput="rR()"/><select id="rfc" onchange="rR()" style="flex:1;min-width:140px;width:auto"><option value="">Tutte le categorie</option><option>Cocktail classico IBA</option><option>Signature cocktail</option><option>Mocktail</option><option>Shot</option><option>Long drink</option><option>Vino al bicchiere</option><option>Birra</option><option>Spirits liscio</option></select></div>
+    <div id="rw"><div class="em">Nessuna ricetta.</div></div>
+  </div>
+</div>
+
+<!-- LISTINO -->
+<div id="pg-list" class="pg">
+  <div class="pt">Listino prezzi</div>
+  <div class="ps">Inserisci il <strong>prezzo al cliente IVA 10% inclusa</strong> — tutto il resto è automatico</div>
+  <div class="card">
+    <div class="fb"><input type="text" id="ls" placeholder="🔍 Cerca cocktail..." style="flex:3;width:auto" oninput="rL()"/><select id="lfc" onchange="rL()" style="flex:1;min-width:140px;width:auto"><option value="">Tutte le categorie</option><option>Cocktail classico IBA</option><option>Signature cocktail</option><option>Mocktail</option><option>Shot</option><option>Long drink</option><option>Vino al bicchiere</option><option>Birra</option><option>Spirits liscio</option></select></div>
+    <div id="lw"><div class="em">Crea prima le ricette.</div></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="pg-dash" class="pg">
+  <div class="pt">Dashboard</div><div class="ps">Riepilogo in tempo reale</div>
+  <div class="g4"><div class="met"><div class="ml">Ricette</div><div class="mv" id="dr">—</div></div><div class="met"><div class="ml">Ingredienti</div><div class="mv" id="di">—</div></div><div class="met"><div class="ml">Bev.cost % classico</div><div class="mv" id="dbc">—</div><div style="font-size:9px;color:var(--t3);margin-top:3px;font-family:var(--m)">solo ingredienti</div></div><div class="met"><div class="ml">Bev.cost % esteso</div><div class="mv" id="dbc2">—</div><div style="font-size:9px;color:var(--t3);margin-top:3px;font-family:var(--m)">incl. lavoro HM</div></div></div>
+  <div class="g3"><div class="met"><div class="ml">Margine medio netto</div><div class="mv" id="dmg">—</div></div><div class="met"><div class="ml">Homemade</div><div class="mv" id="dhm">—</div></div><div class="met"><div class="ml">Dipendenti</div><div class="mv" id="dst">—</div></div></div>
+  <div class="card"><div class="ct">Analisi per ricetta</div><div id="dt"><div class="em">Aggiungi ricette e prezzi.</div></div></div>
+  <div class="card"><div class="ct">Semaforo beverage cost</div><div class="g3"><div class="met"><div class="ml">Ottimo</div><div class="mv g">&lt;20%</div></div><div class="met"><div class="ml">Nella norma</div><div class="mv w">20–30%</div></div><div class="met"><div class="ml">Attenzione</div><div class="mv r">&gt;30%</div></div></div></div>
+
+  <!-- OBIETTIVO GIORNALIERO -->
+  <div class="card" id="dash-obiettivo" style="display:none">
+    <div class="ct">🎯 Obiettivo giornaliero</div>
+    <div class="g3" style="margin-bottom:1rem">
+      <div class="met" style="border-color:var(--gold)">
+        <div class="ml">Devi incassare almeno</div>
+        <div class="mv" id="dash-min-day" style="font-size:28px">—</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:4px;font-family:var(--m)">per coprire costi fissi + bev.cost</div>
+      </div>
+      <div class="met">
+        <div class="ml">Di cui costi fissi</div>
+        <div class="mv" id="dash-cf-day">—</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:4px;font-family:var(--m)">€/giorno su <span id="dash-giorni">26</span>gg</div>
+      </div>
+      <div class="met">
+        <div class="ml">Di cui bev.cost stimato</div>
+        <div class="mv" id="dash-bc-day">—</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:4px;font-family:var(--m)">media ricette con prezzo</div>
+      </div>
+    </div>
+    <div class="g3">
+      <div class="met">
+        <div class="ml">Coperti necessari</div>
+        <div class="mv" id="dash-cop-need">—</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:4px;font-family:var(--m)">al tuo scontrino medio di €<span id="dash-scontrino">—</span></div>
+      </div>
+      <div class="met">
+        <div class="ml">Coperti attuali stimati</div>
+        <div class="mv" id="dash-cop-now">—</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:4px;font-family:var(--m)">impostati nei costi fissi</div>
+      </div>
+      <div class="met">
+        <div class="ml">Gap giornaliero</div>
+        <div class="mv" id="dash-gap">—</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:4px;font-family:var(--m)">ricavo attuale vs obiettivo</div>
+      </div>
+    </div>
+    <div id="dash-msg" style="margin-top:1rem;padding:.9rem;border-radius:var(--r);font-size:13px;font-weight:500"></div>
+  </div>
+</div>
+
+<!-- COSTI FISSI -->
+<div id="pg-costi" class="pg">
+  <div class="pt">Costi fissi mensili</div>
+  <div class="ps">Costi fissi inseriti come importo mensile · personale e utenze con storico mese per mese</div>
+
+  <!-- FISSI -->
+  <div class="card">
+    <div class="ct">Costi fissi (valore mensile)</div>
+    <div class="g2">
+      <div><label>Affitto €/mese (imponibile)</label><input type="number" id="cf-affitto" placeholder="0" step="50" oninput="saveCF()"/></div>
+      <div><label>Social media €/mese (imponibile)</label><input type="number" id="cf-social" placeholder="0" step="10" oninput="saveCF()"/></div>
+      <div><label>Commercialista €/mese (imponibile)</label><input type="number" id="cf-commercialista" placeholder="0" step="10" oninput="saveCF()"/></div>
+      <div><label>Altro €/mese (imponibile)</label><input type="number" id="cf-altro" placeholder="0" step="50" oninput="saveCF()"/></div>
+    </div>
+  </div>
+
+  <!-- ALTRE SPESE FISSE -->
+  <div class="card">
+    <div class="ct">➕ Altre spese fisse mensili</div>
+    <div class="g3" style="margin-bottom:.9rem">
+      <div><label>Voce di spesa</label><input type="text" id="cf-extra-nome" placeholder="es. Musica live, Software, Pulizie..."/></div>
+      <div><label>Importo €/mese</label><input type="number" id="cf-extra-val" placeholder="0" step="10"/></div>
+      <div><label>Note / riferimento</label><input type="text" id="cf-extra-note" placeholder="es. contratto annuale, ogni venerdì..."/></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:1rem">
+      <button class="pr" onclick="addCFExtra()">+ Aggiungi voce</button>
+      <span class="ok" id="cf-extra-ok">✓ Salvato</span>
+    </div>
+    <div id="cf-extra-list"><div class="em">Nessuna voce aggiuntiva.</div></div>
+  </div>
+
+  <!-- PERSONALE storico -->
+  <div class="card">
+    <div class="ct">👥 Personale — storico mensile</div>
+    <div class="g3" style="margin-bottom:.9rem">
+      <div><label>Mese</label><input type="month" id="cf-pers-mese"/></div>
+      <div><label>Costo totale lordo €</label><input type="number" id="cf-pers-val" placeholder="0" step="100"/></div>
+      <div style="display:flex;align-items:flex-end"><button class="pr" onclick="addCFRow('personale')">+ Aggiungi</button></div>
+    </div>
+    <div id="cf-pers-list"><div class="em">Nessun dato inserito.</div></div>
+  </div>
+
+  <!-- UTENZE storico -->
+  <div class="card">
+    <div class="ct">⚡ Utenze — storico mensile (luce, gas, acqua)</div>
+    <div class="g3" style="margin-bottom:.9rem">
+      <div><label>Mese</label><input type="month" id="cf-uten-mese"/></div>
+      <div><label>Totale utenze €</label><input type="number" id="cf-uten-val" placeholder="0" step="50"/></div>
+      <div style="display:flex;align-items:flex-end"><button class="pr" onclick="addCFRow('utenze')">+ Aggiungi</button></div>
+    </div>
+    <div id="cf-uten-list"><div class="em">Nessun dato inserito.</div></div>
+  </div>
+
+  <!-- RIEPILOGO -->
+  <div class="card">
+    <div class="ct">Riepilogo</div>
+    <div class="g3">
+      <div class="met"><div class="ml">Totale costi fissi/mese (media)</div><div class="mv" id="cf-tot">€ 0</div></div>
+      <div class="met"><div class="ml">Costi fissi/giorno</div><div class="mv" id="cf-day">€ 0</div></div>
+      <div class="met"><div class="ml">Giorni lavorativi/mese</div><div><input type="number" id="cf-giorni" value="26" min="1" max="31" step="1" style="width:70px;font-family:var(--m);font-size:18px;font-weight:500;border:none;background:transparent;color:var(--text)" oninput="saveCF();upCFStats()"/></div></div>
+    </div>
+    <div class="sep"></div>
+    <div class="g2" style="margin-bottom:.9rem">
+      <div><label>Coperti medi al giorno</label><input type="number" id="cf-coperti" placeholder="50" min="1" oninput="saveCF();upCFStats()"/></div>
+      <div><label>Scontrino medio €</label><input type="number" id="cf-scontrino" placeholder="25" min="1" step="0.5" oninput="saveCF();upCFStats()"/></div>
+    </div>
+    <div id="cf-stats"></div>
+  </div>
+</div>
+
+<!-- ANALISI -->
+<div id="pg-anal" class="pg">
+  <div class="pt">Analisi</div>
+  <div class="g2"><div class="card"><div class="ct">Top 5 ricette più costose</div><div id="a1"><div class="em">Nessun dato.</div></div></div><div class="card"><div class="ct">Ingredienti più usati</div><div id="a2"><div class="em">Nessun dato.</div></div></div></div>
+  <div class="card"><div class="ct">Variazioni prezzo ingredienti</div><div id="a3"><div class="em">Nessun dato.</div></div></div>
+  <div class="card"><div class="ct">Ripartizione per fornitore</div><div id="a4"><div class="em">Nessun dato.</div></div></div>
+</div>
+
+<!-- REPORT -->
+<div id="pg-rep" class="pg">
+  <div class="pt">Report</div>
+  <div class="card"><div class="ct">Genera riepilogo</div><div class="g2"><div><label>Da</label><input type="date" id="rda"/></div><div><label>A</label><input type="date" id="ra"/></div></div><button class="pr" onclick="genRep()">Genera report</button></div>
+  <div id="ro"></div>
+</div>
+
+</main>
+</div>
+
+<!-- MODAL STORICO -->
+<div class="modal" id="mst">
+  <div class="mbox">
+    <div class="mhd"><span style="font-size:14px;font-weight:500" id="mst-t">Storico prezzi</span><button onclick="cm('mst')">✕</button></div>
+    <div class="psum" id="mst-s"></div>
+    <p style="font-size:10px;font-weight:500;color:var(--t2);margin-bottom:7px;font-family:var(--m);text-transform:uppercase">Storico fatture</p>
+    <div id="mst-tb"></div>
+    <div class="sep"></div>
+    <p style="font-size:10px;font-weight:500;margin-bottom:8px;font-family:var(--m);text-transform:uppercase">Aggiungi voce fattura</p>
+    <input type="hidden" id="mst-id"/>
+    <div class="g4"><div><label>Data</label><input type="date" id="mst-d"/></div><div><label>Costo netto €</label><input type="number" id="mst-c" step="0.01"/></div><div><label>Qtà</label><input type="number" id="mst-q" value="1"/></div><div><label>Fornitore</label><select id="mst-f"><option value="">-- seleziona --</option></select></div></div>
+    <button class="pr" onclick="addFatt()" style="width:100%">+ Aggiungi voce</button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════════
+//  DATI & STORAGE
+// ════════════════════════════════════════════════════════════════════
+const KI='edf12_i',KR='edf12_r',KP='edf12_p',KF='edf12_f',KH='edf12_hm',KS='edf12_st',KC='edf12_cfg',KW='edf12_wp',KCF='edf12_cf';
+let I=[],R=[],P={},F=[],HM=[],ST=[],CFG={energia:3},WP={},CF={affitto:0,social:0,commercialista:0,altro:0,giorni:26,coperti:0,scontrino:0,personale:[],utenze:[],extra:[]};
+
+const DEF_I=[{"id": 1780573271598, "nome": "BRACCA FRIZZANTE 1LT", "cat": "Soft drink / Mixer", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 0.3239, "storico": [{"data": "2026-03-01", "costo": 0.33, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.3239, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271599, "nome": "BRACCA NATURALE 1LT", "cat": "Soft drink / Mixer", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 0.3239, "storico": [{"data": "2026-03-01", "costo": 0.34, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.3239, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271600, "nome": "BRACCA NATURALE PET 50CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 0.19, "storico": [{"data": "2026-03-01", "costo": 0.19, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271601, "nome": "BRACCA FRIZZANTE PET 50CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 0.19, "storico": [{"data": "2026-03-01", "costo": 0.19, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271602, "nome": "PANNA NATURALE 75CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 0.7, "storico": [{"data": "2026-03-01", "costo": 0.72, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.7, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271603, "nome": "SANPELLEGRINO FRIZZANTE 75CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 0.7, "storico": [{"data": "2026-03-01", "costo": 0.72, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.7, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271604, "nome": "MOOD FRIZZANTE PET 50CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 0.3275, "storico": [{"data": "2026-03-01", "costo": 0.33, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.3275, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271605, "nome": "MOOD NATURALE PET 50CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 0.3277, "storico": [{"data": "2026-03-01", "costo": 0.33, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.3277, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271606, "nome": "CRODINO XL 17CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 170, "fornitore": "Cuni Bevande", "costo": 1.14, "storico": [{"data": "2026-03-01", "costo": 1.14, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271607, "nome": "SPUMADOR BIONDA 1LT", "cat": "Soft drink / Mixer", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 0.6, "storico": [{"data": "2026-03-01", "costo": 0.6, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271608, "nome": "RECOARO BRILLANTE 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.6133, "storico": [{"data": "2026-03-01", "costo": 0.63, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.6133, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271609, "nome": "COCA COLA 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 0.83, "storico": [{"data": "2026-03-01", "costo": 0.83, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271610, "nome": "COCA ZERO 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 0.83, "storico": [{"data": "2026-03-01", "costo": 0.83, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271611, "nome": "COCA COLA LATTINA 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 0.6433, "storico": [{"data": "2026-03-01", "costo": 0.67, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.6433, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271612, "nome": "GALVANINA GASSOSA BIO 35CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 350, "fornitore": "Cuni Bevande", "costo": 1.34, "storico": [{"data": "2026-03-01", "costo": 1.34, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271613, "nome": "GALVANINA TONICA CLASSICA BIO 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.9229, "storico": [{"data": "2026-03-01", "costo": 0.92, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.9229, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271614, "nome": "GALVANINA SODA PELMO ROSA BIO 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 1.06, "storico": [{"data": "2026-03-01", "costo": 1.06, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271615, "nome": "SANPELLEGRINO TONICA AGRUMI 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.7935, "storico": [{"data": "2026-03-01", "costo": 0.81, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.7935, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271616, "nome": "ESTATHE LIMONE 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Cuni Bevande", "costo": 0.94, "storico": [{"data": "2026-03-01", "costo": 0.94, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271617, "nome": "SANPELLEGRINO AMARA 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.6058, "storico": [{"data": "2026-03-01", "costo": 0.73, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.6058, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271618, "nome": "SANPELLEGRINO CHINO 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.73, "storico": [{"data": "2026-03-01", "costo": 0.73, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271619, "nome": "REDBULL ORGANICS TONIC 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Cuni Bevande", "costo": 0.9779, "storico": [{"data": "2026-03-01", "costo": 0.98, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.9779, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271620, "nome": "REDBULL ORGANICS LEMON 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Cuni Bevande", "costo": 0.98, "storico": [{"data": "2026-03-01", "costo": 0.98, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271621, "nome": "REDBULL ORGANICS GINGERBEER 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Cuni Bevande", "costo": 0.98, "storico": [{"data": "2026-03-01", "costo": 0.98, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271622, "nome": "REDBULL ORGANICS ORANGE 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Cuni Bevande", "costo": 0.98, "storico": [{"data": "2026-03-01", "costo": 0.98, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271623, "nome": "REDBULL LATTINA 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Cuni Bevande", "costo": 1.05, "storico": [{"data": "2026-03-01", "costo": 1.05, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 1.05, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271624, "nome": "FEVER TREE INDIAN TONIC WATER 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.95, "storico": [{"data": "2026-03-01", "costo": 0.95, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271625, "nome": "WAR FRANCO LATTINA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 2.07, "storico": [{"data": "2026-03-01", "costo": 2.07, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271626, "nome": "WAR AMEN GLUTEN FREE LATTINA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 2.2021, "storico": [{"data": "2026-03-01", "costo": 2.25, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 2.2021, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271627, "nome": "WAR TUTTO FATTO LATTINA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 2.71, "storico": [{"data": "2026-03-01", "costo": 2.71, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271628, "nome": "WAR MEZZO FATTO LATTINA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 2.5558, "storico": [{"data": "2026-03-01", "costo": 2.61, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 2.5558, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271629, "nome": "WAR OSANNA LATTINA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 2.025, "storico": [{"data": "2026-03-01", "costo": 2.07, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 2.025, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271630, "nome": "NOAM 34CL", "cat": "Birra", "um": "ml", "qty": 340, "fornitore": "Cuni Bevande", "costo": 1.5769, "storico": [{"data": "2026-03-01", "costo": 1.71, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 1.5769, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271631, "nome": "MENABREA ANNIVERSARIO BIONDA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 0.954, "storico": [{"data": "2026-03-01", "costo": 0.97, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.954, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271632, "nome": "BIRRIFICIO ITALIANO AMBER SHOCK 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 2.99, "storico": [{"data": "2026-03-01", "costo": 2.99, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 2.99, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271633, "nome": "POGGIARELLO VENTO SAUVIGNON 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 8.1, "storico": [{"data": "2026-03-01", "costo": 8.1, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271634, "nome": "HENRIET CHAMPAGNE TRADITION BRUT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 23.92, "storico": [{"data": "2026-03-01", "costo": 23.92, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271635, "nome": "CITARI LUGANA TERRE BIANCHE 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 6.6, "storico": [{"data": "2026-03-01", "costo": 7.46, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 6.6, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271636, "nome": "CA DEI FRATI LUGANA 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 9.1267, "storico": [{"data": "2026-03-01", "costo": 9.28, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 9.1267, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271637, "nome": "SCHOLA SARMENTI CUBARDI MAGNUM 1,5LT", "cat": "Vino", "um": "ml", "qty": 1500, "fornitore": "Cuni Bevande", "costo": 24.65, "storico": [{"data": "2026-03-01", "costo": 25.93, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 24.65, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271638, "nome": "ST PAULS GEWURZTRAMINER IUSTUS 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 9.52, "storico": [{"data": "2026-03-01", "costo": 9.84, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 9.52, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271639, "nome": "SCHOLA SARMENTI PRIMIT CRITERA 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 6.63, "storico": [{"data": "2026-03-01", "costo": 7.06, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 6.63, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271640, "nome": "SCHOLA SARMENTI PRIM RIS CUBARDI 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 11.05, "storico": [{"data": "2026-03-01", "costo": 11.05, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271641, "nome": "RADISE SPUMANTE MILL EXTRA DRY 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 2.28, "storico": [{"data": "2026-03-01", "costo": 2.28, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271642, "nome": "RADISE PROSECCO VALDOBBIADENE 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 5.33, "storico": [{"data": "2026-03-01", "costo": 5.33, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271643, "nome": "AMAVEL COSTA PORTO RUBY 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 11.48, "storico": [{"data": "2026-03-01", "costo": 11.48, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271644, "nome": "CLEEBOURG CREMANT D ALSACE 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 8.56, "storico": [{"data": "2026-03-01", "costo": 8.56, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271645, "nome": "PLOSE MELA SUCCO BIO 20CL", "cat": "Succhi / Puree", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 1.27, "storico": [{"data": "2026-03-01", "costo": 1.27, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271646, "nome": "CIRIO POMODORO SUCCO 20CL", "cat": "Succhi / Puree", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.93, "storico": [{"data": "2026-03-01", "costo": 0.93, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271647, "nome": "PAGO PERA SUCCO 20CL", "cat": "Succhi / Puree", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.9, "storico": [{"data": "2026-03-01", "costo": 0.9, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271648, "nome": "JEFFERSON AMARO IMPORTANTE 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 23.55, "storico": [{"data": "2026-03-01", "costo": 23.55, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271649, "nome": "RABARBARO ZUCCA GRAN RISERVA 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 13.52, "storico": [{"data": "2026-03-01", "costo": 13.52, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271650, "nome": "FERNET BRANCA MENTA 1LT", "cat": "Liquori", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 16.58, "storico": [{"data": "2026-03-01", "costo": 16.58, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271651, "nome": "APEROL 1LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 12.11, "storico": [{"data": "2026-03-01", "costo": 12.11, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271652, "nome": "BITTER CAMPARI CASK TALES 1LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 44.2, "storico": [{"data": "2026-03-01", "costo": 44.2, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271653, "nome": "PUNT E MES APERITIVO 1LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 8.56, "storico": [{"data": "2026-03-01", "costo": 8.56, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271654, "nome": "BITTER FUSETTI CACAO 70CL", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 15.55, "storico": [{"data": "2026-03-01", "costo": 15.55, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271655, "nome": "SORBOLE APERITIVO 70CL", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 12.67, "storico": [{"data": "2026-03-01", "costo": 12.67, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271656, "nome": "BAG IN BOX BITTER FUSETTI 3LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 3000, "fornitore": "Cuni Bevande", "costo": 37.84, "storico": [{"data": "2026-03-01", "costo": 37.84, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 37.84, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271657, "nome": "BITTER FUSETTI MEXICO 70CL", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 18.8, "storico": [{"data": "2026-03-01", "costo": 18.8, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271658, "nome": "GRAPPA ANTHOLOGY VIOLA CLASSICA 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 16.48, "storico": [{"data": "2026-03-01", "costo": 16.48, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271659, "nome": "GRAPPA MAROLO BAROLO BARRIQUE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 26.48, "storico": [{"data": "2026-03-01", "costo": 26.48, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271660, "nome": "GRAPPA MARZADRO GIARE AMARONE RIS 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 31.36, "storico": [{"data": "2026-03-01", "costo": 31.36, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271661, "nome": "GIN LONDON DRY NO 3 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 27.53, "storico": [{"data": "2026-03-01", "costo": 27.53, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 27.53, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271662, "nome": "GIN MONKEY 47 50CL", "cat": "Spirits base", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 30.68, "storico": [{"data": "2026-03-01", "costo": 30.68, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271663, "nome": "GIN BEEFEATER 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 13.065, "storico": [{"data": "2026-03-01", "costo": 16.08, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 13.065, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271664, "nome": "GIN PLYMOUTH 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 17.02, "storico": [{"data": "2026-03-01", "costo": 17.02, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271665, "nome": "GIN KINOBI KYOTO DRY 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 43.28, "storico": [{"data": "2026-03-01", "costo": 43.28, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271666, "nome": "GIN MALFY POMPELMO ROSA 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 18.915, "storico": [{"data": "2026-03-01", "costo": 20.66, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 18.915, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271667, "nome": "GIN HAYMANS SLOE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 18.8, "storico": [{"data": "2026-03-01", "costo": 17.6, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 18.8, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271668, "nome": "GIN PLYMOUTH NAVY STRENGHT 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 31.57, "storico": [{"data": "2026-03-01", "costo": 31.57, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 31.57, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271669, "nome": "GIN GIN ARTE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 24.56, "storico": [{"data": "2026-03-01", "costo": 24.56, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271670, "nome": "GIN BEEFEATER 00 NOALCOL 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 8.48, "storico": [{"data": "2026-03-01", "costo": 10.64, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 8.48, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271671, "nome": "GIN HOLYWATER 50CL", "cat": "Spirits base", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 29.64, "storico": [{"data": "2026-03-01", "costo": 29.64, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271672, "nome": "GIN ARTE MAGNUM 150CL", "cat": "Spirits base", "um": "ml", "qty": 1500, "fornitore": "Cuni Bevande", "costo": 62.9, "storico": [{"data": "2026-03-01", "costo": 62.9, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271673, "nome": "GIN MALFY LIMONE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 22.12, "storico": [{"data": "2026-03-01", "costo": 22.12, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271674, "nome": "GIN PORTOFINO DRY 50CL", "cat": "Spirits base", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 36.4, "storico": [{"data": "2026-03-01", "costo": 36.4, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271675, "nome": "FEE FOAM FEE BROTHERS 15CL", "cat": "Liquori", "um": "ml", "qty": 150, "fornitore": "Cuni Bevande", "costo": 14.64, "storico": [{"data": "2026-03-01", "costo": 14.64, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271676, "nome": "SAINT GERMAIN LIQUORE 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 29.52, "storico": [{"data": "2026-03-01", "costo": 30.48, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 29.52, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271677, "nome": "NATYS POLPA BLUE AGAVE 75CL", "cat": "Liquori", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 15.28, "storico": [{"data": "2026-03-01", "costo": 15.28, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271678, "nome": "ROSOLIO ITALICUS 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 26.3633, "storico": [{"data": "2026-03-01", "costo": 26.36, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 26.3633, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271679, "nome": "GIFFARD CREMA LAMPONE 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 12.15, "storico": [{"data": "2026-03-01", "costo": 12.15, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271680, "nome": "GIFFARD LIQ TRIPLE SEC 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 10.8, "storico": [{"data": "2026-03-01", "costo": 10.8, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271681, "nome": "GIFFARD CREMA CASSIS D ANJOU 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 9.98, "storico": [{"data": "2026-03-01", "costo": 9.98, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271682, "nome": "GIFFARD SIROP COCCO 1LT", "cat": "Sciroppi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 10.88, "storico": [{"data": "2026-03-01", "costo": 11.44, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 10.88, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271683, "nome": "GIFFARD SIROP FIORI DI SAMBUCO 1LT", "cat": "Sciroppi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 12.56, "storico": [{"data": "2026-03-01", "costo": 12.56, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271684, "nome": "PALLINI SCIROPPO DI AGAVE 50CL", "cat": "Sciroppi", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 11.56, "storico": [{"data": "2026-03-01", "costo": 11.56, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271685, "nome": "GIFFARD SIROP ZENZERO 1LT", "cat": "Sciroppi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 11.78, "storico": [{"data": "2026-03-01", "costo": 11.78, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271686, "nome": "MEZCAL DEL MAGUEY VIDA 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 33.84, "storico": [{"data": "2026-03-01", "costo": 33.84, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271687, "nome": "TEQUILA OLMECA ALTOS 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 15.1467, "storico": [{"data": "2026-03-01", "costo": 18.17, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 15.1467, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271688, "nome": "TEQUILA CLASE AZUL REPOSADO 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 173.95, "storico": [{"data": "2026-03-01", "costo": 173.95, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271689, "nome": "TEQUILA CODIGO 1530 BLANCO 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 36.88, "storico": [{"data": "2026-03-01", "costo": 36.88, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271690, "nome": "VODKA WYBOROVA 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 10.2417, "storico": [{"data": "2026-03-01", "costo": 10.24, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 10.2417, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271691, "nome": "WHISKY JAMESON IRISH WHISKEY 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 21.37, "storico": [{"data": "2026-03-01", "costo": 21.37, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271692, "nome": "WHISKY BOURBON EZRA BROOKS RYE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 22.56, "storico": [{"data": "2026-03-01", "costo": 22.56, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271693, "nome": "WHISKY FOUR ROSES BOURBON 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 17.55, "storico": [{"data": "2026-03-01", "costo": 17.55, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271694, "nome": "VERMOUTH CARPANO CLASSICO 1LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 8.1117, "storico": [{"data": "2026-03-01", "costo": 7.72, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 8.1117, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271695, "nome": "VERMOUTH CARPANO BIANCO 1LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 9.28, "storico": [{"data": "2026-03-01", "costo": 9.28, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 9.28, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271696, "nome": "VERMOUTH CARPANO ANTICA FORMULA 1LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 23.84, "storico": [{"data": "2026-03-01", "costo": 23.84, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 23.84, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271697, "nome": "VERMOUTH LILLET BIANCO 75CL", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 11.84, "storico": [{"data": "2026-03-01", "costo": 11.84, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 11.84, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271698, "nome": "VERMOUTH LILLET ROSSO 75CL", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 11.84, "storico": [{"data": "2026-03-01", "costo": 11.84, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271699, "nome": "VERMOUTH COCCHI EXTRA DRY 50CL", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 13.78, "storico": [{"data": "2026-03-01", "costo": 13.78, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271700, "nome": "RUM HAVANA 3Y 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 12.61, "storico": [{"data": "2026-03-01", "costo": 15.13, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 12.61, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271701, "nome": "RUM HAVANA 7Y 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 21.47, "storico": [{"data": "2026-03-01", "costo": 21.47, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271702, "nome": "RUM HAVANA ANEJO ESPECIAL 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 16.79, "storico": [{"data": "2026-03-01", "costo": 16.79, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271703, "nome": "RUM FLOR DE CANA 12Y 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 24.64, "storico": [{"data": "2026-03-01", "costo": 24.64, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271704, "nome": "RUM FLOR DE CANA 18Y 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 38.4, "storico": [{"data": "2026-03-01", "costo": 38.4, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780575174274, "nome": "QUAGLIA LAMPONE 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 14.3, "storico": [{"data": "2025-10-17", "costo": 14.3, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174275, "nome": "GIN SIPSMITH NAVY 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 30.16, "storico": [{"data": "2025-10-17", "costo": 30.16, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174276, "nome": "REDBULL ORGANICS GINGER BEER 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "BM Group", "costo": 0.87, "storico": [{"data": "2025-10-17", "costo": 0.71, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-16", "costo": 0.87, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174277, "nome": "POLOT SCIROPPO AGAVE 70CL", "cat": "Sciroppi", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 6.2, "storico": [{"data": "2025-10-17", "costo": 6.2, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174278, "nome": "GIN PORTOFINO 50CL", "cat": "Spirits base", "um": "ml", "qty": 500, "fornitore": "BM Group", "costo": 34.4, "storico": [{"data": "2025-10-17", "costo": 28.2, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 34.4, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174279, "nome": "BULLEIT BOURBON 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 13.11, "storico": [{"data": "2025-10-17", "costo": 13.11, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174280, "nome": "BULLEIT RYE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 17.87, "storico": [{"data": "2025-10-17", "costo": 17.87, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174281, "nome": "GIN GINEPRAIO 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 20.08, "storico": [{"data": "2025-10-17", "costo": 20.08, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174282, "nome": "SILENT POOL GIN 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 24.59, "storico": [{"data": "2025-10-17", "costo": 24.59, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174283, "nome": "GIN ROKU 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 20.16, "storico": [{"data": "2025-10-17", "costo": 20.16, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174284, "nome": "AMORES VERDE MEZCAL 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 25.5, "storico": [{"data": "2025-10-17", "costo": 20.9, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-16", "costo": 25.5, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174285, "nome": "SPUMANTE BRUT SANDILIANO 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "BM Group", "costo": 2.46, "storico": [{"data": "2025-10-17", "costo": 2.46, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174286, "nome": "REDBULL ORGANICS BITTER LEMON 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "BM Group", "costo": 1.1521, "storico": [{"data": "2025-10-17", "costo": 0.71, "qta": 1, "forn": "BM Group"}, {"data": "2026-05-20", "costo": 1.1521, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174287, "nome": "REDBULL ORGANICS TONICA CAN 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "BM Group", "costo": 0.71, "storico": [{"data": "2025-10-17", "costo": 0.71, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174288, "nome": "SAKE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 11.27, "storico": [{"data": "2025-10-17", "costo": 11.27, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174289, "nome": "FRANGELICO 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 12.5, "storico": [{"data": "2025-10-17", "costo": 10.25, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 12.5, "qta": 1, "forn": "BM Group"}, {"data": "2026-05-20", "costo": 12.5, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174290, "nome": "COCA COLA NRG 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "BM Group", "costo": 0.79, "storico": [{"data": "2025-10-17", "costo": 0.61, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 0.79, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174291, "nome": "COCA COLA ZERO NRG 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "BM Group", "costo": 0.79, "storico": [{"data": "2025-10-17", "costo": 0.61, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 0.79, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174292, "nome": "LAGAVULIN 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 49.18, "storico": [{"data": "2025-10-17", "costo": 49.18, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174293, "nome": "FEVER TREE INDIAN TONIC 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "BM Group", "costo": 0.98, "storico": [{"data": "2025-10-17", "costo": 0.98, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174294, "nome": "REDBULL 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "BM Group", "costo": 0.46, "storico": [{"data": "2025-10-17", "costo": 0.75, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 0.9, "qta": 1, "forn": "BM Group"}, {"data": "2026-05-20", "costo": 0.46, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174295, "nome": "GIN NORDEST 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 25.96, "storico": [{"data": "2025-10-17", "costo": 21.28, "qta": 1, "forn": "BM Group"}, {"data": "2026-05-20", "costo": 25.96, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174296, "nome": "ACQ SAN BENEDETTO NAT PET 50CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 500, "fornitore": "BM Group", "costo": 0.11, "storico": [{"data": "2025-10-17", "costo": 0.11, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174297, "nome": "BENEDICTINE DOM 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 14.59, "storico": [{"data": "2025-10-17", "costo": 14.59, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174298, "nome": "BIRRA MENABREA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "BM Group", "costo": 0.87, "storico": [{"data": "2025-10-17", "costo": 0.87, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174299, "nome": "BOLS TRIPLE SEC 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 11.99, "storico": [{"data": "2025-10-17", "costo": 9.83, "qta": 1, "forn": "BM Group"}, {"data": "2026-05-20", "costo": 11.99, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174300, "nome": "AMARO CYNAR 1LT", "cat": "Liquori", "um": "ml", "qty": 1000, "fornitore": "BM Group", "costo": 9.51, "storico": [{"data": "2025-10-17", "costo": 9.51, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174301, "nome": "CHARTREUSE GIALLA 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 25.41, "storico": [{"data": "2025-10-17", "costo": 25.41, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174302, "nome": "QUAGLIA CHINOTTO 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 14.3, "storico": [{"data": "2025-10-17", "costo": 14.3, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174303, "nome": "ASSENZIO LA FEE PARISIENNE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 29.1, "storico": [{"data": "2025-10-17", "costo": 29.1, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174304, "nome": "GIFFARD LIQUORE SAMBUCO 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 13.48, "storico": [{"data": "2025-10-17", "costo": 13.48, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174305, "nome": "MIRTO PILLONI 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 14.0, "storico": [{"data": "2025-10-17", "costo": 11.48, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 14.0, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174306, "nome": "MONIN SCIROPPO ORZATA 70CL", "cat": "Sciroppi", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 7.21, "storico": [{"data": "2025-10-17", "costo": 7.21, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174307, "nome": "MONIN CARAMELLO SALATO 70CL", "cat": "Sciroppi", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 9.6, "storico": [{"data": "2025-10-17", "costo": 7.87, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-16", "costo": 9.6, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174308, "nome": "GIFFARD GINGER OF THE INDIES 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 13.61, "storico": [{"data": "2025-10-17", "costo": 13.61, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174309, "nome": "LAGG KILMORY 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 41.8, "storico": [{"data": "2025-10-17", "costo": 41.8, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174310, "nome": "LAGG CORRIECRAVIE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 59.02, "storico": [{"data": "2025-10-17", "costo": 59.02, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174311, "nome": "COCA COLA SLEEK 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "BM Group", "costo": 0.55, "storico": [{"data": "2025-10-17", "costo": 0.45, "qta": 1, "forn": "BM Group"}, {"data": "2026-05-20", "costo": 0.55, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174312, "nome": "GIN SABATINI 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 23.98, "storico": [{"data": "2025-10-17", "costo": 23.98, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174313, "nome": "GIN HENDRICKS 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 20.08, "storico": [{"data": "2025-10-17", "costo": 20.08, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174314, "nome": "RIVO GIN 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 21.64, "storico": [{"data": "2025-10-17", "costo": 21.64, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174315, "nome": "GIL GIN 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 23.77, "storico": [{"data": "2025-10-17", "costo": 23.77, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174316, "nome": "GIN BROCKMANS 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 27.0, "storico": [{"data": "2025-10-17", "costo": 22.13, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 27.0, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174317, "nome": "TANQUERAY SEVILLA 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 13.07, "storico": [{"data": "2025-10-17", "costo": 13.07, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174318, "nome": "PETER IN FLORENCE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 21.85, "storico": [{"data": "2025-10-17", "costo": 21.85, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174319, "nome": "AMARO MANDRAGOLA 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 12.05, "storico": [{"data": "2025-10-17", "costo": 12.05, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590000000, "nome": "AMARETTO DISARONNO 1750ML", "cat": "Liquori", "um": "ml", "qty": 1750, "fornitore": "Maxi C+C", "costo": 21.23, "storico": [{"data": "2026-03-12", "costo": 21.23, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000001, "nome": "AMARO MONTENEGRO 1500ML", "cat": "Liquori", "um": "ml", "qty": 1500, "fornitore": "Maxi C+C", "costo": 26.0, "storico": [{"data": "2025-12-22", "costo": 26.06, "qta": 1, "forn": "Maxi C+C"}, {"data": "2026-03-12", "costo": 26.0, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000002, "nome": "BRANDY RENEBRIAND 700ML", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Maxi C+C", "costo": 6.77, "storico": [{"data": "2025-12-17", "costo": 6.77, "qta": 1, "forn": "Maxi C+C"}, {"data": "2026-03-12", "costo": 6.77, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000003, "nome": "COCA COLA ZERO VAP 330ML", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "Maxi C+C", "costo": 0.7837, "storico": [{"data": "2026-03-12", "costo": 0.7837, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000004, "nome": "LIQANIMA NERA MARZADRO 700ML", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Maxi C+C", "costo": 12.58, "storico": [{"data": "2026-03-12", "costo": 12.58, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000005, "nome": "JEFFERSON AMARO 700ML", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Maxi C+C", "costo": 21.5, "storico": [{"data": "2026-03-12", "costo": 21.5, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000006, "nome": "RABARBARO ZUCCA 700ML", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Maxi C+C", "costo": 7.09, "storico": [{"data": "2026-03-12", "costo": 7.09, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000007, "nome": "SUCCO POMPELMO SKIPPER 1LT", "cat": "Succhi / Puree", "um": "ml", "qty": 1000, "fornitore": "Maxi C+C", "costo": 1.39, "storico": [{"data": "2025-12-17", "costo": 1.39, "qta": 1, "forn": "Maxi C+C"}, {"data": "2026-03-12", "costo": 1.39, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000008, "nome": "SUCCO ACE SKIPPER 1LT", "cat": "Succhi / Puree", "um": "ml", "qty": 1000, "fornitore": "Maxi C+C", "costo": 1.39, "storico": [{"data": "2026-03-12", "costo": 1.39, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000009, "nome": "SUCCO BIO CAROTA PFANNER 500ML", "cat": "Succhi / Puree", "um": "ml", "qty": 500, "fornitore": "Maxi C+C", "costo": 1.54, "storico": [{"data": "2026-03-12", "costo": 1.54, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000010, "nome": "AMARO JAGERMEISTER 1LT", "cat": "Liquori", "um": "ml", "qty": 1000, "fornitore": "Maxi C+C", "costo": 12.2, "storico": [{"data": "2025-12-22", "costo": 12.2, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000011, "nome": "CAMPARI SODA 98ML x10", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 980, "fornitore": "Maxi C+C", "costo": 6.79, "storico": [{"data": "2025-12-22", "costo": 6.79, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000012, "nome": "APERITIVO RICARD 700ML", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 700, "fornitore": "Maxi C+C", "costo": 8.7, "storico": [{"data": "2025-12-22", "costo": 8.7, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000013, "nome": "BACARDI CARTA BLANCA 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Maxi C+C", "costo": 10.99, "storico": [{"data": "2025-12-22", "costo": 10.99, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000014, "nome": "BIRRA MORETTI 330ML", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Maxi C+C", "costo": 1.19, "storico": [{"data": "2025-12-22", "costo": 1.19, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000015, "nome": "COCA COLA REGULAR PET 1500ML", "cat": "Soft drink / Mixer", "um": "ml", "qty": 1500, "fornitore": "Maxi C+C", "costo": 1.63, "storico": [{"data": "2025-12-22", "costo": 1.63, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000016, "nome": "KEGLEVICH MENTA 1LT", "cat": "Liquori", "um": "ml", "qty": 1000, "fornitore": "Maxi C+C", "costo": 7.59, "storico": [{"data": "2025-12-22", "costo": 7.59, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000017, "nome": "LIMONCELLO VILLA ARIANNA 1500ML", "cat": "Liquori", "um": "ml", "qty": 1500, "fornitore": "Maxi C+C", "costo": 6.35, "storico": [{"data": "2025-12-22", "costo": 6.35, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000018, "nome": "RED BULL ENERGY 250ML", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Maxi C+C", "costo": 0.85, "storico": [{"data": "2025-12-22", "costo": 0.85, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000019, "nome": "SAMBUCA BIANCA MOLINARI 1500ML", "cat": "Liquori", "um": "ml", "qty": 1500, "fornitore": "Maxi C+C", "costo": 21.7, "storico": [{"data": "2025-12-22", "costo": 21.7, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000020, "nome": "TONIC WATER SCHWEPPES 1LT", "cat": "Soft drink / Mixer", "um": "ml", "qty": 1000, "fornitore": "Maxi C+C", "costo": 0.98, "storico": [{"data": "2025-12-22", "costo": 0.98, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000021, "nome": "ESTATHE LIMONE 250ML", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Maxi C+C", "costo": 0.76, "storico": [{"data": "2025-12-17", "costo": 0.76, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000022, "nome": "ESTATHE PESCA 250ML", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Maxi C+C", "costo": 0.76, "storico": [{"data": "2025-12-17", "costo": 0.76, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 100001, "nome": "LIME FRESCO SUCCO (cassa 4,5kg → ~1100ml succo)", "cat": "Succhi / Puree", "um": "ml", "qty": 1100, "fornitore": "Mercato", "costo": 10.0, "storico": [{"data": "2026-01-01", "costo": 10.0, "qta": 1, "forn": "Mercato"}]}, {"id": 100002, "nome": "ARANCIA FRESCA", "cat": "Freschi", "um": "g", "qty": 1000, "fornitore": "Mercato", "costo": 1.25, "storico": [{"data": "2026-01-01", "costo": 1.25, "qta": 1, "forn": "Mercato"}]}, {"id": 100003, "nome": "GHIACCIO (produzione interna)", "cat": "Altro", "um": "g", "qty": 1000, "fornitore": "Produzione interna", "costo": 0.75, "storico": [{"data": "2026-01-01", "costo": 0.75, "qta": 1, "forn": "Produzione interna"}]}, {"id": 1780590001022, "nome": "MASTIHA ROOTS 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 23.3, "storico": [{"data": "2026-03-26", "costo": 23.3, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001023, "nome": "SAINT GERMAIN LIQUORE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 25.5, "storico": [{"data": "2026-03-26", "costo": 25.5, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001024, "nome": "GIN GOLD 999 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 36.9, "storico": [{"data": "2026-05-20", "costo": 36.9, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001025, "nome": "SCHWEPPES SODA VAP 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "BM Group", "costo": 0.7, "storico": [{"data": "2026-05-20", "costo": 0.7, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001026, "nome": "REDBULL YELLOW 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "BM Group", "costo": 0.85, "storico": [{"data": "2026-05-20", "costo": 0.85, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001027, "nome": "SILENT POOL CITRUS 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 39.5, "storico": [{"data": "2026-03-16", "costo": 39.5, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001028, "nome": "GIN HENDRICKS GRAN CABARET 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 30.0, "storico": [{"data": "2026-03-26", "costo": 30.0, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001029, "nome": "MONIN SCIROPPO COCCO 70CL", "cat": "Sciroppi", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 8.8, "storico": [{"data": "2026-03-26", "costo": 8.8, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001030, "nome": "MONIN SCIROPPO ELDERFLOWER 70CL", "cat": "Sciroppi", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 8.8, "storico": [{"data": "2026-03-26", "costo": 8.8, "qta": 1, "forn": "BM Group"}]}, {"id": 1780600000001, "nome": "MUNI EPOCHE DOSAGGIO ZERO MET.CLASSICO 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 16.435, "storico": [{"data": "2024-11-01", "costo": 17.3, "qta": 1, "forn": "ViNé"}, {"data": "2025-04-30", "costo": 16.435, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000002, "nome": "REBULI VALDOBBIADENE PROSECCO SUP EXTRA BRUT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 8.712, "storico": [{"data": "2024-11-01", "costo": 9.9, "qta": 1, "forn": "ViNé"}, {"data": "2026-02-23", "costo": 8.712, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000003, "nome": "MUNI LARION BIANCO VENETO IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 10.9, "storico": [{"data": "2024-11-01", "costo": 10.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000004, "nome": "BATTISTELLA UN PINO GRIGIO BIANCO VENETO IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 8.455, "storico": [{"data": "2024-11-01", "costo": 8.9, "qta": 1, "forn": "ViNé"}, {"data": "2025-04-30", "costo": 8.455, "qta": 1, "forn": "ViNé"}, {"data": "2026-02-23", "costo": 8.455, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000005, "nome": "ANNESANTI COLLE FREGIARA ANFORA UMBRIA IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 18.2, "storico": [{"data": "2024-11-01", "costo": 18.2, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000006, "nome": "BATTISTELLA FLORA BIANCO VENETO IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 8.455, "storico": [{"data": "2024-11-01", "costo": 8.9, "qta": 1, "forn": "ViNé"}, {"data": "2025-03-19", "costo": 8.455, "qta": 1, "forn": "ViNé"}, {"data": "2025-04-30", "costo": 8.455, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000007, "nome": "LE DRIADI DRIADE FELICE BERGAMASCA MERLOT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 9.405, "storico": [{"data": "2024-11-01", "costo": 9.9, "qta": 1, "forn": "ViNé"}, {"data": "2025-03-19", "costo": 9.405, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000008, "nome": "ADALIA LAUTE VALPOLICELLA DOC 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 8.4, "storico": [{"data": "2024-11-01", "costo": 8.4, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000009, "nome": "CORTI CUGINI MOKAB VINO FRIZZANTE ROSATO 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 12.9, "storico": [{"data": "2024-11-01", "costo": 12.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000010, "nome": "ANNESANTI CELO BIANCO FRIZZANTE UMBRIA IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 8.5, "storico": [{"data": "2024-11-01", "costo": 8.5, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000011, "nome": "ANNESANTI RASPATO ROSATO FRIZZANTE UMBRIA IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 10.355, "storico": [{"data": "2024-11-01", "costo": 10.9, "qta": 1, "forn": "ViNé"}, {"data": "2025-04-30", "costo": 10.355, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000012, "nome": "LE DRIADI TILAMORE BIANCO MACERATO 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 15.8, "storico": [{"data": "2024-11-01", "costo": 15.8, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000013, "nome": "LA CORNASELLA MOSCATO ROSSO IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 11.9, "storico": [{"data": "2024-11-01", "costo": 11.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000014, "nome": "ANDI ASCARO BARBERA IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 12.92, "storico": [{"data": "2024-11-01", "costo": 13.6, "qta": 1, "forn": "ViNé"}, {"data": "2026-02-23", "costo": 12.92, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000015, "nome": "LE DRIADI BARLINET BERGAMASCA CABERNET FRANC 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 15.9, "storico": [{"data": "2024-11-01", "costo": 15.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000016, "nome": "ADALIA BALT VALPOLICELLA RIPASSO DOC SUP 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 12.9, "storico": [{"data": "2024-11-01", "costo": 12.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000017, "nome": "ADALIA RUVALN AMARONE VALPOLICELLA DOCG 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 29.9, "storico": [{"data": "2024-11-01", "costo": 29.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000018, "nome": "SAN CRISTOFORO BRUT FRANCIACORTA DOCG MAGNUM 150CL", "cat": "Vino", "um": "ml", "qty": 1500, "fornitore": "ViNé", "costo": 34.3, "storico": [{"data": "2026-02-23", "costo": 34.3, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000019, "nome": "SAN CRISTOFORO ND FRANCIACORTA DOCG MAGNUM 150CL", "cat": "Vino", "um": "ml", "qty": 1500, "fornitore": "ViNé", "costo": 35.8, "storico": [{"data": "2026-02-23", "costo": 35.8, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000020, "nome": "SAN CRISTOFORO FRANCIACORTA BRUT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 17.0, "storico": [{"data": "2026-02-23", "costo": 17.0, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000021, "nome": "SAN CRISTOFORO FRANCIACORTA ND 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 17.9, "storico": [{"data": "2026-02-23", "costo": 17.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000022, "nome": "LEFEVRE CUVEE DE RESERVE BRUT NATURE 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 29.0, "storico": [{"data": "2025-03-19", "costo": 29.0, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000023, "nome": "MOET GRAND VINTAGE EXTRA BRUT 2015 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Altro", "costo": 75.0, "storico": [{"data": "2026-01-01", "costo": 75.0, "qta": 1, "forn": "Altro"}]}, {"id": 1780600000024, "nome": "RASCIONIO ROTULAIA IGT CILIEGIOLO BIO 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 9.9, "storico": [{"data": "2026-01-01", "costo": 9.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000025, "nome": "TOSCA ROSSO DEL LUPO MERLOT CAB SAUV 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 0, "storico": []}];
+
+const T=new Date().toISOString().split('T')[0];
+document.getElementById('idata').value=T;
+document.getElementById('mst-d').value=T;
+
+function lsG(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
+function lsS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+
+// ════════════════════════════════════════════════════════════════════
+//  TAB INGREDIENTI
+// ════════════════════════════════════════════════════════════════════
+function switchIngTab(tab){
+  const mag=document.getElementById('sub-mag');
+  const wine=document.getElementById('sub-wine');
+  const tM=document.getElementById('tab-mag');
+  const tW=document.getElementById('tab-wine');
+  if(!mag||!wine)return;
+  if(tab==='mag'){
+    mag.style.display='';wine.style.display='none';
+    tM.style.cssText='background:none;border:none;border-bottom:3px solid var(--gold);margin-bottom:-2px;padding:8px 20px;font-weight:600;color:var(--gold);cursor:pointer;font-size:13px;font-family:var(--f)';
+    tW.style.cssText='background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:8px 20px;font-weight:400;color:var(--t2);cursor:pointer;font-size:13px;font-family:var(--f)';
+  } else {
+    mag.style.display='none';wine.style.display='';
+    tW.style.cssText='background:none;border:none;border-bottom:3px solid var(--gold);margin-bottom:-2px;padding:8px 20px;font-weight:600;color:var(--gold);cursor:pointer;font-size:13px;font-family:var(--f)';
+    tM.style.cssText='background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:8px 20px;font-weight:400;color:var(--t2);cursor:pointer;font-size:13px;font-family:var(--f)';
+    upWineFF();rWine();
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  VINI AL CALICE
+// ════════════════════════════════════════════════════════════════════
+function upWineFF(){
+  const sel=document.getElementById('wine-ff');
+  if(sel){const v=sel.value;const vini=I.filter(i=>i.cat==='Vino');const fs=[...new Set(vini.map(i=>i.fornitore).filter(Boolean))];sel.innerHTML='<option value="">Tutti i fornitori</option>'+fs.map(f=>`<option ${f===v?'selected':''}>${f}</option>`).join('');}
+  const fs2=document.getElementById('wine-forn');
+  if(fs2){const v2=fs2.value;fs2.innerHTML='<option value="">-- seleziona --</option>'+F.map(f=>`<option ${f.nome===v2?'selected':''}>${f.nome}</option>`).join('');}
+  const wd=document.getElementById('wine-data');if(wd&&!wd.value)wd.value=T;
+  // Popola pick da magazzino
+  const pk=document.getElementById('wine-pick');
+  if(pk){const cv=pk.value;const vini=[...I].filter(i=>i.cat==='Vino').sort((a,b)=>a.nome.localeCompare(b.nome));pk.innerHTML='<option value="">— oppure scegli un vino già presente nel magazzino —</option>'+vini.map(i=>`<option value="${i.id}" ${String(i.id)===String(cv)?'selected':''}>${i.nome} (${i.fornitore||'—'})</option>`).join('');}
+}
+
+function pickWineFromMag(){
+  const pk=document.getElementById('wine-pick');
+  if(!pk||!pk.value)return;
+  const i=findIng(pk.value);if(!i)return;
+  const p=px(i);
+  document.getElementById('wine-nome').value=i.nome;
+  document.getElementById('wine-ml').value=i.qty||750;
+  document.getElementById('wine-costo').value=p.ul||i.costo||0;
+  document.getElementById('wine-data').value=T;
+  const wp=WP[i.id]||{};
+  document.getElementById('wine-prezzo').value=wp.c||'';
+  document.getElementById('wine-prezzo-bott').value=wp.b||'';
+  upWineFF();
+  setTimeout(()=>{const s=document.getElementById('wine-forn');if(s)s.value=i.fornitore||'';},60);
+  // Metti id in edit per aggiornare invece di duplicare
+  document.getElementById('wine-edit-id').value=i.id;
+  document.getElementById('wine-form-tit').textContent='Aggiorna prezzi: '+i.nome;
+  document.getElementById('wine-btn').textContent='✓ Salva';
+  document.getElementById('wine-can').style.display='inline-flex';
+  upWinePreview();
+}
+
+function upWinePreview(){
+  const costo=parseFloat(document.getElementById('wine-costo')?.value)||0;
+  const ml=parseInt(document.getElementById('wine-ml')?.value)||750;
+  const pv=parseFloat(document.getElementById('wine-prezzo')?.value)||0;
+  const pvb=parseFloat(document.getElementById('wine-prezzo-bott')?.value)||0;
+  const cal=Math.floor(ml/125);const cc=cal>0?costo/cal:0;
+  const pn=pv?pv/1.10:0;const pnb=pvb?pvb/1.10:0;
+  const prev=document.getElementById('wine-preview');
+  if(!prev)return;
+  if(cc>0||pv||pvb){prev.style.display='block';}else{prev.style.display='none';return;}
+  document.getElementById('wprev-cc').textContent=cc>0?'€'+cc.toFixed(3):'—';
+  const bcpC=pn&&cc>0?(cc/pn*100):null;
+  const ricC=pn&&cc>0?(pn/cc):null;
+  const mgC=pn&&cc>0?pn-cc:null;
+  const el=document.getElementById('wprev-bc');
+  el.textContent=bcpC!==null?(ricC.toFixed(1)+'x · '+(pn&&cc>0?((pn-cc)/pn*100).toFixed(0):'')+'% marg.'):'—';
+  el.style.color=bcpC===null?'inherit':bcpC<=33?'var(--green)':bcpC<=40?'var(--amb)':'var(--red)';
+  document.getElementById('wprev-mg').textContent=mgC!==null?'€'+mgC.toFixed(2):'—';
+  const bcpB=pnb&&costo>0?(costo/pnb*100):null;
+  const ricB=pnb&&costo>0?(pnb/costo):null;
+  const elb=document.getElementById('wprev-bcb');
+  elb.textContent=bcpB!==null?(ricB.toFixed(1)+'x · '+(pnb&&costo>0?((pnb-costo)/pnb*100).toFixed(0):'')+'% marg.'):'—';
+  elb.style.color=bcpB===null?'inherit':bcpB<=33?'var(--green)':bcpB<=40?'var(--amb)':'var(--red)';
+}
+
+function setWPC(id,v){if(!WP[id])WP[id]={};WP[id].c=parseFloat(v)||0;sv('wp');rWine();}
+function setWPB(id,v){if(!WP[id])WP[id]={};WP[id].b=parseFloat(v)||0;sv('wp');rWine();}
+
+function saveWine(){
+  const eid=document.getElementById('wine-edit-id').value;
+  const nome=document.getElementById('wine-nome').value.trim();
+  const forn=document.getElementById('wine-forn').value;
+  const ml=parseInt(document.getElementById('wine-ml').value)||750;
+  const costo=parseFloat(document.getElementById('wine-costo').value);
+  const data=document.getElementById('wine-data').value||T;
+  const prezzo=parseFloat(document.getElementById('wine-prezzo').value)||0;
+  const prezzob=parseFloat(document.getElementById('wine-prezzo-bott').value)||0;
+  if(!nome||!forn||isNaN(costo)){alert('Inserisci nome, fornitore e costo.');return;}
+  let nid;
+  if(eid){
+    const x=findIng(eid);
+    if(x){x.nome=nome;x.fornitore=forn;x.qty=ml;if(!x.storico)x.storico=[];if(costo>0)x.storico.push({data,costo,qta:1,forn});}
+    nid=String(eid);
+    cancelWine();
+  } else {
+    nid=Date.now();
+    I.push({id:nid,nome,cat:'Vino',um:'ml',qty:ml,fornitore:forn,costo,storico:[{data,costo,qta:1,forn}]});
+    document.getElementById('wine-nome').value='';
+    document.getElementById('wine-costo').value='';
+    document.getElementById('wine-prezzo').value='';
+    document.getElementById('wine-prezzo-bott').value='';
+    document.getElementById('wine-forn').value='';
+    document.getElementById('wine-pick').value='';
+  }
+  if(!WP[nid])WP[nid]={};
+  if(prezzo>0)WP[nid].c=prezzo;
+  if(prezzob>0)WP[nid].b=prezzob;
+  sv('i');sv('wp');fl('wine-ok');rWine();upWineFF();rI();
+}
+
+function editWine(id){
+  const i=findIng(id);if(!i)return;
+  const p=px(i);const wp=WP[id]||{};
+  document.getElementById('wine-edit-id').value=id;
+  document.getElementById('wine-nome').value=i.nome;
+  document.getElementById('wine-ml').value=i.qty||750;
+  document.getElementById('wine-costo').value=p.ul||i.costo||0;
+  document.getElementById('wine-data').value=T;
+  document.getElementById('wine-prezzo').value=wp.c||'';
+  document.getElementById('wine-prezzo-bott').value=wp.b||'';
+  upWineFF();
+  setTimeout(()=>{const s=document.getElementById('wine-forn');if(s)s.value=i.fornitore||'';},60);
+  document.getElementById('wine-form-tit').textContent='Modifica: '+i.nome;
+  document.getElementById('wine-btn').textContent='✓ Salva';
+  document.getElementById('wine-can').style.display='inline-flex';
+  document.getElementById('sub-wine').scrollIntoView({behavior:'smooth'});
+  upWinePreview();
+}
+
+function cancelWine(){
+  document.getElementById('wine-edit-id').value='';
+  document.getElementById('wine-nome').value='';
+  document.getElementById('wine-costo').value='';
+  document.getElementById('wine-prezzo').value='';
+  document.getElementById('wine-prezzo-bott').value='';
+  const s=document.getElementById('wine-forn');if(s)s.value='';
+  const pk=document.getElementById('wine-pick');if(pk)pk.value='';
+  const prev=document.getElementById('wine-preview');if(prev)prev.style.display='none';
+  document.getElementById('wine-form-tit').textContent='Aggiungi vino al calice';
+  document.getElementById('wine-btn').textContent='+ Aggiungi';
+  document.getElementById('wine-can').style.display='none';
+}
+
+function delWine(id){
+  if(!confirm('Eliminare questo vino?'))return;
+  I=I.filter(x=>String(x.id)!==String(id));
+  delete WP[id];
+  sv('i');sv('wp');rWine();rI();
+}
+
+function rWine(){
+  const s=(document.getElementById('wine-s')?.value||'').toLowerCase();
+  const ff=document.getElementById('wine-ff')?.value||'';
+  const vini=I.filter(i=>i.cat==='Vino'&&((!s||(i.nome+' '+(i.fornitore||'')).toLowerCase().includes(s))&&(!ff||i.fornitore===ff)));
+  const w=document.getElementById('wine-wrap');if(!w)return;
+  if(!vini.length){w.innerHTML='<div class="em">Nessun vino trovato.</div>';return;}
+  let h='<table><thead><tr><th>Vino</th><th>Fornitore</th><th>Bottiglia</th><th>Costo acq.</th><th>Calici</th><th>Costo calice</th><th>Prezzo calice € (IVA10%)</th><th>Prezzo bottiglia € (IVA10%)</th><th>Bev.cost calice</th><th>Bev.cost bott.</th><th>Margine calice</th><th></th></tr></thead><tbody>';
+  vini.forEach(i=>{
+    const p=px(i);const cb=p.mp;const ml=i.qty||750;const cal=Math.floor(ml/125);const cc=cal>0?cb/cal:0;
+    const wp=WP[i.id]||{};const pv=wp.c||'';const pvb=wp.b||'';
+    const pn=pv?parseFloat(pv)/1.10:0;const pnb=pvb?parseFloat(pvb)/1.10:0;
+    // Calice
+    const ricC=pn&&cc>0?(pn/cc):null;
+    const mgC=pn&&cc>0?pn-cc:null;
+    const mgpC=pn&&cc>0?((pn-cc)/pn*100):null;
+    // Bottiglia
+    const ricB=pnb&&cb>0?(pnb/cb):null;
+    const mgB=pnb&&cb>0?pnb-cb:null;
+    const mgpB=pnb&&cb>0?((pnb-cb)/pnb*100):null;
+    // Soglia: se ho costi fissi uso quella, altrimenti default 33%
+    const soglia=margineMinRequired()||33;
+    function wineTag(mgp,ric){
+      if(mgp===null)return '—';
+      const ok=mgp>=(100-soglia);
+      return ok
+        ? '<span class="bx bg">✓ '+mgp.toFixed(0)+'% · '+ric.toFixed(1)+'x</span>'
+        : '<span class="bx br">✗ '+mgp.toFixed(0)+'% · '+ric.toFixed(1)+'x</span>';
+    }
+    const fb=i.fornitore==='BM Group'?'bb':i.fornitore==='Maxi C+C'?'bw':i.fornitore==='ViNé'?'bp':'bg';
+    h+=`<tr>
+      <td style="font-weight:500">${i.nome}</td>
+      <td><span class="bx ${fb}" style="font-size:9px">${i.fornitore||'—'}</span></td>
+      <td style="font-family:var(--m);font-size:11px">${ml}ml</td>
+      <td style="font-family:var(--m)">€${cb.toFixed(2)}</td>
+      <td style="font-family:var(--m);color:var(--t2)">${cal}×125ml</td>
+      <td style="font-family:var(--m);font-weight:600;color:var(--gold)">${cc>0?'€'+cc.toFixed(3):'—'}</td>
+      <td><input type="number" value="${pv}" min="0" step="0.5" placeholder="6.00" style="width:72px;font-family:var(--m)" onchange="setWPC(${i.id},this.value)"/></td>
+      <td>${wineTag(mgpC,ricC)}</td>
+      <td><input type="number" value="${pvb}" min="0" step="0.5" placeholder="25.00" style="width:72px;font-family:var(--m)" onchange="setWPB(${i.id},this.value)"/></td>
+      <td>${wineTag(mgpB,ricB)}</td>
+      <td><div style="display:flex"><button class="ib" onclick="editWine(${i.id})">✏️</button><button class="ib d" onclick="delWine(${i.id})">🗑</button></div></td>
+    </tr>`;
+  });
+  w.innerHTML=h+'</tbody></table>';
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  EXPORT VINI AL CALICE
+// ════════════════════════════════════════════════════════════════════
+function getWineRows(){
+  return I.filter(i=>i.cat==='Vino').map(i=>{
+    const p=px(i);const cb=p.mp;const ml=i.qty||750;const cal=Math.floor(ml/125);const cc=cal>0?cb/cal:0;
+    const wp=WP[i.id]||{};
+    const pv=wp.c||0;const pvb=wp.b||0;
+    const pn=pv?parseFloat(pv)/1.10:0;const pnb=pvb?parseFloat(pvb)/1.10:0;
+    const ricC=pn&&cc>0?(pn/cc):null;const mgpC=pn&&cc>0?((pn-cc)/pn*100):null;const bcpC=pn&&cc>0?(cc/pn*100):null;
+    const ricB=pnb&&cb>0?(pnb/cb):null;const mgpB=pnb&&cb>0?((pnb-cb)/pnb*100):null;const bcpB=pnb&&cb>0?(cb/pnb*100):null;
+    const valC=bcpC===null?'—':bcpC<=33?'Ottimo':bcpC<=40?'Nella norma':'Attenzione';
+    const valB=bcpB===null?'—':bcpB<=33?'Ottimo':bcpB<=40?'Nella norma':'Attenzione';
+    return{nome:i.nome,fornitore:i.fornitore||'',ml,cb,cal,cc,pv,pvb,ricC,mgpC,bcpC,valC,ricB,mgpB,bcpB,valB};
+  });
+}
+
+function exportWineXLSX(){
+  const rows=getWineRows();
+  const hdr=['Vino','Fornitore','Formato','Costo acq. €','Calici','Costo calice €','Prezzo calice €','Ricarico calice','Margine calice %','Valutazione calice','Prezzo bottiglia €','Ricarico bottiglia','Margine bottiglia %','Valutazione bottiglia'];
+  const lines=[hdr.join('\t')];
+  rows.forEach(r=>lines.push([
+    r.nome,r.fornitore,r.ml+'ml',r.cb.toFixed(2),r.cal,
+    r.cc>0?r.cc.toFixed(3):'',
+    r.pv?r.pv.toFixed(2):'',r.ricC!==null?r.ricC.toFixed(2)+'x':'',r.mgpC!==null?r.mgpC.toFixed(1)+'%':'',r.valC,
+    r.pvb?r.pvb.toFixed(2):'',r.ricB!==null?r.ricB.toFixed(2)+'x':'',r.mgpB!==null?r.mgpB.toFixed(1)+'%':'',r.valB
+  ].join('\t')));
+  const blob=new Blob(['\uFEFF'+lines.join('\n')],{type:'application/vnd.ms-excel;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='vini_calice_'+new Date().toISOString().split('T')[0]+'.xls';a.click();
+}
+
+function exportWinePDF(){
+  const rows=getWineRows();
+  const d=new Date().toLocaleDateString('it-IT');
+  let html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><style>
+    body{font-family:Arial,sans-serif;font-size:10px;margin:20px;color:#111}
+    h1{font-size:15px;margin-bottom:3px}
+    .sub{font-size:9px;color:#666;margin-bottom:14px}
+    table{width:100%;border-collapse:collapse}
+    th{background:#222;color:#fff;padding:5px 7px;text-align:left;font-size:9px;text-transform:uppercase}
+    td{padding:4px 7px;border-bottom:1px solid #eee}
+    tr:nth-child(even) td{background:#f9f9f9}
+    .num{font-family:monospace;text-align:right}
+    .gold{color:#9a6e1a;font-weight:600}
+    .g{background:#e6f5ee;color:#1a7a45;padding:1px 5px;border-radius:3px}
+    .w{background:#fff3e0;color:#b56a00;padding:1px 5px;border-radius:3px}
+    .r{background:#fdecea;color:#c0392b;padding:1px 5px;border-radius:3px}
+    @media print{body{margin:10px}}
+  </style></head><body>
+  <h1>Easy Drink & Food — Vini al Calice</h1>
+  <div class="sub">Generato il ${d} · 125ml/calice · 6 calici da 750ml · 12 da Magnum</div>
+  <table><thead><tr><th>Vino</th><th>Forn.</th><th>Formato</th><th>Costo</th><th>Cal.</th><th>Costo cal.</th><th>P.calice</th><th>Ricarico</th><th>Marg%</th><th>Valutaz.</th><th>P.bottiglia</th><th>Ricarico</th><th>Marg%</th><th>Valutaz.</th></tr></thead><tbody>`;
+  rows.forEach(r=>{
+    const vc=r.valC==='Ottimo'?'g':r.valC==='Nella norma'?'w':r.valC==='Attenzione'?'r':'';
+    const vb=r.valB==='Ottimo'?'g':r.valB==='Nella norma'?'w':r.valB==='Attenzione'?'r':'';
+    const vcTag=vc?`<span class="${vc}">${r.valC}</span>`:'—';
+    const vbTag=vb?`<span class="${vb}">${r.valB}</span>`:'—';
+    html+=`<tr><td style="font-weight:600">${r.nome}</td><td>${r.fornitore}</td><td class="num">${r.ml}ml</td><td class="num">€${r.cb.toFixed(2)}</td><td class="num">${r.cal}</td><td class="num gold">${r.cc>0?'€'+r.cc.toFixed(3):'—'}</td><td class="num">${r.pv?'€'+r.pv.toFixed(2):'—'}</td><td class="num">${r.ricC!==null?r.ricC.toFixed(1)+'x':'—'}</td><td class="num">${r.mgpC!==null?r.mgpC.toFixed(0)+'%':'—'}</td><td>${vcTag}</td><td class="num">${r.pvb?'€'+r.pvb.toFixed(2):'—'}</td><td class="num">${r.ricB!==null?r.ricB.toFixed(1)+'x':'—'}</td><td class="num">${r.mgpB!==null?r.mgpB.toFixed(0)+'%':'—'}</td><td>${vbTag}</td></tr>`;
+  });
+  html+=`</tbody></table><div style="margin-top:10px;font-size:8px;color:#999">Easy Drink and Food · Beverage Cost v4.0 · Capriate S.G. (BG)</div></body></html>`;
+  const w=window.open('','_blank');w.document.write(html);w.document.close();setTimeout(()=>w.print(),400);
+}
+
+
+// ════════════════════════════════════════════════════════════════════
+//  COSTI FISSI
+// ════════════════════════════════════════════════════════════════════
+function saveCF(){
+  CF.affitto=parseFloat(document.getElementById('cf-affitto')?.value)||0;
+  CF.social=parseFloat(document.getElementById('cf-social')?.value)||0;
+  CF.commercialista=parseFloat(document.getElementById('cf-commercialista')?.value)||0;
+  CF.altro=parseFloat(document.getElementById('cf-altro')?.value)||0;
+  CF.giorni=parseInt(document.getElementById('cf-giorni')?.value)||26;
+  CF.coperti=parseInt(document.getElementById('cf-coperti')?.value)||0;
+  CF.scontrino=parseFloat(document.getElementById('cf-scontrino')?.value)||0;
+  sv('cf');upCFStats();
+}
+
+function cfMediaPersonale(){
+  if(!CF.personale||!CF.personale.length)return 0;
+  const ult=CF.personale.slice(-3);
+  return ult.reduce((s,r)=>s+r.val,0)/ult.length;
+}
+function cfMediaUtenze(){
+  if(!CF.utenze||!CF.utenze.length)return 0;
+  const ult=CF.utenze.slice(-3);
+  return ult.reduce((s,r)=>s+r.val,0)/ult.length;
+}
+
+function cfTotale(){
+  const extra=(CF.extra||[]).reduce((s,r)=>s+(r.val||0),0);
+  return (CF.affitto||0)+cfMediaPersonale()+cfMediaUtenze()+(CF.social||0)+(CF.commercialista||0)+(CF.altro||0)+extra;
+}
+
+
+function addCFExtra(){
+  const nome=document.getElementById('cf-extra-nome')?.value.trim();
+  const val=parseFloat(document.getElementById('cf-extra-val')?.value)||0;
+  const note=document.getElementById('cf-extra-note')?.value.trim()||'';
+  if(!nome||!val){alert('Inserisci nome e importo.');return;}
+  if(!CF.extra)CF.extra=[];
+  CF.extra.push({id:Date.now(),nome,val,note});
+  document.getElementById('cf-extra-nome').value='';
+  document.getElementById('cf-extra-val').value='';
+  document.getElementById('cf-extra-note').value='';
+  sv('cf');fl('cf-extra-ok');upCFExtraList();upCFStats();
+}
+
+function delCFExtra(id){
+  if(!confirm('Eliminare questa voce?'))return;
+  CF.extra=(CF.extra||[]).filter(r=>String(r.id)!==String(id));
+  sv('cf');upCFExtraList();upCFStats();
+}
+
+function editCFExtra(id){
+  const r=(CF.extra||[]).find(x=>String(x.id)===String(id));if(!r)return;
+  const nuovoNome=prompt('Nome voce:',r.nome);if(nuovoNome===null)return;
+  const nuovoVal=parseFloat(prompt('Importo €/mese:',r.val));if(isNaN(nuovoVal))return;
+  const nuovaNota=prompt('Note / riferimento:',r.note||'');
+  r.nome=nuovoNome.trim()||r.nome;
+  r.val=nuovoVal;
+  r.note=nuovaNota||'';
+  sv('cf');upCFExtraList();upCFStats();
+}
+
+function upCFExtraList(){
+  const w=document.getElementById('cf-extra-list');if(!w)return;
+  const extra=CF.extra||[];
+  if(!extra.length){w.innerHTML='<div class="em">Nessuna voce aggiuntiva.</div>';return;}
+  const tot=extra.reduce((s,r)=>s+(r.val||0),0);
+  let h='<table><thead><tr><th>Voce di spesa</th><th>€/mese</th><th>Note / riferimento</th><th></th></tr></thead><tbody>';
+  extra.forEach(r=>{
+    h+=`<tr>
+      <td style="font-weight:500">${r.nome}</td>
+      <td style="font-family:var(--m);font-weight:600">€ ${r.val.toFixed(0)}</td>
+      <td style="color:var(--t2);font-size:12px">${r.note||'—'}</td>
+      <td><div style="display:flex"><button class="ib" onclick="editCFExtra(${r.id})">✏️</button><button class="ib d" onclick="delCFExtra(${r.id})">🗑</button></div></td>
+    </tr>`;
+  });
+  h+=`</tbody></table><div style="font-size:11px;color:var(--t2);margin-top:8px;font-family:var(--m)">Totale voci extra: <strong>€ ${tot.toFixed(0)}/mese</strong></div>`;
+  w.innerHTML=h;
+}
+
+function addCFRow(tipo){
+  const meseEl=document.getElementById('cf-'+tipo.substring(0,4)+'-mese');
+  const valEl=document.getElementById('cf-'+tipo.substring(0,4)+'-val');
+  if(!meseEl||!valEl)return;
+  const mese=meseEl.value;const val=parseFloat(valEl.value)||0;
+  if(!mese||!val){alert('Inserisci mese e importo.');return;}
+  if(!CF[tipo])CF[tipo]=[];
+  // Aggiorna se mese già presente, altrimenti aggiungi
+  const idx=CF[tipo].findIndex(r=>r.mese===mese);
+  if(idx>-1)CF[tipo][idx].val=val;
+  else CF[tipo].push({mese,val});
+  CF[tipo].sort((a,b)=>a.mese.localeCompare(b.mese));
+  valEl.value='';
+  sv('cf');upCFLists();upCFStats();
+}
+
+function delCFRow(tipo,mese){
+  if(!confirm('Eliminare voce '+mese+'?'))return;
+  CF[tipo]=CF[tipo].filter(r=>r.mese!==mese);
+  sv('cf');upCFLists();upCFStats();
+}
+
+function upCFLists(){
+  // Personale
+  const pw=document.getElementById('cf-pers-list');
+  if(pw){
+    if(!CF.personale||!CF.personale.length){pw.innerHTML='<div class="em">Nessun dato inserito.</div>';}
+    else{
+      const media=cfMediaPersonale();
+      let h='<table><thead><tr><th>Mese</th><th>Costo lordo €</th><th>vs media</th><th></th></tr></thead><tbody>';
+      [...CF.personale].reverse().forEach(r=>{
+        const diff=r.val-media;const pct=media>0?(diff/media*100):0;
+        h+=`<tr><td style="font-family:var(--m)">${r.mese}</td><td style="font-family:var(--m);font-weight:500">€ ${r.val.toFixed(0)}</td><td>${media>0?`<span style="color:${diff>0?'var(--red)':'var(--green)'};">${diff>0?'+':''}${pct.toFixed(0)}%</span>`:'—'}</td><td><button class="ib d" onclick="delCFRow('personale','${r.mese}')">🗑</button></td></tr>`;
+      });
+      h+=`</tbody></table><div style="font-size:11px;color:var(--t2);margin-top:8px;font-family:var(--m)">Media ultimi 3 mesi: <strong>€ ${media.toFixed(0)}</strong></div>`;
+      pw.innerHTML=h;
+    }
+  }
+  // Utenze
+  const uw=document.getElementById('cf-uten-list');
+  if(uw){
+    if(!CF.utenze||!CF.utenze.length){uw.innerHTML='<div class="em">Nessun dato inserito.</div>';}
+    else{
+      const media=cfMediaUtenze();
+      let h='<table><thead><tr><th>Mese</th><th>Totale utenze €</th><th>vs media</th><th></th></tr></thead><tbody>';
+      [...CF.utenze].reverse().forEach(r=>{
+        const diff=r.val-media;const pct=media>0?(diff/media*100):0;
+        h+=`<tr><td style="font-family:var(--m)">${r.mese}</td><td style="font-family:var(--m);font-weight:500">€ ${r.val.toFixed(0)}</td><td>${media>0?`<span style="color:${diff>0?'var(--red)':'var(--green)'};">${diff>0?'+':''}${pct.toFixed(0)}%</span>`:'—'}</td><td><button class="ib d" onclick="delCFRow('utenze','${r.mese}')">🗑</button></td></tr>`;
+      });
+      h+=`</tbody></table><div style="font-size:11px;color:var(--t2);margin-top:8px;font-family:var(--m)">Media ultimi 3 mesi: <strong>€ ${media.toFixed(0)}</strong></div>`;
+      uw.innerHTML=h;
+    }
+  }
+}
+
+function upCFForm(){
+  ['affitto','social','commercialista','altro','giorni','coperti','scontrino'].forEach(k=>{
+    const el=document.getElementById('cf-'+k);if(el)el.value=CF[k]||'';
+  });
+  // Imposta mese corrente nei picker
+  const oggi=new Date().toISOString().slice(0,7);
+  const pm=document.getElementById('cf-pers-mese');if(pm&&!pm.value)pm.value=oggi;
+  const um=document.getElementById('cf-uten-mese');if(um&&!um.value)um.value=oggi;
+  upCFLists();upCFExtraList();upCFStats();
+}
+
+function upCFStats(){
+  const tot=cfTotale();
+  const day=CF.giorni>0?tot/CF.giorni:0;
+  const el=document.getElementById('cf-tot');if(el)el.textContent='€ '+tot.toFixed(0);
+  const el2=document.getElementById('cf-day');if(el2)el2.textContent='€ '+day.toFixed(0);
+  const stats=document.getElementById('cf-stats');if(!stats)return;
+  if(!tot){stats.innerHTML='<div class="em" style="padding:.5rem">Inserisci i costi fissi per vedere le analisi.</div>';return;}
+  const coperti=CF.coperti||0;const scontrino=CF.scontrino||0;
+  const ricavoMese=coperti*scontrino*(CF.giorni||26);
+  const pctCosti=ricavoMese>0?(tot/ricavoMese*100):null;
+  const costoPerCoperto=coperti>0&&CF.giorni>0?(day/coperti):null;
+  stats.innerHTML=`<div class="g3">
+    <div class="met"><div class="ml">Ricavo stimato/mese</div><div class="mv">${ricavoMese>0?'€ '+ricavoMese.toFixed(0):'—'}</div><div style="font-size:9px;color:var(--t3);margin-top:2px;font-family:var(--m)">${coperti} cop. × €${scontrino} × ${CF.giorni}gg</div></div>
+    <div class="met"><div class="ml">Costi fissi su ricavo</div><div class="mv ${pctCosti!==null?(pctCosti<30?'g':pctCosti<50?'w':'r'):''}">${pctCosti!==null?pctCosti.toFixed(1)+'%':'—'}</div><div style="font-size:9px;color:var(--t3);margin-top:2px;font-family:var(--m)">ottimo &lt;30%</div></div>
+    <div class="met"><div class="ml">Costo fisso per cliente</div><div class="mv">${costoPerCoperto!==null?'€ '+costoPerCoperto.toFixed(2):'—'}</div><div style="font-size:9px;color:var(--t3);margin-top:2px;font-family:var(--m)">minimo da coprire</div></div>
+  </div>
+  <div style="margin-top:1rem;font-size:11px;color:var(--t2);font-family:var(--m)">
+    Dettaglio: Affitto €${(CF.affitto||0).toFixed(0)} · Personale €${cfMediaPersonale().toFixed(0)} · Utenze €${cfMediaUtenze().toFixed(0)} · Social €${(CF.social||0).toFixed(0)} · Commercialista €${(CF.commercialista||0).toFixed(0)} · Altro €${(CF.altro||0).toFixed(0)}${(CF.extra||[]).length?' · Voci extra €'+(CF.extra||[]).reduce((s,r)=>s+(r.val||0),0).toFixed(0):''}
+  </div>`;
+}
+
+function margineMinRequired(){
+  const tot=cfTotale();if(!tot)return null;
+  const ricavo=(CF.coperti||0)*(CF.scontrino||0)*(CF.giorni||26);
+  if(!ricavo)return null;
+  return tot/ricavo*100;
+}
+
+
+// ════════════════════════════════════════════════════════════════════
+//  BACKUP EXPORT / IMPORT
+// ════════════════════════════════════════════════════════════════════
+function exportBackup(){
+  const backup = {
+    version: '4.0',
+    data: new Date().toISOString(),
+    I, R, P, F, HM, ST, CFG, WP, CF
+  };
+  const json = JSON.stringify(backup, null, 2);
+  const blob = new Blob([json], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const oggi = new Date().toISOString().split('T')[0];
+  a.download = 'easy_drink_backup_' + oggi + '.json';
+  a.click();
+  const ok = document.getElementById('backup-ok');
+  if(ok){ok.textContent='✓ Backup salvato';ok.classList.add('s');setTimeout(()=>{ok.classList.remove('s');ok.textContent='';},3000);}
+}
+
+function importBackup(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try {
+      const backup = JSON.parse(e.target.result);
+      if(!backup.I || !backup.R){alert('File non valido o danneggiato.');return;}
+      if(!confirm('Vuoi caricare il backup del ' + (backup.data?new Date(backup.data).toLocaleDateString('it-IT'):'?') + '? I dati attuali verranno sostituiti.')){return;}
+      if(backup.I) I = backup.I;
+      if(backup.R) R = backup.R;
+      if(backup.P) P = backup.P;
+      if(backup.F) F = backup.F;
+      if(backup.HM) HM = backup.HM;
+      if(backup.ST) ST = backup.ST;
+      if(backup.CFG) CFG = backup.CFG;
+      if(backup.WP) WP = backup.WP;
+      if(backup.CF) CF = backup.CF;
+      sv();
+      rAll();
+      const ok = document.getElementById('backup-ok');
+      if(ok){ok.textContent='✓ Backup caricato!';ok.classList.add('s');setTimeout(()=>{ok.classList.remove('s');ok.textContent='';},3000);}
+      input.value = '';
+    } catch(err){
+      alert('Errore nel leggere il file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+async function load(){
+  try{
+    const a=await window.storage.get(KI);if(a&&a.value)I=JSON.parse(a.value);
+    const b=await window.storage.get(KR);if(b&&b.value)R=JSON.parse(b.value);
+    const c=await window.storage.get(KP);if(c&&c.value)P=JSON.parse(c.value);
+    const d=await window.storage.get(KF);if(d&&d.value)F=JSON.parse(d.value);
+    const e=await window.storage.get(KH);if(e&&e.value)HM=JSON.parse(e.value);
+    const s=await window.storage.get(KS);if(s&&s.value)ST=JSON.parse(s.value);
+    const g=await window.storage.get(KC);if(g&&g.value)CFG=JSON.parse(g.value);
+    const wp=await window.storage.get(KW);if(wp&&wp.value)WP=JSON.parse(wp.value);
+    const cf=await window.storage.get(KCF);if(cf&&cf.value)CF=JSON.parse(cf.value);
+  }catch(err){
+    const a=lsG(KI);if(a)I=a;
+    const b=lsG(KR);if(b)R=b;
+    const c=lsG(KP);if(c)P=c;
+    const d=lsG(KF);if(d)F=d;
+    const e=lsG(KH);if(e)HM=e;
+    const s=lsG(KS);if(s)ST=s;
+    const g=lsG(KC);if(g)CFG=g;
+    const wp=lsG(KW);if(wp)WP=wp;
+    const cf=lsG(KCF);if(cf)CF=cf;
+  }
+  // Merge DEF_I: aggiorna sempre i prodotti base, mantiene aggiunte utente
+  {
+    const defIds=new Set(DEF_I.map(x=>String(x.id)));
+    const userOnly=I.filter(x=>!defIds.has(String(x.id)));
+    I=[...DEF_I,...userOnly];
+    sv('i');
+  }
+  if(!F.length){
+    F=[{id:1,nome:'Cuni Bevande',tel:'',email:'',note:'Listino 01/03/2026',piva:''},{id:2,nome:'BM Group',tel:'035-0667672',email:'info@bmsrls.it',note:'',piva:'IT04189160163'},{id:3,nome:'Mercato',tel:'',email:'',note:'Prodotti freschi',piva:''},{id:4,nome:'ViNé',tel:'338 3134417',email:'vinesrls@gmail.com',note:'Lista v2411 - vini naturali',piva:'IT01569820291'},{id:5,nome:'Altro',tel:'',email:'',note:'',piva:''}];
+    sv('f');
+  }
+  // Aggiungi fornitori mancanti
+  ['ViNé','Altro'].forEach(n=>{if(!F.find(f=>f.nome===n)){F.push({id:Date.now(),nome:n,tel:'',email:'',note:'',piva:''});sv('f');}});
+  const eEl=document.getElementById('hm-energia');
+  if(eEl)eEl.value=CFG.energia||3;
+  rAll();
+}
+
+async function sv(w){
+  try{
+    if(!w||w==='i'){await window.storage.set(KI,JSON.stringify(I));lsS(KI,I);}
+    if(!w||w==='r'){await window.storage.set(KR,JSON.stringify(R));lsS(KR,R);}
+    if(!w||w==='p'){await window.storage.set(KP,JSON.stringify(P));lsS(KP,P);}
+    if(!w||w==='f'){await window.storage.set(KF,JSON.stringify(F));lsS(KF,F);}
+    if(!w||w==='hm'){await window.storage.set(KH,JSON.stringify(HM));lsS(KH,HM);}
+    if(!w||w==='st'){await window.storage.set(KS,JSON.stringify(ST));lsS(KS,ST);}
+    if(!w||w==='cfg'){await window.storage.set(KC,JSON.stringify(CFG));lsS(KC,CFG);}
+    if(!w||w==='wp'){await window.storage.set(KW,JSON.stringify(WP));lsS(KW,WP);}
+    if(!w||w==='cf'){await window.storage.set(KCF,JSON.stringify(CF));lsS(KCF,CF);}
+  }catch(e){lsS(KI,I);lsS(KR,R);lsS(KP,P);lsS(KF,F);lsS(KH,HM);lsS(KS,ST);lsS(KC,CFG);}
+}
+
+function fl(id){const e=document.getElementById(id);if(!e)return;e.classList.add('s');setTimeout(()=>e.classList.remove('s'),2000);}
+function cm(id){document.getElementById(id).classList.remove('on');}
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)cm(this.id);}));
+
+function go(n,el){
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.getElementById('pg-'+n).classList.add('on');el.classList.add('on');
+  if(n==='list')rL();if(n==='dash')rD();if(n==='anal')rA();if(n==='ing'){switchIngTab('mag');}if(n==='costi'){upCFForm();upCFStats();}
+  if(n==='home'){rHM();rStaff();upStaffSel();}
+}
+function rAll(){rI();rR();rF();rHM();rStaff();upFF();upStaffSel();}
+
+// ════════════════════════════════════════════════════════════════════
+//  CALCOLO PREZZI
+// ════════════════════════════════════════════════════════════════════
+function findIng(id){
+  if(!id&&id!==0)return null;
+  const sid=String(id);
+  return I.find(x=>String(x.id)===sid)||null;
+}
+
+function px(ing){
+  const sto=ing.storico||(ing.costo?[{data:'2026-01-01',costo:ing.costo,qta:1}]:[]);
+  const s=[...sto].sort((a,b)=>a.data.localeCompare(b.data));
+  if(!s.length)return{ul:0,ms:0,mp:0,pu:0};
+  const du=[...new Set(s.map(x=>x.data))].sort((a,b)=>b.localeCompare(a)).slice(0,3);
+  const u3=s.filter(x=>du.includes(x.data));
+  const ul=s[s.length-1].costo;
+  const ms=u3.reduce((a,x)=>a+x.costo,0)/u3.length;
+  const tq=u3.reduce((a,x)=>a+x.qta,0);
+  const mp=tq>0?u3.reduce((a,x)=>a+x.costo*x.qta,0)/tq:ms;
+  return{ul:+ul.toFixed(4),ms:+ms.toFixed(4),mp:+mp.toFixed(4),pu:+(mp/(ing.qty||1)).toFixed(6)};
+}
+
+function hmCostoIng(h){
+  return(h.componenti||[]).reduce((s,c)=>{
+    const i=findIng(c.ingId);
+    return i?s+px(i).pu*c.qty:s;
+  },0);
+}
+function hmCostoLav(h){
+  const st=ST.find(s=>String(s.id)===String(h.staffId));
+  return((st?st.tariffa:14)/60)*(h.minuti||0);
+}
+function hmCostoEn(h){return hmCostoIng(h)*((CFG.energia||3)/100);}
+function hmCostoU(h){
+  const tot=hmCostoIng(h)+hmCostoLav(h)+hmCostoEn(h);
+  return h.resa>0?tot/h.resa:0;
+}
+function findHM(id){return HM.find(h=>String(h.id)===String(id).replace('hm_',''))||null;}
+
+function costoComp(c){
+  if(!c.ingId)return 0;
+  const sid=String(c.ingId);
+  if(sid.startsWith('hm_')){const hm=findHM(sid);return hm?hmCostoU(hm)*c.qty:0;}
+  const i=findIng(c.ingId);
+  return i?px(i).pu*c.qty:0;
+}
+
+function cRclassico(r){
+  return(r.componenti||[]).reduce((s,c)=>{
+    if(!c.ingId)return s;
+    const sid=String(c.ingId);
+    if(sid.startsWith('hm_')){
+      const hm=findHM(sid);if(!hm)return s;
+      return s+(hmCostoIng(hm)+hmCostoEn(hm))/hm.resa*c.qty;
+    }
+    const i=findIng(c.ingId);
+    return i?s+px(i).pu*c.qty:s;
+  },0);
+}
+function cR(r){
+  return(r.componenti||[]).reduce((s,c)=>{
+    if(!c.ingId)return s;
+    return s+costoComp(c);
+  },0);
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  AUTOCOMPLETE — LA PARTE CHIAVE
+//  Ogni riga ingrediente ha: data-rid (ID univoco riga) e data-ingid (ID ingrediente selezionato)
+//  L'utente digita → lista filtra → clicca → ingId salvato → costo calcolato
+// ════════════════════════════════════════════════════════════════════
+function allIngList(){
+  const base=I.map(i=>({id:String(i.id),nome:i.nome,um:i.um,cat:i.cat,fornitore:i.fornitore}));
+  const hm=HM.map(h=>({id:'hm_'+h.id,nome:'[HM] '+h.nome,um:h.resaUm||'ml',cat:'Homemade',fornitore:''}));
+  return [...base,...hm];
+}
+
+// Crea una riga ingrediente
+// containerSel: stringa CSS selector del contenitore
+// preset: {ingId, nome, um, qty} — opzionale
+function addRow(containerId, onChangeCb, preset){
+  const container=document.getElementById(containerId);
+  if(!container)return;
+  const rid='rid_'+Date.now()+'_'+Math.floor(Math.random()*9999);
+  const div=document.createElement('div');
+  div.className='ing-row';
+  div.dataset.rid=rid;
+  div.dataset.ingid=preset&&preset.ingId?String(preset.ingId):'';
+  if(preset&&preset.ingId)div.classList.add('linked');
+
+  div.innerHTML=`
+    <div class="ac-wrap">
+      <input type="text" class="ac-inp ${preset&&preset.ingId?'linked':''}"
+        value="${preset?escH(preset.nome):''}"
+        placeholder="Digita per cercare ingrediente..."
+        autocomplete="off" spellcheck="false"/>
+      <div class="ac-dd" id="dd_${rid}"></div>
+    </div>
+    <input type="number" class="qty-inp" value="${preset&&preset.qty?preset.qty:''}" placeholder="Qtà" min="0" step="0.5"/>
+    <span class="um-lbl">${preset&&preset.um?preset.um:''}</span>
+    <button class="ib d" title="Rimuovi">✕</button>`;
+
+  // Input evento — filtra lista
+  const inp=div.querySelector('.ac-inp');
+  const dd=div.querySelector('.ac-dd');
+  const qtyInp=div.querySelector('.qty-inp');
+  const umLbl=div.querySelector('.um-lbl');
+  const rmBtn=div.querySelector('.ib.d');
+
+  inp.addEventListener('input',()=>{
+    showDD(div,inp,dd,onChangeCb);
+  });
+  inp.addEventListener('focus',()=>{
+    showDD(div,inp,dd,onChangeCb);
+  });
+  inp.addEventListener('blur',()=>{
+    // Piccolo delay per permettere il click sulla lista
+    setTimeout(()=>{dd.classList.remove('open');},150);
+  });
+  qtyInp.addEventListener('input',()=>{try{eval(onChangeCb);}catch(e){}});
+  rmBtn.addEventListener('mousedown',(e)=>{e.preventDefault();});
+  rmBtn.addEventListener('click',()=>{div.remove();try{eval(onChangeCb);}catch(e){};});
+
+  container.appendChild(div);
+  try{eval(onChangeCb);}catch(e){}
+}
+
+function escH(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
+function showDD(rowDiv,inp,dd,onChangeCb){
+  const q=inp.value.toLowerCase().trim();
+  const all=allIngList();
+  const matches=q.length===0?all.slice(0,15):all.filter(x=>x.nome.toLowerCase().includes(q)).slice(0,20);
+  if(!matches.length){dd.classList.remove('open');return;}
+  dd.innerHTML='';
+  matches.forEach(item=>{
+    const el=document.createElement('div');
+    el.className='ac-item';
+    el.innerHTML=`<span>${item.nome}</span><span style="font-size:10px;color:var(--t3);font-family:var(--m)">${item.cat||''}</span>`;
+    // USA mousedown per evitare il blur che chiude la lista prima del click
+    el.addEventListener('mousedown',(e)=>{
+      e.preventDefault(); // Impedisce blur
+      selectIng(rowDiv,inp,dd,item,onChangeCb);
+    });
+    dd.appendChild(el);
+  });
+  dd.classList.add('open');
+}
+
+function selectIng(rowDiv,inp,dd,item,onChangeCb){
+  rowDiv.dataset.ingid=item.id;
+  inp.value=item.nome;
+  inp.classList.add('linked');
+  rowDiv.classList.add('linked');
+  rowDiv.querySelector('.um-lbl').textContent=item.um||'';
+  dd.classList.remove('open');
+  try{eval(onChangeCb);}catch(e){}
+}
+
+// Leggi le righe di un container e restituisci array componenti
+function readRows(containerId){
+  const rows=document.querySelectorAll('#'+containerId+' .ing-row');
+  const result=[];
+  rows.forEach(row=>{
+    const ingId=row.dataset.ingid||'';
+    const qty=parseFloat(row.querySelector('.qty-inp').value);
+    const nome=row.querySelector('.ac-inp').value.trim();
+    const um=row.querySelector('.um-lbl').textContent.trim();
+    if(!nome)return; // riga vuota, salta
+    result.push({ingId:ingId||null,nome,qty:isNaN(qty)?0:qty,um});
+  });
+  return result;
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  COSTO STIMATO IN TEMPO REALE (preview)
+// ════════════════════════════════════════════════════════════════════
+function upRP(){
+  const rows=readRows('rings');
+  let tot=0,linked=0;
+  rows.forEach(c=>{
+    if(!c.ingId||c.qty<=0)return;
+    tot+=costoComp(c);linked++;
+  });
+  const p=document.getElementById('rprev');
+  if(!rows.length){p.style.display='none';return;}
+  p.style.display='block';
+  const unlinked=rows.filter(c=>!c.ingId).length;
+  p.innerHTML=`<span style="color:var(--t3)">Costo stimato:</span> <span style="color:var(--gold)">€${tot.toFixed(3)}</span>${unlinked>0?` <span style="color:var(--t3);font-size:10px"> · ${unlinked} non collegati</span>`:''}`;
+}
+
+function upHMPrev(){
+  const rows=readRows('hm-rings');
+  const resa=parseFloat(document.getElementById('hm-resa')?.value||0);
+  const min=parseFloat(document.getElementById('hm-min')?.value||0);
+  const staffId=document.getElementById('hm-staff')?.value;
+  const st=ST.find(s=>String(s.id)===String(staffId));
+  const tariffa=st?st.tariffa:14;
+  const energia=(CFG.energia||3)/100;
+  let costoIng=0;
+  rows.forEach(c=>{
+    if(!c.ingId||c.qty<=0)return;
+    const i=findIng(c.ingId);
+    if(i)costoIng+=px(i).pu*c.qty;
+  });
+  const cl=(tariffa/60)*min;
+  const ce=costoIng*energia;
+  const tot=costoIng+cl+ce;
+  const cu=resa>0?tot/resa:0;
+  const p=document.getElementById('hm-prev');
+  p.style.display='block';
+  document.getElementById('hmp-ing').textContent='€'+costoIng.toFixed(3);
+  document.getElementById('hmp-lav').textContent='€'+cl.toFixed(3);
+  document.getElementById('hmp-en').textContent='€'+ce.toFixed(3);
+  document.getElementById('hmp-tot').textContent='€'+tot.toFixed(3);
+  document.getElementById('hmp-pu').textContent=resa>0?'€'+cu.toFixed(4)+'/'+(document.getElementById('hm-resa-um')?.value||'ml'):'—';
+  if(tot>0){
+    const pi=Math.round(costoIng/tot*100);const pl=Math.round(cl/tot*100);const pe=100-pi-pl;
+    document.getElementById('hmp-bar').innerHTML=`<div style="width:${pi}%;background:var(--gold)" title="Ingredienti ${pi}%"></div><div style="width:${pl}%;background:var(--amb)" title="Lavoro ${pl}%"></div><div style="width:${pe}%;background:var(--t3)" title="Energia ${pe}%"></div>`;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  INGREDIENTI
+// ════════════════════════════════════════════════════════════════════
+function saveI(){
+  const eid=document.getElementById('iid').value;
+  const n=document.getElementById('inome').value.trim();
+  const cat=document.getElementById('icat').value;
+  const um=document.getElementById('ium').value;
+  const qty=parseFloat(document.getElementById('iqty').value);
+  const co=parseFloat(document.getElementById('icosto').value);
+  const dt=document.getElementById('idata').value||T;
+  const fo=document.getElementById('iforn').value;
+  if(!n||isNaN(qty)||isNaN(co)){alert('Inserisci nome, quantità e costo.');return;}
+  if(!fo){alert('Seleziona un fornitore.');return;}
+  if(eid){
+    const x=findIng(eid);
+    if(x){x.nome=n;x.cat=cat;x.um=um;x.qty=qty;x.fornitore=fo;
+      if(!x.storico)x.storico=[];
+      const ul=x.storico.slice(-1)[0];
+      if(!ul||ul.costo!==co||ul.data!==dt)x.storico.push({data:dt,costo:co,qta:1,forn:fo});}
+    cancelI();
+  }else{
+    I.push({id:Date.now(),nome:n,cat,um,qty,fornitore:fo,costo:co,storico:[{data:dt,costo:co,qta:1,forn:fo}]});
+    document.getElementById('inome').value='';document.getElementById('iqty').value='';document.getElementById('icosto').value='';document.getElementById('idata').value=T;document.getElementById('iforn').value='';
+  }
+  sv('i');fl('iok');rI();upFF();
+}
+function cancelI(){
+  document.getElementById('iid').value='';document.getElementById('itit').textContent='Aggiungi ingrediente';document.getElementById('ibtn').textContent='+ Aggiungi';document.getElementById('ican').style.display='none';
+  document.getElementById('inome').value='';document.getElementById('iqty').value='';document.getElementById('icosto').value='';document.getElementById('idata').value=T;document.getElementById('iforn').value='';
+}
+function editI(id){
+  const x=findIng(id);if(!x)return;
+  const p=px(x);
+  document.getElementById('iid').value=id;document.getElementById('inome').value=x.nome;document.getElementById('icat').value=x.cat;document.getElementById('ium').value=x.um;document.getElementById('iqty').value=x.qty;document.getElementById('icosto').value=p.ul||x.costo||0;document.getElementById('idata').value=T;
+  upFF();setTimeout(()=>{const sel=document.getElementById('iforn');if(sel)sel.value=x.fornitore||'';},50);
+  document.getElementById('itit').textContent='Modifica: '+x.nome;document.getElementById('ibtn').textContent='✓ Salva';document.getElementById('ican').style.display='inline-flex';
+  window.scrollTo(0,0);
+}
+function delI(id){if(!confirm('Eliminare?'))return;I=I.filter(x=>String(x.id)!==String(id));sv('i');rI();}
+function rI(){
+  const s=(document.getElementById('is')?.value||'').toLowerCase();
+  const fc=document.getElementById('ifc')?.value||'';
+  const ff=document.getElementById('iff')?.value||'';
+  const f=I.filter(i=>{const t=(i.nome+' '+i.cat+' '+(i.fornitore||'')).toLowerCase();return(!s||t.includes(s))&&(!fc||i.cat===fc)&&(!ff||i.fornitore===ff);});
+  document.getElementById('icnt').textContent=I.length;
+  const w=document.getElementById('iw');
+  if(!f.length){w.innerHTML='<div class="em">Nessun risultato.</div>';return;}
+  let h='<table><thead><tr><th>Prodotto</th><th>Cat.</th><th>⭐ Ultimo prezzo</th><th>Prezzo precedente</th><th>Variazione</th><th>€/unità</th><th>Fornitore</th><th></th></tr></thead><tbody>';
+  f.forEach(i=>{
+    const p=px(i);
+    const st=[...(i.storico||[])].sort((a,b)=>a.data.localeCompare(b.data));
+    const last=st.length>0?st[st.length-1]:null;
+    const prev=st.length>1?st[st.length-2]:null;
+    const varPct=last&&prev?((last.costo-prev.costo)/prev.costo*100):null;
+    const varAss=last&&prev?(last.costo-prev.costo):null;
+    // Colore fornitore
+    const fb=i.fornitore==='BM Group'?'bb':i.fornitore==='Maxi C+C'?'bw':i.fornitore==='Mercato'?'bp':i.fornitore==='Produzione interna'?'bp':'bg';
+    h+=`<tr>
+      <td style="font-weight:500">${i.nome}</td>
+      <td><span class="bx bg" style="font-size:9px">${i.cat}</span></td>
+      <td>
+        <div style="font-family:var(--m);font-weight:600;font-size:14px;color:var(--text)">€${p.ul.toFixed(2)}</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:1px">${last?.data||'—'}</div>
+      </td>
+      <td>
+        ${prev?`<div style="font-family:var(--m);color:var(--t2)">€${prev.costo.toFixed(2)}</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:1px">${prev.data}</div>`:'<span style="color:var(--t3);font-size:11px">—</span>'}
+      </td>
+      <td>
+        ${varPct!==null?`
+          <div style="display:flex;align-items:center;gap:5px">
+            <span style="font-size:18px">${varPct>0?'↑':'↓'}</span>
+            <div>
+              <div style="font-family:var(--m);font-weight:600;color:${varPct>0?'var(--red)':'var(--green)'}">
+                ${varPct>0?'+':''}${varPct.toFixed(1)}%
+              </div>
+              <div style="font-size:10px;color:${varPct>0?'var(--red)':'var(--green)'};font-family:var(--m)">
+                ${varAss>0?'+':''}€${varAss.toFixed(2)}
+              </div>
+            </div>
+          </div>`:'<span style="color:var(--t3);font-size:11px">prima volta</span>'}
+      </td>
+      <td style="font-family:var(--m);color:var(--t3);font-size:11px">€${p.pu.toFixed(4)}</td>
+      <td><span class="bx ${fb}" style="font-size:9px">${i.fornitore||'—'}</span></td>
+      <td><div style="display:flex"><button class="ib" onclick="openS(${i.id})" title="Storico completo">🕐</button><button class="ib" onclick="editI(${i.id})">✏️</button><button class="ib d" onclick="delI(${i.id})">🗑</button></div></td>
+    </tr>`;
+  });
+  w.innerHTML=h+'</tbody></table>';
+}
+function upFF(){
+  const sel=document.getElementById('iff');const v=sel?.value||'';
+  const fs=[...new Set(I.map(i=>i.fornitore).filter(Boolean))];
+  if(sel)sel.innerHTML='<option value="">Tutti i fornitori</option>'+fs.map(f=>`<option ${f===v?'selected':''}>${f}</option>`).join('');
+  const fOpts='<option value="">-- seleziona --</option>'+F.map(f=>`<option value="${f.nome}">${f.nome}</option>`).join('');
+  ['iforn','mst-f'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=fOpts;});
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  STORICO
+// ════════════════════════════════════════════════════════════════════
+function openS(id){
+  const i=findIng(id);if(!i)return;
+  if(!i.storico)i.storico=[{data:T,costo:i.costo||0,qta:1,forn:i.fornitore||''}];
+  document.getElementById('mst-id').value=id;document.getElementById('mst-t').textContent='Storico: '+i.nome;document.getElementById('mst-d').value=T;document.getElementById('mst-c').value='';document.getElementById('mst-q').value='1';
+  upFF();setTimeout(()=>{const sel=document.getElementById('mst-f');if(sel)sel.value=i.fornitore||'';},50);
+  rSM(i);document.getElementById('mst').classList.add('on');
+}
+function rSM(i){
+  const p=px(i);
+  const s=[...(i.storico||[])].sort((a,b)=>b.data.localeCompare(a.data));
+  document.getElementById('mst-s').innerHTML=`<div class="pb"><div class="pbl">Ultimo</div><div class="pbv" style="font-family:var(--m)">€${p.ul.toFixed(2)}</div><div style="font-size:9px;color:var(--t3);margin-top:2px">${s[0]?.data||'—'}</div></div><div class="pb"><div class="pbl">Media semplice ult.3</div><div class="pbv" style="font-family:var(--m)">€${p.ms.toFixed(2)}</div></div><div class="pb hi"><div class="pbl">⭐ Media pond. ult.3</div><div class="pbv" style="font-family:var(--m);color:var(--gold)">€${p.mp.toFixed(2)}</div><div style="font-size:9px;color:var(--gold3);margin-top:2px">usato nelle ricette</div></div>`;
+  if(!s.length){document.getElementById('mst-tb').innerHTML='<div class="em">Nessuna voce.</div>';return;}
+  const du=[...new Set(s.map(x=>x.data))].sort((a,b)=>b.localeCompare(a)).slice(0,3);
+  let h='<table><thead><tr><th>Data</th><th>Costo netto</th><th>Qtà</th><th>Fornitore</th><th></th></tr></thead><tbody>';
+  s.forEach((v,idx)=>{const u3=du.includes(v.data);h+=`<tr style="${u3?'background:var(--bg3)':''}"><td style="font-family:var(--m)">${v.data}</td><td style="font-family:var(--m)">€${v.costo.toFixed(2)} ${u3?'<span class="bx bb" style="font-size:8px">ult.3</span>':''}</td><td>${v.qta}</td><td>${v.forn||i.fornitore||'—'}</td><td><button class="ib d" onclick="delVS(${i.id},${idx})" style="font-size:12px">🗑</button></td></tr>`;});
+  document.getElementById('mst-tb').innerHTML=h+'</tbody></table>';
+}
+function delVS(iid,idx){
+  const i=findIng(iid);if(!i||!i.storico)return;
+  const s=[...(i.storico||[])].sort((a,b)=>b.data.localeCompare(a.data));const v=s[idx];
+  i.storico=i.storico.filter(x=>!(x.data===v.data&&x.costo===v.costo&&x.qta===v.qta));
+  sv('i');rSM(i);rI();
+}
+function addFatt(){
+  const id=parseInt(document.getElementById('mst-id').value);const i=findIng(id);if(!i)return;
+  if(!i.storico)i.storico=[];
+  const dt=document.getElementById('mst-d').value;const co=parseFloat(document.getElementById('mst-c').value);const qt=parseInt(document.getElementById('mst-q').value)||1;const fo=document.getElementById('mst-f').value;
+  if(!dt||isNaN(co)||co<=0){alert('Inserisci data e costo.');return;}
+  i.storico.push({data:dt,costo:co,qta:qt,forn:fo});sv('i');rSM(i);rI();
+  document.getElementById('mst-c').value='';document.getElementById('mst-q').value='1';
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  FORNITORI
+// ════════════════════════════════════════════════════════════════════
+function saveF(){
+  const eid=document.getElementById('fid').value;const n=document.getElementById('fnome').value.trim();if(!n){alert('Inserisci nome.');return;}
+  const obj={nome:n,tel:document.getElementById('ftel').value.trim(),email:document.getElementById('femail').value.trim(),piva:document.getElementById('fpiva').value.trim(),note:document.getElementById('fnote').value.trim()};
+  if(eid){const x=F.find(f=>String(f.id)===String(eid));if(x)Object.assign(x,obj);cancelF();}
+  else{F.push({id:Date.now(),...obj});['fnome','ftel','femail','fpiva','fnote'].forEach(id=>document.getElementById(id).value='');}
+  sv('f');fl('fok');rF();upFF();
+}
+function cancelF(){document.getElementById('fid').value='';document.getElementById('ftit').textContent='Aggiungi fornitore';document.getElementById('fbtn').textContent='+ Aggiungi';document.getElementById('fcan').style.display='none';['fnome','ftel','femail','fpiva','fnote'].forEach(id=>document.getElementById(id).value='');}
+function editF(id){const x=F.find(f=>String(f.id)===String(id));if(!x)return;document.getElementById('fid').value=id;document.getElementById('fnome').value=x.nome;document.getElementById('ftel').value=x.tel||'';document.getElementById('femail').value=x.email||'';document.getElementById('fpiva').value=x.piva||'';document.getElementById('fnote').value=x.note||'';document.getElementById('ftit').textContent='Modifica: '+x.nome;document.getElementById('fbtn').textContent='✓ Salva';document.getElementById('fcan').style.display='inline-flex';}
+function delF(id){if(!confirm('Eliminare?'))return;F=F.filter(x=>String(x.id)!==String(id));sv('f');rF();upFF();}
+function rF(){
+  document.getElementById('fcnt').textContent=F.length;const w=document.getElementById('fw');if(!F.length){w.innerHTML='<div class="em">Nessun fornitore.</div>';return;}
+  let h='<table><thead><tr><th>Nome</th><th>Tel</th><th>Email</th><th>P.IVA</th><th>Prodotti</th><th>Note</th><th></th></tr></thead><tbody>';
+  F.forEach(f=>{const np=I.filter(i=>i.fornitore===f.nome).length;h+=`<tr><td style="font-weight:500">${f.nome}</td><td style="font-family:var(--m)">${f.tel||'—'}</td><td style="color:var(--t2)">${f.email||'—'}</td><td style="font-family:var(--m);font-size:11px">${f.piva||'—'}</td><td><span class="bx bg">${np}</span></td><td style="font-size:11px;color:var(--t3)">${f.note||'—'}</td><td><div style="display:flex"><button class="ib" onclick="editF(${f.id})">✏️</button><button class="ib d" onclick="delF(${f.id})">🗑</button></div></td></tr>`;});
+  w.innerHTML=h+'</tbody></table>';
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  PERSONALE
+// ════════════════════════════════════════════════════════════════════
+function addStaff(){
+  const n=document.getElementById('st-nome').value.trim();const t=parseFloat(document.getElementById('st-tariffa').value);
+  if(!n||isNaN(t)||t<=0){alert('Inserisci nome e tariffa.');return;}
+  ST.push({id:Date.now(),nome:n,tariffa:t});
+  document.getElementById('st-nome').value='';document.getElementById('st-tariffa').value='';
+  sv('st');rStaff();upStaffSel();
+}
+function delStaff(id){if(!confirm('Rimuovere?'))return;ST=ST.filter(s=>String(s.id)!==String(id));sv('st');rStaff();upStaffSel();}
+function rStaff(){
+  const w=document.getElementById('staff-list');if(!w)return;
+  if(!ST.length){w.innerHTML='<div class="em" style="padding:1rem">Nessun dipendente ancora.</div>';return;}
+  w.innerHTML=ST.map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg3);border:1px solid var(--bo);border-radius:var(--r);padding:.8rem 1rem;margin-bottom:.5rem"><div><strong>${s.nome}</strong><div style="font-size:11px;color:var(--t2);font-family:var(--m)">€${s.tariffa.toFixed(2)}/h lordo</div></div><button class="ib d" onclick="delStaff(${s.id})">🗑</button></div>`).join('');
+}
+function upStaffSel(){
+  const sel=document.getElementById('hm-staff');if(!sel)return;
+  const v=sel.value;
+  sel.innerHTML='<option value="">-- seleziona dipendente --</option>'+ST.map(s=>`<option value="${s.id}" ${String(s.id)===String(v)?'selected':''}>${s.nome}</option>`).join('');
+}
+function saveCFG(){CFG.energia=parseFloat(document.getElementById('hm-energia').value)||3;sv('cfg');}
+
+// ════════════════════════════════════════════════════════════════════
+//  HOMEMADE
+// ════════════════════════════════════════════════════════════════════
+function saveHM(){
+  const eid=document.getElementById('hm-id').value;
+  const n=document.getElementById('hm-nome').value.trim();const tipo=document.getElementById('hm-tipo').value;
+  const resa=parseFloat(document.getElementById('hm-resa').value);const resaUm=document.getElementById('hm-resa-um').value;
+  const min=parseFloat(document.getElementById('hm-min').value)||0;
+  const staffId=document.getElementById('hm-staff').value||null;const note=document.getElementById('hm-note').value.trim();
+  if(!n||isNaN(resa)){alert('Inserisci nome e resa finale.');return;}
+  const rows=readRows('hm-rings');
+  const comp=rows.map(c=>({ingId:c.ingId?c.ingId:null,nome:c.nome,qty:c.qty,um:c.um}));
+  const obj={id:eid?parseInt(eid):Date.now(),nome:n,tipo,resa,resaUm,minuti:min,staffId:staffId?parseInt(staffId):null,note,componenti:comp};
+  if(eid){const idx=HM.findIndex(h=>String(h.id)===String(eid));if(idx>-1)HM[idx]=obj;cancelHM();}
+  else{HM.push(obj);clearHMF();}
+  sv('hm');fl('hm-ok');rHM();
+}
+function clearHMF(){
+  ['hm-nome','hm-resa','hm-min','hm-note'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('hm-id').value='';document.getElementById('hm-rings').innerHTML='';
+  document.getElementById('hm-prev').style.display='none';
+  const s=document.getElementById('hm-staff');if(s)s.value='';
+}
+function cancelHM(){clearHMF();document.getElementById('hm-tit').textContent='Nuova preparazione';document.getElementById('hm-btn').textContent='Salva preparazione';document.getElementById('hm-can').style.display='none';}
+function editHM(id){
+  const h=HM.find(x=>String(x.id)===String(id));if(!h)return;
+  document.getElementById('hm-id').value=id;document.getElementById('hm-nome').value=h.nome;document.getElementById('hm-tipo').value=h.tipo;document.getElementById('hm-resa').value=h.resa;document.getElementById('hm-resa-um').value=h.resaUm||'ml';document.getElementById('hm-min').value=h.minuti||0;document.getElementById('hm-note').value=h.note||'';
+  upStaffSel();setTimeout(()=>{const sel=document.getElementById('hm-staff');if(sel)sel.value=h.staffId||'';},50);
+  document.getElementById('hm-rings').innerHTML='';
+  (h.componenti||[]).forEach(c=>{
+    const i=findIng(c.ingId);
+    addRow('hm-rings','upHMPrev()',{ingId:c.ingId,nome:c.nome,um:c.um||'g',qty:c.qty});
+  });
+  document.getElementById('hm-tit').textContent='Modifica: '+h.nome;document.getElementById('hm-btn').textContent='✓ Salva modifiche';document.getElementById('hm-can').style.display='inline-flex';
+  window.scrollTo(0,0);
+}
+function delHM(id){if(!confirm('Eliminare?'))return;HM=HM.filter(h=>String(h.id)!==String(id));sv('hm');rHM();}
+function rHM(){
+  document.getElementById('hm-cnt').textContent=HM.length;
+  const s=(document.getElementById('hm-s')?.value||'').toLowerCase();const ft=document.getElementById('hm-ft')?.value||'';
+  const f=HM.filter(h=>(!s||(h.nome+' '+h.tipo).toLowerCase().includes(s))&&(!ft||h.tipo===ft));
+  const w=document.getElementById('hm-wrap');
+  if(!f.length){w.innerHTML='<div class="em">Nessuna preparazione ancora.</div>';return;}
+  let h='<table><thead><tr><th>Nome</th><th>Tipo</th><th>Resa</th><th>Da</th><th>Tempo</th><th>Costo ing.</th><th>Lavoro</th><th>Energia</th><th>Costo/u</th><th></th></tr></thead><tbody>';
+  f.forEach(hm=>{
+    const ci=hmCostoIng(hm);const cl=hmCostoLav(hm);const ce=hmCostoEn(hm);const tot=ci+cl+ce;const cu=hm.resa>0?tot/hm.resa:0;
+    const st=ST.find(s=>String(s.id)===String(hm.staffId));
+    const pl=tot>0?Math.round(cl/tot*100):0;
+    h+=`<tr><td style="font-weight:500">${hm.nome}</td><td><span class="bx bp" style="font-size:9px">${hm.tipo}</span></td><td style="font-family:var(--m)">${hm.resa} ${hm.resaUm||'ml'}</td><td style="font-size:11px;color:var(--t2)">${st?st.nome:'—'}</td><td style="font-family:var(--m)">${hm.minuti||0} min</td><td style="font-family:var(--m)">€${ci.toFixed(3)}</td><td style="font-family:var(--m);color:var(--amb)">€${cl.toFixed(3)} <span style="font-size:9px;color:var(--t3)">(${pl}%)</span></td><td style="font-family:var(--m);color:var(--t2)">€${ce.toFixed(3)}</td><td style="font-family:var(--m);color:var(--gold);font-weight:500">€${cu.toFixed(4)}/${hm.resaUm||'ml'}</td><td><div style="display:flex"><button class="ib" onclick="editHM(${hm.id})">✏️</button><button class="ib d" onclick="delHM(${hm.id})">🗑</button></div></td></tr>`;
+  });
+  w.innerHTML=h+'</tbody></table>';
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  RICETTE
+// ════════════════════════════════════════════════════════════════════
+function saveR(){
+  const eid=document.getElementById('rid').value;
+  const n=document.getElementById('rnome').value.trim();const cat=document.getElementById('rcat').value;
+  if(!n){alert('Inserisci nome cocktail.');return;}
+  const rows=readRows('rings');
+  const comp=rows.filter(c=>c.nome).map(c=>{
+    const costo=costoComp(c);
+    let um=c.um;
+    if(c.ingId&&!String(c.ingId).startsWith('hm_')){const i=findIng(c.ingId);if(i)um=i.um;}
+    return{ingId:c.ingId||null,nome:c.nome,qty:c.qty,um,costo};
+  });
+  const tot=comp.reduce((s,c)=>s+c.costo,0);
+  if(eid){const idx=R.findIndex(r=>String(r.id)===String(eid));if(idx>-1)R[idx]={...R[idx],nome:n,cat,componenti:comp,costoTot:tot};cancelR();}
+  else{R.push({id:Date.now(),nome:n,cat,componenti:comp,costoTot:tot});clearRF();}
+  sv('r');fl('rok');rR();
+}
+function clearRF(){document.getElementById('rnome').value='';document.getElementById('rid').value='';document.getElementById('rings').innerHTML='';document.getElementById('rprev').style.display='none';}
+function cancelR(){clearRF();document.getElementById('rtit').textContent='Nuova ricetta';document.getElementById('rbtn').textContent='Salva ricetta';document.getElementById('rcan').style.display='none';}
+function editR(id){
+  const r=R.find(x=>String(x.id)===String(id));if(!r)return;
+  document.getElementById('rid').value=id;document.getElementById('rnome').value=r.nome;document.getElementById('rcat').value=r.cat;
+  document.getElementById('rings').innerHTML='';
+  (r.componenti||[]).forEach(c=>{
+    const i=c.ingId?findIng(c.ingId):null;
+    const hmObj=c.ingId&&String(c.ingId).startsWith('hm_')?findHM(c.ingId):null;
+    addRow('rings','upRP()',{
+      ingId:c.ingId,
+      nome:i?i.nome:hmObj?'[HM] '+hmObj.nome:c.nome,
+      um:i?i.um:hmObj?hmObj.resaUm:c.um,
+      qty:c.qty
+    });
+  });
+  document.getElementById('rtit').textContent='Modifica: '+r.nome;document.getElementById('rbtn').textContent='✓ Salva modifiche';document.getElementById('rcan').style.display='inline-flex';
+  window.scrollTo(0,0);upRP();
+}
+function delR(id){if(!confirm('Eliminare?'))return;R=R.filter(r=>String(r.id)!==String(id));delete P[id];sv('r');sv('p');rR();}
+function rR(){
+  const s=(document.getElementById('rs')?.value||'').toLowerCase();const fc=document.getElementById('rfc')?.value||'';
+  const f=R.filter(r=>{const t=(r.nome+' '+r.cat).toLowerCase();return(!s||t.includes(s))&&(!fc||r.cat===fc);});
+  document.getElementById('rcnt').textContent=R.length;
+  const w=document.getElementById('rw');if(!f.length){w.innerHTML='<div class="em">Nessuna ricetta.</div>';return;}
+  let h='<table><thead><tr><th>Cocktail</th><th>Categoria</th><th>Ing.</th><th>Costo classico</th><th>Costo esteso</th><th></th></tr></thead><tbody>';
+  f.forEach(r=>{
+    const cc=cRclassico(r);const ce=cR(r);const cb=r.cat==='Cocktail classico IBA'?'bgo':'bb';
+    const hasHM=(r.componenti||[]).some(c=>c.ingId&&String(c.ingId).startsWith('hm_'));
+    const linked=(r.componenti||[]).filter(c=>c.ingId).length;const tot=(r.componenti||[]).length;
+    h+=`<tr><td style="font-weight:500">${r.nome}</td><td><span class="bx ${cb}" style="font-size:9px">${r.cat}</span></td><td style="font-family:var(--m)">${linked}/${tot}</td><td style="font-family:var(--m)">${cc>0?'<span style="color:var(--gold)">€'+cc.toFixed(3)+'</span>':'<span style="color:var(--t3)">'+linked+'/'+tot+' collegati</span>'}</td><td style="font-family:var(--m)">${hasHM&&ce>0?'<span style="color:var(--amb)">€'+ce.toFixed(3)+'</span>':'<span style="color:var(--t3);font-size:10px">—</span>'}</td><td><div style="display:flex"><button class="ib" onclick="editR(${r.id})">✏️</button><button class="ib d" onclick="delR(${r.id})">🗑</button></div></td></tr>`;
+  });
+  w.innerHTML=h+'</tbody></table>';
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  IMPORT IBA
+// ════════════════════════════════════════════════════════════════════
+function doIBA(){
+  const IBA=[
+    {n:"Negroni",i:[{n:"Gin",q:30},{n:"Vermouth Rosso",q:30},{n:"Bitter Campari",q:30}]},
+    {n:"Dry Martini",i:[{n:"Gin",q:60},{n:"Vermouth Dry",q:10}]},
+    {n:"Manhattan",i:[{n:"Bourbon/Rye Whiskey",q:50},{n:"Vermouth Rosso",q:20},{n:"Angostura Bitters",q:2}]},
+    {n:"Old Fashioned",i:[{n:"Bourbon Whiskey",q:45},{n:"Angostura Bitters",q:2},{n:"Sciroppo di zucchero",q:5}]},
+    {n:"Daiquiri",i:[{n:"Rum Bianco",q:45},{n:"Succo di lime",q:20},{n:"Sciroppo di zucchero",q:5}]},
+    {n:"Americano",i:[{n:"Bitter Campari",q:30},{n:"Vermouth Rosso",q:30},{n:"Soda water",q:60}]},
+    {n:"Gin Fizz",i:[{n:"Gin",q:45},{n:"Succo di limone",q:30},{n:"Sciroppo di zucchero",q:10},{n:"Soda water",q:80}]},
+    {n:"Whiskey Sour",i:[{n:"Bourbon Whiskey",q:45},{n:"Succo di limone",q:30},{n:"Sciroppo di zucchero",q:15},{n:"Albume",q:30}]},
+    {n:"Aperol Spritz",i:[{n:"Aperol",q:60},{n:"Prosecco",q:90},{n:"Soda water",q:30}]},
+    {n:"Mojito",i:[{n:"Rum Bianco",q:45},{n:"Succo di lime",q:20},{n:"Sciroppo di zucchero",q:15},{n:"Menta fresca",q:6,u:"pz"},{n:"Soda water",q:60}]},
+    {n:"Margarita",i:[{n:"Tequila",q:50},{n:"Triple Sec",q:20},{n:"Succo di lime",q:15}]},
+    {n:"Cosmopolitan",i:[{n:"Vodka",q:40},{n:"Triple Sec",q:15},{n:"Succo di lime",q:15},{n:"Succo cranberry",q:30}]},
+    {n:"Hugo",i:[{n:"Prosecco",q:100},{n:"Sciroppo Sambuco",q:20},{n:"Soda water",q:40},{n:"Menta fresca",q:3,u:"pz"}]},
+    {n:"Bellini",i:[{n:"Prosecco",q:100},{n:"Purea di pesca",q:50}]},
+    {n:"Cuba Libre",i:[{n:"Rum Bianco",q:50},{n:"Cola",q:100},{n:"Succo di lime",q:10}]},
+    {n:"Tequila Sunrise",i:[{n:"Tequila",q:45},{n:"Succo arancia",q:90},{n:"Granatina",q:15}]},
+    {n:"Bloody Mary",i:[{n:"Vodka",q:45},{n:"Succo di pomodoro",q:90},{n:"Succo di limone",q:15},{n:"Worcestershire",q:5},{n:"Tabasco",q:2}]},
+    {n:"Pina Colada",i:[{n:"Rum Bianco",q:30},{n:"Rum scuro",q:30},{n:"Crema di cocco",q:30},{n:"Succo ananas",q:90}]},
+    {n:"Long Island Iced Tea",i:[{n:"Vodka",q:15},{n:"Tequila",q:15},{n:"Rum Bianco",q:15},{n:"Gin",q:15},{n:"Triple Sec",q:15},{n:"Succo di limone",q:25},{n:"Sciroppo",q:10},{n:"Cola",q:60}]},
+    {n:"Irish Coffee",i:[{n:"Irish Whiskey",q:40},{n:"Caffè caldo",q:80},{n:"Zucchero di canna",q:10,u:"g"},{n:"Panna fresca",q:30}]},
+    {n:"Moscow Mule",i:[{n:"Vodka",q:45},{n:"Succo di lime",q:15},{n:"Ginger Beer",q:120}]},
+    {n:"French 75",i:[{n:"Gin",q:30},{n:"Succo di limone",q:15},{n:"Sciroppo",q:10},{n:"Prosecco",q:60}]},
+    {n:"Kir Royal",i:[{n:"Prosecco",q:120},{n:"Crème de Cassis",q:15}]},
+    {n:"Black Russian",i:[{n:"Vodka",q:50},{n:"Liquore al caffè",q:20}]},
+    {n:"Garibaldi",i:[{n:"Bitter Campari",q:40},{n:"Succo arancia",q:80}]},
+    {n:"Sex on the Beach",i:[{n:"Vodka",q:40},{n:"Peach Schnapps",q:20},{n:"Succo arancia",q:40},{n:"Succo cranberry",q:40}]},
+    {n:"Espresso Martini",i:[{n:"Vodka",q:50},{n:"Liquore al caffè",q:30},{n:"Espresso",q:30},{n:"Sciroppo",q:10}]},
+    {n:"Dark & Stormy",i:[{n:"Rum scuro",q:60},{n:"Ginger Beer",q:120},{n:"Succo di lime",q:10}]},
+    {n:"Tommy's Margarita",i:[{n:"Tequila",q:60},{n:"Succo di lime",q:30},{n:"Sciroppo Agave",q:15}]},
+    {n:"Naked & Famous",i:[{n:"Mezcal",q:22.5},{n:"Chartreuse Gialla",q:22.5},{n:"Aperol",q:22.5},{n:"Succo di lime",q:22.5}]},
+    {n:"Paper Plane",i:[{n:"Bourbon Whiskey",q:22.5},{n:"Aperol",q:22.5},{n:"Amaro",q:22.5},{n:"Succo di limone",q:22.5}]},
+    {n:"Mezcal Negroni",i:[{n:"Mezcal",q:30},{n:"Vermouth Rosso",q:30},{n:"Bitter Campari",q:30}]},
+    {n:"Penicillin",i:[{n:"Scotch Whisky",q:45},{n:"Succo di limone",q:22.5},{n:"Sciroppo miele zenzero",q:22.5},{n:"Scotch torbato",q:7.5}]},
+    {n:"Jungle Bird",i:[{n:"Rum scuro",q:45},{n:"Bitter Campari",q:22.5},{n:"Succo ananas",q:45},{n:"Succo di lime",q:15},{n:"Sciroppo",q:15}]},
+    {n:"Sidecar",i:[{n:"Cognac",q:50},{n:"Triple Sec",q:20},{n:"Succo di limone",q:20}]},
+    {n:"Boulevardier",i:[{n:"Bourbon Whiskey",q:45},{n:"Vermouth Rosso",q:30},{n:"Bitter Campari",q:30}]},
+    {n:"Caipirinha",i:[{n:"Cachaça",q:60},{n:"Lime fresco",q:25,u:"g"},{n:"Zucchero",q:10,u:"g"}]},
+    {n:"Hanky Panky",i:[{n:"Gin",q:45},{n:"Vermouth Rosso",q:45},{n:"Fernet Branca Menta",q:7.5}]},
+    {n:"Mai Tai",i:[{n:"Rum Bianco",q:30},{n:"Rum scuro",q:30},{n:"Triple Sec",q:15},{n:"Sciroppo orgeat",q:15},{n:"Succo di lime",q:15}]},
+    {n:"Sazerac",i:[{n:"Rye Whiskey",q:50},{n:"Assenzio",q:5},{n:"Bitters",q:2},{n:"Zucchero",q:5,u:"g"}]},
+    {n:"White Lady",i:[{n:"Gin",q:40},{n:"Triple Sec",q:30},{n:"Succo di limone",q:20}]},
+    {n:"Between the Sheets",i:[{n:"Rum Bianco",q:30},{n:"Cognac",q:30},{n:"Triple Sec",q:30},{n:"Succo di limone",q:20}]},
+    {n:"Last Word",i:[{n:"Gin",q:22.5},{n:"Chartreuse Verde",q:22.5},{n:"Maraschino",q:22.5},{n:"Succo di lime",q:22.5}]},
+    {n:"Clover Club",i:[{n:"Gin",q:45},{n:"Succo di limone",q:15},{n:"Sciroppo lampone",q:15},{n:"Albume",q:30}]},
+    {n:"Rusty Nail",i:[{n:"Scotch Whisky",q:45},{n:"Drambuie",q:25}]}
+  ];
+  const ne=new Set(R.map(r=>r.nome.toLowerCase()));
+  let agg=0;
+  IBA.forEach((r,idx)=>{
+    if(ne.has(r.n.toLowerCase()))return;
+    R.push({id:Date.now()+idx*13+Math.floor(Math.random()*9999),nome:r.n,cat:'Cocktail classico IBA',componenti:r.i.map(i=>({ingId:null,nome:i.n,qty:i.q,um:i.u||'ml',costo:0})),costoTot:0});
+    agg++;
+  });
+  sv('r');rR();
+  alert(agg>0?`✓ Importate ${agg} ricette IBA!\n\nNelle ricette IBA gli ingredienti hanno nomi generici (es. "Gin").\nUsa il tasto ✏️ su ogni ricetta per selezionare l'ingrediente specifico dal tuo magazzino.`:' Tutte le ricette IBA sono già presenti.');
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  LISTINO
+// ════════════════════════════════════════════════════════════════════
+function rL(){
+  const s=(document.getElementById('ls')?.value||'').toLowerCase();const fc=document.getElementById('lfc')?.value||'';
+  const f=R.filter(r=>{const t=(r.nome+' '+r.cat).toLowerCase();return(!s||t.includes(s))&&(!fc||r.cat===fc);});
+  const w=document.getElementById('lw');
+  if(!R.length){w.innerHTML='<div class="em">Crea prima le ricette.</div>';return;}
+  if(!f.length){w.innerHTML='<div class="em">Nessun risultato.</div>';return;}
+  let h='<table><thead><tr><th>Cocktail</th><th>Costo classico</th><th>Costo esteso</th><th>Prezzo cliente (IVA 10% incl.)</th><th>Prezzo netto</th><th>Bev.cost %</th><th>Margine netto</th></tr></thead><tbody>';
+  f.forEach(r=>{
+    const cc=cRclassico(r);const ce=cR(r);const pIva=P[r.id]||'';
+    const pNetto=pIva?(pIva/1.10).toFixed(2):'—';const bcp=pIva&&cc>0?((cc/(pIva/1.10))*100).toFixed(1):'—';const mg=pIva&&cc>0?((pIva/1.10)-cc).toFixed(2):'—';
+    const cl=pIva&&cc>0?(parseFloat(bcp)<20?'bg':parseFloat(bcp)<30?'bw':'br'):'';
+    const hasHM=(r.componenti||[]).some(c=>c.ingId&&String(c.ingId).startsWith('hm_'));
+    h+=`<tr><td style="font-weight:500">${r.nome}</td><td style="font-family:var(--m);color:var(--gold)">${cc>0?'€'+cc.toFixed(3):'—'}</td><td style="font-family:var(--m);color:var(--amb)">${hasHM&&ce>0?'€'+ce.toFixed(3):'—'}</td><td><div style="display:flex;align-items:center;gap:7px"><input type="number" value="${pIva}" min="0" step="0.5" placeholder="es. 9.00" style="width:85px;font-family:var(--m)" onchange="setP(${r.id},this.value)"/><span style="font-size:10px;color:var(--t3);font-family:var(--m)">€ al cliente</span></div></td><td style="font-family:var(--m);color:var(--t2)">${pNetto!=='—'?'€'+pNetto:'—'}</td><td>${pIva&&cc>0?`<span class="bx ${cl}">${bcp}%</span>`:'—'}</td><td style="font-family:var(--m)">${mg!=='—'?'€'+mg:'—'}</td></tr>`;
+  });
+  w.innerHTML=h+'</tbody></table>';
+}
+function setP(id,v){P[id]=parseFloat(v)||0;sv('p');rL();}
+
+// ════════════════════════════════════════════════════════════════════
+//  DASHBOARD
+// ════════════════════════════════════════════════════════════════════
+function rD(){
+  document.getElementById('dr').textContent=R.length;document.getElementById('di').textContent=I.length;document.getElementById('dhm').textContent=HM.length;document.getElementById('dst').textContent=ST.length;
+  const cp=R.filter(r=>P[r.id]>0&&cRclassico(r)>0);
+  let bcMedia=0;
+  if(cp.length){
+    const bcC=cp.reduce((s,r)=>s+(cRclassico(r)/(P[r.id]/1.10))*100,0)/cp.length;
+    const bcE=cp.reduce((s,r)=>s+(cR(r)/(P[r.id]/1.10))*100,0)/cp.length;
+    const mm=cp.reduce((s,r)=>s+(P[r.id]/1.10-cRclassico(r)),0)/cp.length;
+    bcMedia=bcC;
+    const eC=document.getElementById('dbc');eC.textContent=bcC.toFixed(1)+'%';eC.className='mv '+(bcC<20?'g':bcC<30?'w':'r');
+    const eE=document.getElementById('dbc2');eE.textContent=bcE.toFixed(1)+'%';eE.className='mv '+(bcE<20?'g':bcE<30?'w':'r');
+    document.getElementById('dmg').textContent='€'+mm.toFixed(2);
+  }
+  let h='<table><thead><tr><th>Cocktail</th><th>Costo classico</th><th>Prezzo cliente</th><th>Bev.cost %</th><th>Margine</th><th>Valutazione</th></tr></thead><tbody>';
+  R.forEach(r=>{
+    const cc=cRclassico(r);const pIva=P[r.id];const pn=pIva?pIva/1.10:null;const bcp=pn&&cc>0?(cc/pn*100):null;const mg=pn&&cc>0?pn-cc:null;
+    let v='—',bc='';if(bcp!==null){if(bcp<20){v='Ottimo';bc='bg';}else if(bcp<30){v='Nella norma';bc='bw';}else{v='Attenzione';bc='br';}}
+    h+=`<tr><td style="font-weight:500">${r.nome}</td><td style="font-family:var(--m);color:var(--gold)">${cc>0?'€'+cc.toFixed(3):'—'}</td><td style="font-family:var(--m)">${pIva?'€'+pIva.toFixed(2):'—'}</td><td>${bcp!==null?bcp.toFixed(1)+'%':'—'}</td><td style="font-family:var(--m)">${mg!==null?'€'+mg.toFixed(2):'—'}</td><td>${v!=='—'?`<span class="bx ${bc}">${v}</span>`:'—'}</td></tr>`;
+  });
+  document.getElementById('dt').innerHTML=h+'</tbody></table>';
+
+  // ── OBIETTIVO GIORNALIERO ──────────────────────────────────────
+  const tot=cfTotale();
+  const giorni=CF.giorni||26;
+  const coperti=CF.coperti||0;
+  const scontrino=CF.scontrino||0;
+  const card=document.getElementById('dash-obiettivo');
+  if(!card)return;
+
+  if(!tot&&!bcMedia){card.style.display='none';return;}
+  card.style.display='block';
+
+  // Costo fisso/giorno
+  const cfDay=tot/giorni;
+
+  // Per coprire i costi fissi: incasso minimo solo da fissi
+  // Il bev.cost medio dice: ogni €1 incassato, bcMedia% va al prodotto
+  // Quindi: incasso_min = cfDay / (1 - bcMedia/100)
+  const bcFraction=bcMedia>0?bcMedia/100:0.25; // default 25% se nessuna ricetta
+  const incassoMin=bcFraction<1?cfDay/(1-bcFraction):cfDay*4;
+
+  // Bev.cost stimato al giorno
+  const bcDay=incassoMin*bcFraction;
+
+  // Coperti necessari
+  const copNecessari=scontrino>0?Math.ceil(incassoMin/scontrino):null;
+
+  // Ricavo attuale stimato
+  const ricavoAttuale=coperti*scontrino;
+
+  // Gap
+  const gap=ricavoAttuale-incassoMin;
+
+  document.getElementById('dash-cf-day').textContent='€'+cfDay.toFixed(0);
+  document.getElementById('dash-giorni').textContent=giorni;
+  document.getElementById('dash-bc-day').textContent=bcMedia>0?'€'+bcDay.toFixed(0):'—';
+  document.getElementById('dash-min-day').textContent='€'+incassoMin.toFixed(0);
+  document.getElementById('dash-cop-need').textContent=copNecessari!==null?copNecessari+'':'—';
+  document.getElementById('dash-scontrino').textContent=scontrino?scontrino.toFixed(2):'—';
+  document.getElementById('dash-cop-now').textContent=coperti||'—';
+
+  const gapEl=document.getElementById('dash-gap');
+  const msgEl=document.getElementById('dash-msg');
+  if(gap>=0){
+    gapEl.textContent='+€'+gap.toFixed(0);
+    gapEl.className='mv g';
+    msgEl.style.background='var(--green2)';
+    msgEl.style.color='var(--green)';
+    msgEl.innerHTML="✓ Con i tuoi coperti attuali stai coprendo costi fissi e bev.cost. Hai un margine di <strong>€"+gap.toFixed(0)+"/giorno</strong> per il profitto.";
+  } else {
+    gapEl.textContent='–€'+Math.abs(gap).toFixed(0);
+    gapEl.className='mv r';
+    msgEl.style.background='var(--red2)';
+    msgEl.style.color='var(--red)';
+    const copMancanti=copNecessari!==null&&coperti>0?copNecessari-coperti:null;
+    msgEl.innerHTML='✗ Ti mancano <strong>€'+Math.abs(gap).toFixed(0)+'/giorno</strong> per coprire tutto.'+(copMancanti!==null?' Servono <strong>'+copMancanti+' coperti in più</strong> al giorno (o uno scontrino medio più alto).':'');
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  ANALISI
+// ════════════════════════════════════════════════════════════════════
+function rA(){
+  const rc=[...R].map(r=>({n:r.nome,c:cRclassico(r)})).filter(r=>r.c>0).sort((a,b)=>b.c-a.c).slice(0,5);
+  document.getElementById('a1').innerHTML=rc.length?rc.map((r,i)=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bo)"><span>${i+1}. ${r.n}</span><strong style="font-family:var(--m);color:var(--gold)">€${r.c.toFixed(3)}</strong></div>`).join(''):'<div class="em">Nessun dato.</div>';
+  const iu={};R.forEach(r=>(r.componenti||[]).forEach(c=>{if(c.nome)iu[c.nome]=(iu[c.nome]||0)+1;}));
+  const t5=Object.entries(iu).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('a2').innerHTML=t5.length?t5.map(([n,cnt],i)=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bo)"><span>${i+1}. ${n}</span><span class="bx bb">${cnt}</span></div>`).join(''):'<div class="em">Nessun dato.</div>';
+  const vi=I.filter(i=>(i.storico||[]).length>1).map(i=>{const s=[...(i.storico||[])].sort((a,b)=>a.data.localeCompare(b.data));const d=((s[s.length-1].costo-s[0].costo)/s[0].costo*100);return{n:i.nome,f:s[0].costo,l:s[s.length-1].costo,d};}).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,10);
+  const w3=document.getElementById('a3');
+  if(!vi.length){w3.innerHTML='<div class="em">Nessun dato.</div>';}
+  else{let h='<table><thead><tr><th>Ingrediente</th><th>Prima</th><th>Ultima</th><th>Variazione</th></tr></thead><tbody>';vi.forEach(v=>{h+=`<tr><td>${v.n}</td><td style="font-family:var(--m)">€${v.f.toFixed(2)}</td><td style="font-family:var(--m)">€${v.l.toFixed(2)}</td><td><span class="bx ${v.d>0?'br':'bg'}">${v.d>0?'+':''}${v.d.toFixed(1)}%</span></td></tr>`;});w3.innerHTML=h+'</tbody></table>';}
+  const fm={};I.forEach(i=>{const f=i.fornitore||'Sconosciuto';fm[f]=(fm[f]||0)+1;});
+  const tot=Object.values(fm).reduce((a,b)=>a+b,0);
+  document.getElementById('a4').innerHTML=tot?Object.entries(fm).sort((a,b)=>b[1]-a[1]).map(([f,n])=>{const p=((n/tot)*100).toFixed(0);return`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:500">${f}</span><span style="font-family:var(--m);color:var(--t2)">${n} prodotti (${p}%)</span></div><div style="background:var(--bg3);border-radius:4px;height:5px"><div style="background:var(--gold);border-radius:4px;height:5px;width:${p}%"></div></div></div>`;}).join(''):'<div class="em">Nessun dato.</div>';
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  REPORT
+// ════════════════════════════════════════════════════════════════════
+function genRep(){
+  const cp=R.filter(r=>P[r.id]>0&&cRclassico(r)>0);
+  const bmC=cp.length?cp.reduce((s,r)=>s+(cRclassico(r)/(P[r.id]/1.10))*100,0)/cp.length:null;
+  const bmE=cp.length?cp.reduce((s,r)=>s+(cR(r)/(P[r.id]/1.10))*100,0)/cp.length:null;
+  const mm=cp.length?cp.reduce((s,r)=>s+(P[r.id]/1.10-cRclassico(r)),0)/cp.length:null;
+  const ot=cp.filter(r=>cRclassico(r)/(P[r.id]/1.10)*100<20).length;
+  const no=cp.filter(r=>{const b=cRclassico(r)/(P[r.id]/1.10)*100;return b>=20&&b<30;}).length;
+  const at=cp.filter(r=>cRclassico(r)/(P[r.id]/1.10)*100>=30).length;
+  const hmTot=HM.reduce((s,h)=>s+hmCostoIng(h)+hmCostoLav(h)+hmCostoEn(h),0);
+  document.getElementById('ro').innerHTML=`<div class="card"><div class="ct">Riepilogo Easy Drink and Food · ${new Date().toLocaleDateString('it-IT')}</div>
+    <div class="g4" style="margin-bottom:1rem"><div class="met"><div class="ml">Ricette</div><div class="mv">${R.length}</div></div><div class="met"><div class="ml">Bev.cost classico</div><div class="mv ${bmC!==null?(bmC<20?'g':bmC<30?'w':'r'):''}">${bmC!==null?bmC.toFixed(1)+'%':'—'}</div></div><div class="met"><div class="ml">Bev.cost esteso</div><div class="mv ${bmE!==null?(bmE<20?'g':bmE<30?'w':'r'):''}">${bmE!==null?bmE.toFixed(1)+'%':'—'}</div></div><div class="met"><div class="ml">Margine medio</div><div class="mv">${mm!==null?'€'+mm.toFixed(2):'—'}</div></div></div>
+    <div class="g4"><div class="met"><div class="ml">Ottimo &lt;20%</div><div class="mv g">${ot}</div></div><div class="met"><div class="ml">Norma 20–30%</div><div class="mv w">${no}</div></div><div class="met"><div class="ml">Attenzione &gt;30%</div><div class="mv r">${at}</div></div><div class="met"><div class="ml">Costo HM totale</div><div class="mv" style="font-size:18px">€${hmTot.toFixed(2)}</div></div></div>
+    ${HM.length?`<div class="sep"></div><div class="ct">Homemade</div><table><thead><tr><th>Preparazione</th><th>Tipo</th><th>Costo ing.</th><th>Lavoro</th><th>Energia</th><th>Totale</th><th>Costo/u</th></tr></thead><tbody>${HM.map(h=>{const ci=hmCostoIng(h);const cl=hmCostoLav(h);const ce=hmCostoEn(h);const tot=ci+cl+ce;const cu=h.resa>0?tot/h.resa:0;return`<tr><td style="font-weight:500">${h.nome}</td><td><span class="bx bp" style="font-size:9px">${h.tipo}</span></td><td style="font-family:var(--m)">€${ci.toFixed(3)}</td><td style="font-family:var(--m);color:var(--amb)">€${cl.toFixed(3)}</td><td style="font-family:var(--m)">€${ce.toFixed(3)}</td><td style="font-family:var(--m)">€${tot.toFixed(3)}</td><td style="font-family:var(--m);color:var(--gold)">€${cu.toFixed(4)}/${h.resaUm||'ml'}</td></tr>`;}).join('')}</tbody></table>`:''}
+    <div class="sep"></div><div class="ct">Ricette con prezzo impostato</div>
+    <table><thead><tr><th>Cocktail</th><th>Costo classico</th><th>Prezzo cliente</th><th>Bev.cost %</th><th>Margine €</th></tr></thead><tbody>${cp.map(r=>{const c=cRclassico(r);const pn=P[r.id]/1.10;const b=c/pn*100;return`<tr><td style="font-weight:500">${r.nome}</td><td style="font-family:var(--m);color:var(--gold)">€${c.toFixed(3)}</td><td style="font-family:var(--m)">€${P[r.id].toFixed(2)}</td><td><span class="bx ${b<20?'bg':b<30?'bw':'br'}">${b.toFixed(1)}%</span></td><td style="font-family:var(--m)">€${(pn-c).toFixed(2)}</td></tr>`;}).join('')}</tbody></table></div>`;
+}
+
+load();
+</script>
+</body>
+</html>
