@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Easy Drink and Food — Beverage Cost</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#ffffff;--bg2:#f8f8f8;--bg3:#f0f0f0;--bg4:#e8e8e8;
@@ -448,6 +449,27 @@ tr:hover td{background:var(--bg3)}
 </div>
 
 <script>
+// ════════════════════════════════════════════════════════════════════
+//  SUPABASE
+// ════════════════════════════════════════════════════════════════════
+const SUPA_URL = 'https://slgfsthgubdjaadoqtiz.supabase.co';
+const SUPA_KEY = 'sb_publishable_NYwoHXoeS0tGKFMsDT6lFA_SfGIsTVN';
+const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+async function supaGet(key){
+  try{
+    const {data,error} = await supa.from('easy_drink_data').select('value').eq('key',key).single();
+    if(error||!data)return null;
+    return data.value;
+  }catch(e){return null;}
+}
+
+async function supaSet(key,value){
+  try{
+    await supa.from('easy_drink_data').upsert({key,value,updated_at:new Date().toISOString()});
+  }catch(e){console.warn('Supabase save error:',e);}
+}
+
 // ════════════════════════════════════════════════════════════════════
 //  DATI & STORAGE
 // ════════════════════════════════════════════════════════════════════
@@ -958,15 +980,20 @@ function importBackup(input){
 
 async function load(){
   try{
-    const a=await window.storage.get(KI);if(a&&a.value)I=JSON.parse(a.value);
-    const b=await window.storage.get(KR);if(b&&b.value)R=JSON.parse(b.value);
-    const c=await window.storage.get(KP);if(c&&c.value)P=JSON.parse(c.value);
-    const d=await window.storage.get(KF);if(d&&d.value)F=JSON.parse(d.value);
-    const e=await window.storage.get(KH);if(e&&e.value)HM=JSON.parse(e.value);
-    const s=await window.storage.get(KS);if(s&&s.value)ST=JSON.parse(s.value);
-    const g=await window.storage.get(KC);if(g&&g.value)CFG=JSON.parse(g.value);
-    const wp=await window.storage.get(KW);if(wp&&wp.value)WP=JSON.parse(wp.value);
-    const cf=await window.storage.get(KCF);if(cf&&cf.value)CF=JSON.parse(cf.value);
+    // Carica da Supabase (online) con fallback localStorage
+    const keys=[KI,KR,KP,KF,KH,KS,KC,KW,KCF];
+    const vars={[KI]:'I',[KR]:'R',[KP]:'P',[KF]:'F',[KH]:'HM',[KS]:'ST',[KC]:'CFG',[KW]:'WP',[KCF]:'CF'};
+    for(const k of keys){
+      const v=await supaGet(k)||lsG(k);
+      if(v){
+        try{
+          const parsed=typeof v==='string'?JSON.parse(v):v;
+          if(k===KI)I=parsed;else if(k===KR)R=parsed;else if(k===KP)P=parsed;
+          else if(k===KF)F=parsed;else if(k===KH)HM=parsed;else if(k===KS)ST=parsed;
+          else if(k===KC)CFG=parsed;else if(k===KW)WP=parsed;else if(k===KCF)CF=parsed;
+        }catch(e){}
+      }
+    }
   }catch(err){
     const a=lsG(KI);if(a)I=a;
     const b=lsG(KR);if(b)R=b;
