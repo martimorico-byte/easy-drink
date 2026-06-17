@@ -782,7 +782,9 @@ function saveCF(){
   CF.giorni=parseInt(document.getElementById('cf-giorni')?.value)||26;
   CF.coperti=parseInt(document.getElementById('cf-coperti')?.value)||0;
   CF.scontrino=parseFloat(document.getElementById('cf-scontrino')?.value)||0;
-  sv('cf');upCFStats();
+  sv('cf');
+  // Aggiorna stats dopo un piccolo delay per dare tempo a Supabase
+  setTimeout(upCFStats, 100);
 }
 
 function cfMediaPersonale(){
@@ -1036,8 +1038,7 @@ async function load(){
   if(!HM.length&&INIT_HM.length){HM=INIT_HM;sv('hm');}
   if(!ST.length&&INIT_ST.length){ST=INIT_ST;sv('st');}
   if(!Object.keys(WP).length&&Object.keys(INIT_WP).length){WP=INIT_WP;sv('wp');}
-  // CF viene solo da Supabase/localStorage, non dal backup incorporato
-  if(INIT_CFG&&INIT_CFG.energia&&!CFG.energia){CFG=INIT_CFG;sv('cfg');}
+  // CF e CFG vengono solo da Supabase/localStorage
   if(!F.length){
     F=[{id:1,nome:'Cuni Bevande',tel:'',email:'',note:'Listino 01/03/2026',piva:''},{id:2,nome:'BM Group',tel:'035-0667672',email:'info@bmsrls.it',note:'',piva:'IT04189160163'},{id:3,nome:'Mercato',tel:'',email:'',note:'Prodotti freschi',piva:''},{id:4,nome:'ViNé',tel:'338 3134417',email:'vinesrls@gmail.com',note:'Lista v2411 - vini naturali',piva:'IT01569820291'},{id:5,nome:'Altro',tel:'',email:'',note:'',piva:''}];
     sv('f');
@@ -1047,20 +1048,35 @@ async function load(){
   const eEl=document.getElementById('hm-energia');
   if(eEl)eEl.value=CFG.energia||3;
   rAll();
+  // Aggiorna i campi CF se la pagina costi è visibile
+  upCFForm();
 }
 
 async function sv(w){
   try{
-    if(!w||w==='i'){await window.storage.set(KI,JSON.stringify(I));lsS(KI,I);}
-    if(!w||w==='r'){await window.storage.set(KR,JSON.stringify(R));lsS(KR,R);}
-    if(!w||w==='p'){await window.storage.set(KP,JSON.stringify(P));lsS(KP,P);}
-    if(!w||w==='f'){await window.storage.set(KF,JSON.stringify(F));lsS(KF,F);}
-    if(!w||w==='hm'){await window.storage.set(KH,JSON.stringify(HM));lsS(KH,HM);}
-    if(!w||w==='st'){await window.storage.set(KS,JSON.stringify(ST));lsS(KS,ST);}
-    if(!w||w==='cfg'){await window.storage.set(KC,JSON.stringify(CFG));lsS(KC,CFG);}
-    if(!w||w==='wp'){await window.storage.set(KW,JSON.stringify(WP));lsS(KW,WP);}
-    if(!w||w==='cf'){await window.storage.set(KCF,JSON.stringify(CF));lsS(KCF,CF);}
-  }catch(e){lsS(KI,I);lsS(KR,R);lsS(KP,P);lsS(KF,F);lsS(KH,HM);lsS(KS,ST);lsS(KC,CFG);}
+    // Salva su localStorage immediatamente (sincrono)
+    if(!w||w==='i')lsS(KI,I);
+    if(!w||w==='r')lsS(KR,R);
+    if(!w||w==='p')lsS(KP,P);
+    if(!w||w==='f')lsS(KF,F);
+    if(!w||w==='hm')lsS(KH,HM);
+    if(!w||w==='st')lsS(KS,ST);
+    if(!w||w==='cfg')lsS(KC,CFG);
+    if(!w||w==='wp')lsS(KW,WP);
+    if(!w||w==='cf')lsS(KCF,CF);
+    // Salva su Supabase in background (asincrono)
+    if(!w||w==='i')supaSet(KI,JSON.stringify(I));
+    if(!w||w==='r')supaSet(KR,JSON.stringify(R));
+    if(!w||w==='p')supaSet(KP,JSON.stringify(P));
+    if(!w||w==='f')supaSet(KF,JSON.stringify(F));
+    if(!w||w==='hm')supaSet(KH,JSON.stringify(HM));
+    if(!w||w==='st')supaSet(KS,JSON.stringify(ST));
+    if(!w||w==='cfg')supaSet(KC,JSON.stringify(CFG));
+    if(!w||w==='wp')supaSet(KW,JSON.stringify(WP));
+    if(!w||w==='cf')supaSet(KCF,JSON.stringify(CF));
+  }catch(e){
+    lsS(KI,I);lsS(KR,R);lsS(KP,P);lsS(KF,F);lsS(KH,HM);lsS(KS,ST);lsS(KC,CFG);lsS(KW,WP);lsS(KCF,CF);
+  }
 }
 
 function fl(id){const e=document.getElementById(id);if(!e)return;e.classList.add('s');setTimeout(()=>e.classList.remove('s'),2000);}
