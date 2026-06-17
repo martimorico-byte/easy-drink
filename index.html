@@ -364,9 +364,10 @@ tr:hover td{background:var(--bg3)}
   <!-- ALTRE SPESE FISSE -->
   <div class="card">
     <div class="ct">➕ Altre spese fisse mensili</div>
-    <div class="g3" style="margin-bottom:.9rem">
+    <div class="g4" style="margin-bottom:.9rem">
       <div><label>Voce di spesa</label><input type="text" id="cf-extra-nome" placeholder="es. Musica live, Software, Pulizie..."/></div>
-      <div><label>Importo €/mese</label><input type="number" id="cf-extra-val" placeholder="0" step="10"/></div>
+      <div><label>Mese di riferimento</label><input type="month" id="cf-extra-mese"/></div>
+      <div><label>Importo €</label><input type="number" id="cf-extra-val" placeholder="0" step="10"/></div>
       <div><label>Note / riferimento</label><input type="text" id="cf-extra-note" placeholder="es. contratto annuale, ogni venerdì..."/></div>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:1rem">
@@ -413,6 +414,18 @@ tr:hover td{background:var(--bg3)}
     </div>
     <div id="cf-stats"></div>
   </div>
+</div>
+
+  <!-- REPORT MENSILE COSTI -->
+  <div class="card">
+    <div class="ct">📅 Report mensile costi</div>
+    <div class="g2" style="margin-bottom:1rem">
+      <div><label>Seleziona mese</label><input type="month" id="cf-report-mese" oninput="upCFReport()"/></div>
+      <div style="display:flex;align-items:flex-end"><button onclick="upCFReport()" class="pr">Visualizza</button></div>
+    </div>
+    <div id="cf-report-wrap"><div class="em">Seleziona un mese per vedere il report.</div></div>
+  </div>
+
 </div>
 
 <!-- ANALISI -->
@@ -806,11 +819,14 @@ function cfTotale(){
 
 function addCFExtra(){
   const nome=document.getElementById('cf-extra-nome')?.value.trim();
+  const mese=document.getElementById('cf-extra-mese')?.value||'';
   const val=parseFloat(document.getElementById('cf-extra-val')?.value)||0;
   const note=document.getElementById('cf-extra-note')?.value.trim()||'';
   if(!nome||!val){alert('Inserisci nome e importo.');return;}
+  if(!mese){alert('Seleziona il mese di riferimento.');return;}
   if(!CF.extra)CF.extra=[];
-  CF.extra.push({id:Date.now(),nome,val,note});
+  CF.extra.push({id:Date.now(),nome,mese,val,note});
+  CF.extra.sort((a,b)=>b.mese.localeCompare(a.mese));
   document.getElementById('cf-extra-nome').value='';
   document.getElementById('cf-extra-val').value='';
   document.getElementById('cf-extra-note').value='';
@@ -839,11 +855,12 @@ function upCFExtraList(){
   const extra=CF.extra||[];
   if(!extra.length){w.innerHTML='<div class="em">Nessuna voce aggiuntiva.</div>';return;}
   const tot=extra.reduce((s,r)=>s+(r.val||0),0);
-  let h='<table><thead><tr><th>Voce di spesa</th><th>€/mese</th><th>Note / riferimento</th><th></th></tr></thead><tbody>';
+  let h='<table><thead><tr><th>Voce di spesa</th><th>Mese</th><th>Importo €</th><th>Note / riferimento</th><th></th></tr></thead><tbody>';
   extra.forEach(r=>{
     h+=`<tr>
       <td style="font-weight:500">${r.nome}</td>
-      <td style="font-family:var(--m);font-weight:600">€ ${r.val.toFixed(0)}</td>
+      <td style="font-family:var(--m);color:var(--t2)">${r.mese||'—'}</td>
+      <td style="font-family:var(--m);font-weight:600">€ ${(r.val||0).toFixed(0)}</td>
       <td style="color:var(--t2);font-size:12px">${r.note||'—'}</td>
       <td><div style="display:flex"><button class="ib" onclick="editCFExtra(${r.id})">✏️</button><button class="ib d" onclick="delCFExtra(${r.id})">🗑</button></div></td>
     </tr>`;
@@ -997,6 +1014,95 @@ function importBackup(input){
   reader.readAsText(file);
 }
 
+
+// ════════════════════════════════════════════════════════════════════
+//  REPORT MENSILE COSTI
+// ════════════════════════════════════════════════════════════════════
+function upCFReport(){
+  const mese=document.getElementById('cf-report-mese')?.value;
+  const w=document.getElementById('cf-report-wrap');
+  if(!w)return;
+  if(!mese){w.innerHTML='<div class="em">Seleziona un mese.</div>';return;}
+
+  const meseLbl=new Date(mese+'-01').toLocaleDateString('it-IT',{month:'long',year:'numeric'});
+
+  // Costi fissi (si ripetono ogni mese)
+  const affitto=CF.affitto||0;
+  const social=CF.social||0;
+  const comm=CF.commercialista||0;
+  const altro=CF.altro||0;
+  const totFissi=affitto+social+comm+altro;
+
+  // Personale del mese
+  const persRow=(CF.personale||[]).find(r=>r.mese===mese);
+  const persVal=persRow?persRow.val:null;
+
+  // Utenze del mese
+  const utenRow=(CF.utenze||[]).find(r=>r.mese===mese);
+  const utenVal=utenRow?utenRow.val:null;
+
+  // Spese extra del mese
+  const extraMese=(CF.extra||[]).filter(r=>r.mese===mese);
+  const totExtra=extraMese.reduce((s,r)=>s+(r.val||0),0);
+
+  // Totale
+  const totale=totFissi+(persVal||0)+(utenVal||0)+totExtra;
+
+  let html=`<div style="margin-bottom:1rem;font-size:13px;font-weight:600;color:var(--text)">📅 ${meseLbl}</div>`;
+
+  // Tabella voci
+  html+=`<table><thead><tr><th>Voce</th><th>Tipo</th><th>Importo €</th><th>Note</th></tr></thead><tbody>`;
+
+  // Fissi
+  if(affitto>0)html+=`<tr><td style="font-weight:500">Affitto</td><td><span class="bx bg" style="font-size:9px">Fisso</span></td><td style="font-family:var(--m)">€ ${affitto.toFixed(0)}</td><td style="color:var(--t3)">—</td></tr>`;
+  if(social>0)html+=`<tr><td style="font-weight:500">Social media</td><td><span class="bx bg" style="font-size:9px">Fisso</span></td><td style="font-family:var(--m)">€ ${social.toFixed(0)}</td><td style="color:var(--t3)">—</td></tr>`;
+  if(comm>0)html+=`<tr><td style="font-weight:500">Commercialista</td><td><span class="bx bg" style="font-size:9px">Fisso</span></td><td style="font-family:var(--m)">€ ${comm.toFixed(0)}</td><td style="color:var(--t3)">—</td></tr>`;
+  if(altro>0)html+=`<tr><td style="font-weight:500">Altro (fisso)</td><td><span class="bx bg" style="font-size:9px">Fisso</span></td><td style="font-family:var(--m)">€ ${altro.toFixed(0)}</td><td style="color:var(--t3)">—</td></tr>`;
+
+  // Personale
+  if(persVal!==null){
+    html+=`<tr><td style="font-weight:500">Personale</td><td><span class="bx bw" style="font-size:9px">Variabile</span></td><td style="font-family:var(--m)">€ ${persVal.toFixed(0)}</td><td style="color:var(--t3)">Costo lordo mese</td></tr>`;
+  } else {
+    const mediaPers=cfMediaPersonale();
+    if(mediaPers>0)html+=`<tr style="opacity:.6"><td style="font-weight:500">Personale</td><td><span class="bx bw" style="font-size:9px">Variabile</span></td><td style="font-family:var(--m);color:var(--t2)">€ ${mediaPers.toFixed(0)} <span style="font-size:9px">(media)</span></td><td style="color:var(--t3)">Dato non inserito per questo mese</td></tr>`;
+  }
+
+  // Utenze
+  if(utenVal!==null){
+    html+=`<tr><td style="font-weight:500">Utenze</td><td><span class="bx bw" style="font-size:9px">Variabile</span></td><td style="font-family:var(--m)">€ ${utenVal.toFixed(0)}</td><td style="color:var(--t3)">Luce, gas, acqua</td></tr>`;
+  } else {
+    const mediaUten=cfMediaUtenze();
+    if(mediaUten>0)html+=`<tr style="opacity:.6"><td style="font-weight:500">Utenze</td><td><span class="bx bw" style="font-size:9px">Variabile</span></td><td style="font-family:var(--m);color:var(--t2)">€ ${mediaUten.toFixed(0)} <span style="font-size:9px">(media)</span></td><td style="color:var(--t3)">Dato non inserito per questo mese</td></tr>`;
+  }
+
+  // Spese extra del mese
+  extraMese.forEach(r=>{
+    html+=`<tr><td style="font-weight:500">${r.nome}</td><td><span class="bx bp" style="font-size:9px">Extra</span></td><td style="font-family:var(--m)">€ ${(r.val||0).toFixed(0)}</td><td style="color:var(--t3)">${r.note||'—'}</td></tr>`;
+  });
+
+  html+=`</tbody></table>`;
+
+  // Totale
+  html+=`<div style="margin-top:1rem;padding:1rem;background:var(--bg3);border-radius:var(--r);border:1px solid var(--bo)">
+    <div class="g3">
+      <div class="met" style="border-color:var(--gold)">
+        <div class="ml">Totale costi ${meseLbl}</div>
+        <div class="mv" style="font-size:28px">€ ${totale.toFixed(0)}</div>
+      </div>
+      <div class="met">
+        <div class="ml">Fissi</div>
+        <div class="mv">€ ${totFissi.toFixed(0)}</div>
+      </div>
+      <div class="met">
+        <div class="ml">Variabili + extra</div>
+        <div class="mv">€ ${((persVal||cfMediaPersonale())+(utenVal||cfMediaUtenze())+totExtra).toFixed(0)}</div>
+      </div>
+    </div>
+  </div>`;
+
+  w.innerHTML=html;
+}
+
 async function load(){
   try{
     // Carica da Supabase (online) con fallback localStorage
@@ -1087,7 +1193,8 @@ function go(n,el){
   document.querySelectorAll('.ni').forEach(b=>b.classList.remove('on'));
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.getElementById('pg-'+n).classList.add('on');el.classList.add('on');
-  if(n==='list')rL();if(n==='dash')rD();if(n==='anal')rA();if(n==='ing'){switchIngTab('mag');}if(n==='costi'){upCFForm();upCFStats();}
+  if(n==='list')rL();if(n==='dash')rD();if(n==='anal')rA();if(n==='ing'){switchIngTab('mag');}if(n==='costi'){upCFForm();upCFStats();// imposta mese corrente nel report
+const oggi=new Date().toISOString().slice(0,7);const rm=document.getElementById('cf-report-mese');if(rm&&!rm.value)rm.value=oggi;}
   if(n==='home'){rHM();rStaff();upStaffSel();}
 }
 function rAll(){rI();rR();rF();rHM();rStaff();upFF();upStaffSel();}
