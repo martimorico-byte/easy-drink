@@ -1036,10 +1036,8 @@ async function load(){
   if(!HM.length&&INIT_HM.length){HM=INIT_HM;sv('hm');}
   if(!ST.length&&INIT_ST.length){ST=INIT_ST;sv('st');}
   if(!Object.keys(WP).length&&Object.keys(INIT_WP).length){WP=INIT_WP;sv('wp');}
-  if(INIT_CF&&Object.keys(INIT_CF).length){
-    if(!CF.affitto&&!CF.personale?.length&&!CF.utenze?.length){CF=INIT_CF;sv('cf');}
-  }
-  if(INIT_CFG&&INIT_CFG.energia){CFG=INIT_CFG;sv('cfg');}
+  // CF viene solo da Supabase/localStorage, non dal backup incorporato
+  if(INIT_CFG&&INIT_CFG.energia&&!CFG.energia){CFG=INIT_CFG;sv('cfg');}
   if(!F.length){
     F=[{id:1,nome:'Cuni Bevande',tel:'',email:'',note:'Listino 01/03/2026',piva:''},{id:2,nome:'BM Group',tel:'035-0667672',email:'info@bmsrls.it',note:'',piva:'IT04189160163'},{id:3,nome:'Mercato',tel:'',email:'',note:'Prodotti freschi',piva:''},{id:4,nome:'ViNé',tel:'338 3134417',email:'vinesrls@gmail.com',note:'Lista v2411 - vini naturali',piva:'IT01569820291'},{id:5,nome:'Altro',tel:'',email:'',note:'',piva:''}];
     sv('f');
