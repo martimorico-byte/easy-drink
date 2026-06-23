@@ -107,6 +107,7 @@ tr:hover td{background:var(--bg3)}
     <div class="ni" onclick="go('ric',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Ricette</div>
     <div class="ni" onclick="go('list',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Listino</div>
     <div class="ni" onclick="go('dash',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</div>
+    <div class="ni" onclick="go('economia',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Economia</div>
     <div class="ni" onclick="go('costi',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Costi fissi</div>
     <div class="ni" onclick="go('anal',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analisi</div>
     <div class="ni" onclick="go('rep',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Report</div>
@@ -429,6 +430,173 @@ tr:hover td{background:var(--bg3)}
 
 </div>
 
+<!-- COSTI FISSI -->
+<div id="pg-costi" class="pg">
+  <div class="pt">Costi fissi mensili</div>
+  <div class="ps">Costi fissi inseriti come importo mensile · personale e utenze con storico mese per mese</div>
+
+  <!-- FISSI -->
+  <div class="card">
+    <div class="ct">Costi fissi (valore mensile)</div>
+    <div class="g2">
+      <div><label>Affitto €/mese (imponibile)</label><input type="number" id="cf-affitto" placeholder="0" step="50" oninput="saveCF()"/></div>
+      <div><label>Social media €/mese (imponibile)</label><input type="number" id="cf-social" placeholder="0" step="10" oninput="saveCF()"/></div>
+      <div><label>Commercialista €/mese (imponibile)</label><input type="number" id="cf-commercialista" placeholder="0" step="10" oninput="saveCF()"/></div>
+      <div><label>Altro €/mese (imponibile)</label><input type="number" id="cf-altro" placeholder="0" step="50" oninput="saveCF()"/></div>
+    </div>
+  </div>
+
+  <!-- ALTRE SPESE FISSE -->
+  <div class="card">
+    <div class="ct">➕ Altre spese fisse mensili</div>
+    <div class="g4" style="margin-bottom:.9rem">
+      <div><label>Voce di spesa</label><input type="text" id="cf-extra-nome" placeholder="es. Musica live, Software, Pulizie..."/></div>
+      <div><label>Mese (opzionale)</label><select id="cf-extra-mese"><option value="">Tutto l'anno</option></select></div>
+      <div><label>Importo €</label><input type="number" id="cf-extra-val" placeholder="0" step="10"/></div>
+      <div><label>Note / riferimento</label><input type="text" id="cf-extra-note" placeholder="es. contratto annuale, ogni venerdì..."/></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:1rem">
+      <button class="pr" onclick="addCFExtra()">+ Aggiungi voce</button>
+      <span class="ok" id="cf-extra-ok">✓ Salvato</span>
+    </div>
+    <div id="cf-extra-list"><div class="em">Nessuna voce aggiuntiva.</div></div>
+  </div>
+
+  <!-- PERSONALE storico -->
+  <div class="card">
+    <div class="ct">👥 Personale — storico mensile</div>
+    <div class="g3" style="margin-bottom:.9rem">
+      <div><label>Mese</label><input type="month" id="cf-pers-mese"/></div>
+      <div><label>Costo totale lordo €</label><input type="number" id="cf-pers-val" placeholder="0" step="100"/></div>
+      <div style="display:flex;align-items:flex-end"><button class="pr" onclick="addCFRow('personale')">+ Aggiungi</button></div>
+    </div>
+    <div id="cf-pers-list"><div class="em">Nessun dato inserito.</div></div>
+  </div>
+
+  <!-- UTENZE storico -->
+  <div class="card">
+    <div class="ct">⚡ Utenze — storico mensile (luce, gas, acqua)</div>
+    <div class="g3" style="margin-bottom:.9rem">
+      <div><label>Mese</label><input type="month" id="cf-uten-mese"/></div>
+      <div><label>Totale utenze €</label><input type="number" id="cf-uten-val" placeholder="0" step="50"/></div>
+      <div style="display:flex;align-items:flex-end"><button class="pr" onclick="addCFRow('utenze')">+ Aggiungi</button></div>
+    </div>
+    <div id="cf-uten-list"><div class="em">Nessun dato inserito.</div></div>
+  </div>
+
+  <!-- RIEPILOGO -->
+  <div class="card">
+    <div class="ct">Riepilogo</div>
+    <div class="g3">
+      <div class="met"><div class="ml">Totale costi fissi/mese (media)</div><div class="mv" id="cf-tot">€ 0</div></div>
+      <div class="met"><div class="ml">Costi fissi/giorno</div><div class="mv" id="cf-day">€ 0</div></div>
+      <div class="met"><div class="ml">Giorni lavorativi/mese</div><div><input type="number" id="cf-giorni" value="26" min="1" max="31" step="1" style="width:70px;font-family:var(--m);font-size:18px;font-weight:500;border:none;background:transparent;color:var(--text)" oninput="saveCF();upCFStats()"/></div></div>
+    </div>
+    <div class="sep"></div>
+    <div class="g2" style="margin-bottom:.9rem">
+      <div><label>Coperti medi al giorno</label><input type="number" id="cf-coperti" placeholder="50" min="1" oninput="saveCF();upCFStats()"/></div>
+      <div><label>Scontrino medio €</label><input type="number" id="cf-scontrino" placeholder="25" min="1" step="0.5" oninput="saveCF();upCFStats()"/></div>
+    </div>
+    <div id="cf-stats"></div>
+  </div>
+
+  <!-- REPORT MENSILE COSTI -->
+  <div class="card">
+    <div class="ct">📅 Report mensile costi</div>
+    <div class="g2" style="margin-bottom:1rem">
+      <div><label>Seleziona mese</label><input type="month" id="cf-report-mese" oninput="upCFReport()"/></div>
+      <div style="display:flex;align-items:flex-end"><button onclick="upCFReport()" class="pr">Visualizza</button></div>
+    </div>
+    <div id="cf-report-wrap"><div class="em">Seleziona un mese per vedere il report.</div></div>
+  </div>
+
+
+
+</div>
+
+<!-- ECONOMIA -->
+<div id="pg-economia" class="pg">
+  <div class="pt">Gestione economica</div>
+  <div class="ps">Fatture acquisto · Incassi giornalieri · Saldo mensile</div>
+  <div style="display:flex;gap:0;margin-bottom:1.2rem;border-bottom:2px solid var(--bo)">
+    <button id="eco-tab-fatt" onclick="switchEcoTab('fatture')" style="background:none;border:none;border-bottom:3px solid var(--gold);margin-bottom:-2px;padding:8px 20px;font-weight:600;color:var(--gold);cursor:pointer;font-size:13px;font-family:var(--f)">📄 Fatture acquisto</button>
+    <button id="eco-tab-inc" onclick="switchEcoTab('incassi')" style="background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:8px 20px;font-weight:400;color:var(--t2);cursor:pointer;font-size:13px;font-family:var(--f)">💰 Incassi</button>
+    <button id="eco-tab-sal" onclick="switchEcoTab('saldo')" style="background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:8px 20px;font-weight:400;color:var(--t2);cursor:pointer;font-size:13px;font-family:var(--f)">📊 Saldo mensile</button>
+  </div>
+
+  <!-- FATTURE -->
+  <div id="eco-sub-fatture">
+    <div class="card">
+      <div class="ct">Aggiungi fattura acquisto</div>
+      <div class="g4">
+        <div><label>Fornitore</label><select id="eco-fatt-forn"><option value="">-- seleziona --</option></select></div>
+        <div><label>Categoria</label><select id="eco-fatt-cat">
+          <option>Beverage</option><option>Food - Metro</option><option>Food - Carne</option>
+          <option>Food - Frutta e Verdura</option><option>Food - Altro</option><option>Altro</option>
+        </select></div>
+        <div><label>Data fattura</label><input type="date" id="eco-fatt-data"/></div>
+        <div><label>Importo € (imponibile)</label><input type="number" id="eco-fatt-imp" step="0.01" placeholder="0.00"/></div>
+      </div>
+      <div class="g3">
+        <div><label>N° fattura</label><input type="text" id="eco-fatt-num" placeholder="es. FT 001/2026"/></div>
+        <div><label>Note</label><input type="text" id="eco-fatt-note" placeholder="es. ordine settimanale"/></div>
+        <div style="display:flex;align-items:flex-end;gap:8px">
+          <button class="pr" onclick="addFattura()">+ Aggiungi</button>
+          <span class="ok" id="eco-fatt-ok">✓ Salvata</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="fb">
+        <input type="text" id="eco-fatt-s" placeholder="🔍 Cerca..." style="flex:2;width:auto" oninput="rFatture()"/>
+        <select id="eco-fatt-fc" onchange="rFatture()" style="flex:1;min-width:140px;width:auto">
+          <option value="">Tutte le categorie</option>
+          <option>Beverage</option><option>Food - Metro</option><option>Food - Carne</option>
+          <option>Food - Frutta e Verdura</option><option>Food - Altro</option><option>Altro</option>
+        </select>
+        <input type="month" id="eco-fatt-mese" onchange="rFatture()" style="flex:1;width:auto"/>
+        <button onclick="exportFattureXLSX()">📊 Excel</button>
+      </div>
+      <div id="eco-fatt-wrap"><div class="em">Nessuna fattura inserita.</div></div>
+    </div>
+  </div>
+
+  <!-- INCASSI -->
+  <div id="eco-sub-incassi" style="display:none">
+    <div class="card">
+      <div class="ct">Aggiungi incasso giornaliero</div>
+      <div class="g4">
+        <div><label>Data</label><input type="date" id="eco-inc-data"/></div>
+        <div><label>Incasso lordo € (IVA 10% incl.)</label><input type="number" id="eco-inc-lordo" step="0.01" placeholder="0.00" oninput="upIncPreview()"/></div>
+        <div><label>Incasso netto € (auto)</label><input type="number" id="eco-inc-netto" step="0.01" readonly style="background:var(--bg3);color:var(--t2)"/></div>
+        <div><label>Note</label><input type="text" id="eco-inc-note" placeholder="es. sabato sera..."/></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="pr" onclick="addIncasso()">+ Aggiungi</button>
+        <span class="ok" id="eco-inc-ok">✓ Salvato</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="fb">
+        <input type="month" id="eco-inc-mese" onchange="rIncassi()" style="flex:1;width:auto"/>
+        <button onclick="exportIncassiXLSX()">📊 Excel</button>
+      </div>
+      <div id="eco-inc-wrap"><div class="em">Nessun incasso inserito.</div></div>
+    </div>
+  </div>
+
+  <!-- SALDO -->
+  <div id="eco-sub-saldo" style="display:none">
+    <div class="card">
+      <div class="g2">
+        <div><label>Seleziona mese</label><input type="month" id="eco-sal-mese" oninput="upSaldo()"/></div>
+        <div style="display:flex;align-items:flex-end"><button class="pr" onclick="upSaldo()">Visualizza</button></div>
+      </div>
+    </div>
+    <div id="eco-sal-wrap"><div class="em">Seleziona un mese.</div></div>
+  </div>
+</div>
+
 <!-- ANALISI -->
 <div id="pg-anal" class="pg">
   <div class="pt">Analisi</div>
@@ -491,13 +659,15 @@ const INIT_HM=[{"id": 1781009739825, "nome": "Sciroppo di zucchero", "tipo": "Sc
 const INIT_ST=[{"id": 1748000000001, "nome": "Filippo Gelmini — Barista Liv.4", "tariffa": 13.76}];
 const INIT_WP={};
 const INIT_CF={"affitto": 1250, "social": 302, "commercialista": 500, "altro": 0, "giorni": 26, "coperti": 0, "scontrino": 0, "personale": [{"mese": "2026-05", "val": 10808}], "utenze": [{"mese": "2026-01", "val": 2397}, {"mese": "2026-02", "val": 1888}, {"mese": "2026-03", "val": 2165}, {"mese": "2026-04", "val": 1785}, {"mese": "2026-05", "val": 2072}], "extra": [{"id": 1781718091017, "nome": "Spotify", "val": 16, "note": ""}, {"id": 1781718115331, "nome": "SIAE", "val": 30, "note": "360€ canone annuo"}]};
+const INIT_FATT=[{"id": 1700000023, "forn": "ViNe", "cat": "Beverage", "data": "2025-03-19", "imp": 226.82, "num": "FV-076/2025", "note": "Vini naturali"}, {"id": 1700000024, "forn": "ViNe", "cat": "Beverage", "data": "2025-04-30", "imp": 272.18, "num": "FV-110/2025", "note": "Vini naturali"}, {"id": 1700000001, "forn": "Metro", "cat": "Food - Metro", "data": "2026-01-03", "imp": 448.63, "num": "194-234810", "note": "Delivery"}, {"id": 1700000002, "forn": "Metro", "cat": "Food - Metro", "data": "2026-01-07", "imp": 203.66, "num": "006-407726", "note": "Seriate"}, {"id": 1700000003, "forn": "Metro", "cat": "Food - Metro", "data": "2026-01-16", "imp": 422.56, "num": "194-242975", "note": "Delivery"}, {"id": 1700000004, "forn": "Metro", "cat": "Beverage", "data": "2026-01-16", "imp": 42.8, "num": "011-569573", "note": "Cinisello - Rum Planteray"}, {"id": 1700000005, "forn": "Metro", "cat": "Food - Metro", "data": "2026-01-24", "imp": 469.81, "num": "194-248359", "note": "Delivery"}, {"id": 1700000006, "forn": "Metro", "cat": "Food - Metro", "data": "2026-01-30", "imp": 368.67, "num": "194-252263", "note": "Delivery"}, {"id": 1700000007, "forn": "Metro", "cat": "Food - Metro", "data": "2026-02-06", "imp": 336.03, "num": "194-257042", "note": "Delivery"}, {"id": 1700000008, "forn": "Metro", "cat": "Food - Metro", "data": "2026-02-13", "imp": 373.3, "num": "194-262111", "note": "Delivery"}, {"id": 1700000009, "forn": "Metro", "cat": "Food - Metro", "data": "2026-02-20", "imp": 361.11, "num": "194-267083", "note": "Delivery"}, {"id": 1700000025, "forn": "ViNe", "cat": "Beverage", "data": "2026-02-23", "imp": 804.04, "num": "040/2026", "note": "San Cristoforo, Battistella, Rebuli, Andi"}, {"id": 1700000010, "forn": "Metro", "cat": "Food - Metro", "data": "2026-02-27", "imp": 447.66, "num": "194-272055", "note": "Delivery"}, {"id": 1700000011, "forn": "Metro", "cat": "Food - Metro", "data": "2026-03-06", "imp": 463.2, "num": "194-276997", "note": "Delivery"}, {"id": 1700000018, "forn": "Metro", "cat": "Food - Metro", "data": "2026-03-26", "imp": 332.82, "num": "194-291930", "note": "Delivery"}, {"id": 1700000012, "forn": "Metro", "cat": "Food - Metro", "data": "2026-04-01", "imp": 463.53, "num": "005-393235", "note": "Seriate"}, {"id": 1700000019, "forn": "Metro", "cat": "Food - Metro", "data": "2026-04-09", "imp": 648.82, "num": "194-302300", "note": "Delivery"}, {"id": 1700000020, "forn": "Metro", "cat": "Food - Metro", "data": "2026-04-18", "imp": 431.08, "num": "194-309952", "note": "Delivery"}, {"id": 1700000021, "forn": "Metro", "cat": "Food - Metro", "data": "2026-05-01", "imp": 502.29, "num": "194-320454", "note": "Delivery"}, {"id": 1700000013, "forn": "Metro", "cat": "Food - Metro", "data": "2026-05-21", "imp": 217.66, "num": "004-345959", "note": "Seriate"}, {"id": 1700000022, "forn": "Metro", "cat": "Food - Metro", "data": "2026-05-21", "imp": 344.06, "num": "194-336538", "note": "Delivery"}, {"id": 1700000014, "forn": "Metro", "cat": "Beverage", "data": "2026-05-27", "imp": 134.58, "num": "005-401346", "note": "Seriate - Gin/Acqua"}, {"id": 1700000015, "forn": "Metro", "cat": "Food - Metro", "data": "2026-05-29", "imp": 143.29, "num": "005-401722", "note": "Seriate - Pesce/Calamari"}, {"id": 1700000016, "forn": "Metro", "cat": "Beverage", "data": "2026-06-13", "imp": 263.67, "num": "003-298661", "note": "Seriate - Bailey/Montenegro/Aperol"}, {"id": 1700000017, "forn": "Metro", "cat": "Beverage", "data": "2026-06-18", "imp": 212.11, "num": "006-432015", "note": "Seriate - Gin Hendricks"}];
+const INIT_INC=[{"id": 1800000001, "data": "2026-01-02", "giorno": "Venerdì", "lordo": 145.0, "netto": 131.82, "note": "Venerdì"}, {"id": 1800000002, "data": "2026-01-03", "giorno": "Sabato", "lordo": 929.5, "netto": 845.0, "note": "Sabato"}, {"id": 1800000003, "data": "2026-01-04", "giorno": "Domenica", "lordo": 1343.5, "netto": 1221.36, "note": "Domenica"}, {"id": 1800000004, "data": "2026-01-05", "giorno": "Lunedì", "lordo": 500.5, "netto": 455.0, "note": "Lunedì"}, {"id": 1800000005, "data": "2026-01-06", "giorno": "Martedì", "lordo": 897.0, "netto": 815.45, "note": "Martedì"}, {"id": 1800000006, "data": "2026-01-09", "giorno": "Venerdì", "lordo": 405.5, "netto": 368.64, "note": "Venerdì"}, {"id": 1800000007, "data": "2026-01-10", "giorno": "Sabato", "lordo": 979.0, "netto": 890.0, "note": "Sabato"}, {"id": 1800000008, "data": "2026-01-11", "giorno": "Domenica", "lordo": 1747.9, "netto": 1589.0, "note": "Domenica"}, {"id": 1800000009, "data": "2026-01-12", "giorno": "Lunedì", "lordo": 41.0, "netto": 37.27, "note": "Lunedì"}, {"id": 1800000010, "data": "2026-01-13", "giorno": "Martedì", "lordo": 286.0, "netto": 260.0, "note": "Martedì"}, {"id": 1800000011, "data": "2026-01-14", "giorno": "Mercoledì", "lordo": 322.5, "netto": 293.18, "note": "Mercoledì"}, {"id": 1800000012, "data": "2026-01-15", "giorno": "Giovedì", "lordo": 397.0, "netto": 360.91, "note": "Giovedì"}, {"id": 1800000013, "data": "2026-01-16", "giorno": "Venerdì", "lordo": 378.0, "netto": 343.64, "note": "Venerdì"}, {"id": 1800000014, "data": "2026-01-17", "giorno": "Sabato", "lordo": 1616.5, "netto": 1469.55, "note": "Sabato"}, {"id": 1800000015, "data": "2026-01-18", "giorno": "Domenica", "lordo": 1484.0, "netto": 1349.09, "note": "Domenica"}, {"id": 1800000016, "data": "2026-01-19", "giorno": "Lunedì", "lordo": 31.0, "netto": 28.18, "note": "Lunedì"}, {"id": 1800000017, "data": "2026-01-20", "giorno": "Martedì", "lordo": 271.5, "netto": 246.82, "note": "Martedì"}, {"id": 1800000018, "data": "2026-01-21", "giorno": "Mercoledì", "lordo": 755.5, "netto": 686.82, "note": "Mercoledì"}, {"id": 1800000019, "data": "2026-01-22", "giorno": "Giovedì", "lordo": 367.5, "netto": 334.09, "note": "Giovedì"}, {"id": 1800000020, "data": "2026-01-23", "giorno": "Venerdì", "lordo": 842.5, "netto": 765.91, "note": "Venerdì"}, {"id": 1800000021, "data": "2026-01-24", "giorno": "Sabato", "lordo": 2209.5, "netto": 2008.64, "note": "Sabato"}, {"id": 1800000022, "data": "2026-01-25", "giorno": "Domenica", "lordo": 982.0, "netto": 892.73, "note": "Domenica"}, {"id": 1800000023, "data": "2026-01-27", "giorno": "Martedì", "lordo": 304.0, "netto": 276.36, "note": "Martedì"}, {"id": 1800000024, "data": "2026-01-28", "giorno": "Mercoledì", "lordo": 268.5, "netto": 244.09, "note": "Mercoledì"}, {"id": 1800000025, "data": "2026-01-29", "giorno": "Giovedì", "lordo": 456.5, "netto": 415.0, "note": "Giovedì"}, {"id": 1800000026, "data": "2026-01-30", "giorno": "Venerdì", "lordo": 483.0, "netto": 439.09, "note": "Venerdì"}, {"id": 1800000027, "data": "2026-01-31", "giorno": "Sabato", "lordo": 1672.0, "netto": 1520.0, "note": "Sabato"}, {"id": 1800000028, "data": "2026-02-01", "giorno": "Domenica", "lordo": 1807.5, "netto": 1643.18, "note": "Domenica"}, {"id": 1800000029, "data": "2026-02-03", "giorno": "Martedì", "lordo": 256.0, "netto": 232.73, "note": "Martedì"}, {"id": 1800000030, "data": "2026-02-04", "giorno": "Mercoledì", "lordo": 419.0, "netto": 380.91, "note": "Mercoledì"}, {"id": 1800000031, "data": "2026-02-05", "giorno": "Giovedì", "lordo": 347.0, "netto": 315.45, "note": "Giovedì"}, {"id": 1800000032, "data": "2026-02-06", "giorno": "Venerdì", "lordo": 525.0, "netto": 477.27, "note": "Venerdì"}, {"id": 1800000033, "data": "2026-02-07", "giorno": "Sabato", "lordo": 1636.0, "netto": 1487.27, "note": "Sabato"}, {"id": 1800000034, "data": "2026-02-08", "giorno": "Domenica", "lordo": 1927.5, "netto": 1752.27, "note": "Domenica"}, {"id": 1800000035, "data": "2026-02-09", "giorno": "Lunedì", "lordo": 55.0, "netto": 50.0, "note": "Lunedì"}, {"id": 1800000036, "data": "2026-02-10", "giorno": "Martedì", "lordo": 347.5, "netto": 315.91, "note": "Martedì"}, {"id": 1800000037, "data": "2026-02-11", "giorno": "Mercoledì", "lordo": 322.0, "netto": 292.73, "note": "Mercoledì"}, {"id": 1800000038, "data": "2026-02-12", "giorno": "Giovedì", "lordo": 483.5, "netto": 439.55, "note": "Giovedì"}, {"id": 1800000039, "data": "2026-02-13", "giorno": "Venerdì", "lordo": 409.0, "netto": 371.82, "note": "Venerdì"}, {"id": 1800000040, "data": "2026-02-14", "giorno": "Sabato", "lordo": 2383.5, "netto": 2166.82, "note": "Sabato"}, {"id": 1800000041, "data": "2026-02-15", "giorno": "Domenica", "lordo": 879.0, "netto": 799.09, "note": "Domenica"}, {"id": 1800000042, "data": "2026-02-17", "giorno": "Martedì", "lordo": 173.5, "netto": 157.73, "note": "Martedì"}, {"id": 1800000043, "data": "2026-02-18", "giorno": "Mercoledì", "lordo": 220.0, "netto": 200.0, "note": "Mercoledì"}, {"id": 1800000044, "data": "2026-02-19", "giorno": "Giovedì", "lordo": 473.5, "netto": 430.45, "note": "Giovedì"}, {"id": 1800000045, "data": "2026-02-20", "giorno": "Venerdì", "lordo": 970.5, "netto": 882.27, "note": "Venerdì"}, {"id": 1800000046, "data": "2026-02-21", "giorno": "Sabato", "lordo": 1451.0, "netto": 1319.09, "note": "Sabato"}, {"id": 1800000047, "data": "2026-02-22", "giorno": "Domenica", "lordo": 751.0, "netto": 682.73, "note": "Domenica"}, {"id": 1800000048, "data": "2026-02-23", "giorno": "Lunedì", "lordo": 274.0, "netto": 249.09, "note": "Lunedì"}, {"id": 1800000049, "data": "2026-02-24", "giorno": "Martedì", "lordo": 449.0, "netto": 408.18, "note": "Martedì"}, {"id": 1800000050, "data": "2026-02-25", "giorno": "Mercoledì", "lordo": 720.0, "netto": 654.55, "note": "Mercoledì"}, {"id": 1800000051, "data": "2026-02-26", "giorno": "Giovedì", "lordo": 213.5, "netto": 194.09, "note": "Giovedì"}, {"id": 1800000052, "data": "2026-02-27", "giorno": "Venerdì", "lordo": 378.5, "netto": 344.09, "note": "Venerdì"}, {"id": 1800000053, "data": "2026-02-28", "giorno": "Sabato", "lordo": 1151.5, "netto": 1046.82, "note": "Sabato"}, {"id": 1800000054, "data": "2026-03-01", "giorno": "Domenica", "lordo": 1616.5, "netto": 1469.55, "note": "Domenica"}, {"id": 1800000055, "data": "2026-03-02", "giorno": "Lunedì", "lordo": 326.5, "netto": 296.82, "note": "Lunedì"}, {"id": 1800000056, "data": "2026-03-03", "giorno": "Martedì", "lordo": 299.0, "netto": 271.82, "note": "Martedì"}, {"id": 1800000057, "data": "2026-03-04", "giorno": "Mercoledì", "lordo": 430.5, "netto": 391.36, "note": "Mercoledì"}, {"id": 1800000058, "data": "2026-03-05", "giorno": "Giovedì", "lordo": 633.5, "netto": 575.91, "note": "Giovedì"}, {"id": 1800000059, "data": "2026-03-06", "giorno": "Venerdì", "lordo": 2140.0, "netto": 1945.45, "note": "Venerdì"}, {"id": 1800000060, "data": "2026-03-07", "giorno": "Sabato", "lordo": 2628.13, "netto": 2389.21, "note": "Sabato"}, {"id": 1800000061, "data": "2026-03-08", "giorno": "Domenica", "lordo": 436.0, "netto": 396.36, "note": "Domenica"}, {"id": 1800000062, "data": "2026-03-09", "giorno": "Lunedì", "lordo": 206.5, "netto": 187.73, "note": "Lunedì"}, {"id": 1800000063, "data": "2026-03-10", "giorno": "Martedì", "lordo": 626.0, "netto": 569.09, "note": "Martedì"}, {"id": 1800000064, "data": "2026-03-11", "giorno": "Mercoledì", "lordo": 625.5, "netto": 568.64, "note": "Mercoledì"}, {"id": 1800000065, "data": "2026-03-12", "giorno": "Giovedì", "lordo": 990.5, "netto": 900.45, "note": "Giovedì"}, {"id": 1800000066, "data": "2026-03-13", "giorno": "Venerdì", "lordo": 2592.5, "netto": 2356.82, "note": "Venerdì"}, {"id": 1800000067, "data": "2026-03-14", "giorno": "Sabato", "lordo": 2512.5, "netto": 2284.09, "note": "Sabato"}, {"id": 1800000068, "data": "2026-03-16", "giorno": "Lunedì", "lordo": 363.0, "netto": 330.0, "note": "Lunedì"}, {"id": 1800000069, "data": "2026-03-17", "giorno": "Martedì", "lordo": 536.0, "netto": 487.27, "note": "Martedì"}, {"id": 1800000070, "data": "2026-03-18", "giorno": "Mercoledì", "lordo": 324.0, "netto": 294.55, "note": "Mercoledì"}, {"id": 1800000071, "data": "2026-03-19", "giorno": "Giovedì", "lordo": 1330.0, "netto": 1209.09, "note": "Giovedì"}, {"id": 1800000072, "data": "2026-03-20", "giorno": "Venerdì", "lordo": 1933.45, "netto": 1767.27, "note": "Venerdì"}, {"id": 1800000073, "data": "2026-03-21", "giorno": "Sabato", "lordo": 1607.0, "netto": 1460.91, "note": "Sabato"}, {"id": 1800000074, "data": "2026-03-22", "giorno": "Domenica", "lordo": 40.0, "netto": 36.36, "note": "Domenica"}, {"id": 1800000075, "data": "2026-03-23", "giorno": "Lunedì", "lordo": 661.0, "netto": 600.91, "note": "Lunedì"}, {"id": 1800000076, "data": "2026-03-24", "giorno": "Martedì", "lordo": 67.0, "netto": 60.91, "note": "Martedì"}, {"id": 1800000077, "data": "2026-03-25", "giorno": "Mercoledì", "lordo": 626.5, "netto": 569.55, "note": "Mercoledì"}, {"id": 1800000078, "data": "2026-03-26", "giorno": "Giovedì", "lordo": 818.5, "netto": 744.09, "note": "Giovedì"}, {"id": 1800000079, "data": "2026-03-27", "giorno": "Venerdì", "lordo": 1560.5, "netto": 1418.64, "note": "Venerdì"}, {"id": 1800000080, "data": "2026-03-28", "giorno": "Sabato", "lordo": 2055.8, "netto": 1868.91, "note": "Sabato"}, {"id": 1800000081, "data": "2026-03-29", "giorno": "Domenica", "lordo": 68.0, "netto": 61.82, "note": "Domenica"}, {"id": 1800000082, "data": "2026-03-30", "giorno": "Lunedì", "lordo": 310.0, "netto": 281.82, "note": "Lunedì"}, {"id": 1800000083, "data": "2026-03-31", "giorno": "Martedì", "lordo": 310.0, "netto": 281.82, "note": "Martedì"}, {"id": 1800000084, "data": "2026-04-01", "giorno": "Mercoledì", "lordo": 164.0, "netto": 149.09, "note": "Mercoledì"}, {"id": 1800000085, "data": "2026-04-02", "giorno": "Giovedì", "lordo": 932.0, "netto": 847.27, "note": "Giovedì"}, {"id": 1800000086, "data": "2026-04-03", "giorno": "Venerdì", "lordo": 931.0, "netto": 846.36, "note": "Venerdì"}, {"id": 1800000087, "data": "2026-04-04", "giorno": "Sabato", "lordo": 2441.5, "netto": 2219.55, "note": "Sabato"}, {"id": 1800000088, "data": "2026-04-05", "giorno": "Domenica", "lordo": 1382.0, "netto": 1256.36, "note": "Domenica"}, {"id": 1800000089, "data": "2026-04-06", "giorno": "Lunedì", "lordo": 110.0, "netto": 100.0, "note": "Lunedì"}, {"id": 1800000090, "data": "2026-04-08", "giorno": "Mercoledì", "lordo": 121.0, "netto": 110.0, "note": "Mercoledì"}, {"id": 1800000091, "data": "2026-04-09", "giorno": "Giovedì", "lordo": 255.5, "netto": 232.27, "note": "Giovedì"}, {"id": 1800000092, "data": "2026-04-10", "giorno": "Venerdì", "lordo": 553.0, "netto": 502.73, "note": "Venerdì"}, {"id": 1800000093, "data": "2026-04-11", "giorno": "Sabato", "lordo": 1692.0, "netto": 1538.18, "note": "Sabato"}, {"id": 1800000094, "data": "2026-04-12", "giorno": "Domenica", "lordo": 2428.7, "netto": 2207.91, "note": "Domenica"}, {"id": 1800000095, "data": "2026-04-14", "giorno": "Martedì", "lordo": 225.5, "netto": 205.0, "note": "Martedì"}, {"id": 1800000096, "data": "2026-04-15", "giorno": "Mercoledì", "lordo": 275.5, "netto": 250.45, "note": "Mercoledì"}, {"id": 1800000097, "data": "2026-04-16", "giorno": "Giovedì", "lordo": 535.5, "netto": 486.82, "note": "Giovedì"}, {"id": 1800000098, "data": "2026-04-17", "giorno": "Venerdì", "lordo": 479.5, "netto": 435.91, "note": "Venerdì"}, {"id": 1800000099, "data": "2026-04-18", "giorno": "Sabato", "lordo": 1717.5, "netto": 1561.36, "note": "Sabato"}, {"id": 1800000100, "data": "2026-04-19", "giorno": "Domenica", "lordo": 2134.9, "netto": 1940.82, "note": "Domenica"}, {"id": 1800000101, "data": "2026-04-21", "giorno": "Martedì", "lordo": 226.5, "netto": 205.91, "note": "Martedì"}, {"id": 1800000102, "data": "2026-04-22", "giorno": "Mercoledì", "lordo": 307.5, "netto": 279.55, "note": "Mercoledì"}, {"id": 1800000103, "data": "2026-04-23", "giorno": "Giovedì", "lordo": 338.0, "netto": 307.27, "note": "Giovedì"}, {"id": 1800000104, "data": "2026-04-24", "giorno": "Venerdì", "lordo": 807.5, "netto": 734.09, "note": "Venerdì"}, {"id": 1800000105, "data": "2026-04-25", "giorno": "Sabato", "lordo": 1632.0, "netto": 1483.64, "note": "Sabato"}, {"id": 1800000106, "data": "2026-04-26", "giorno": "Domenica", "lordo": 1321.0, "netto": 1200.91, "note": "Domenica"}, {"id": 1800000107, "data": "2026-04-27", "giorno": "Lunedì", "lordo": 39.0, "netto": 35.45, "note": "Lunedì"}, {"id": 1800000108, "data": "2026-04-28", "giorno": "Martedì", "lordo": 239.0, "netto": 217.27, "note": "Martedì"}, {"id": 1800000109, "data": "2026-04-29", "giorno": "Mercoledì", "lordo": 411.5, "netto": 374.09, "note": "Mercoledì"}, {"id": 1800000110, "data": "2026-04-30", "giorno": "Giovedì", "lordo": 495.5, "netto": 450.45, "note": "Giovedì"}, {"id": 1800000111, "data": "2026-05-01", "giorno": "Venerdì", "lordo": 651.0, "netto": 591.82, "note": "Venerdì"}, {"id": 1800000112, "data": "2026-05-02", "giorno": "Sabato", "lordo": 977.5, "netto": 888.64, "note": "Sabato"}, {"id": 1800000113, "data": "2026-05-03", "giorno": "Domenica", "lordo": 976.5, "netto": 887.73, "note": "Domenica"}, {"id": 1800000114, "data": "2026-05-04", "giorno": "Lunedì", "lordo": 25.0, "netto": 22.73, "note": "Lunedì"}, {"id": 1800000115, "data": "2026-05-05", "giorno": "Martedì", "lordo": 308.0, "netto": 280.0, "note": "Martedì"}, {"id": 1800000116, "data": "2026-05-06", "giorno": "Mercoledì", "lordo": 398.0, "netto": 361.82, "note": "Mercoledì"}, {"id": 1800000117, "data": "2026-05-07", "giorno": "Giovedì", "lordo": 441.5, "netto": 401.36, "note": "Giovedì"}, {"id": 1800000118, "data": "2026-05-08", "giorno": "Venerdì", "lordo": 795.5, "netto": 723.18, "note": "Venerdì"}, {"id": 1800000119, "data": "2026-05-09", "giorno": "Sabato", "lordo": 1478.0, "netto": 1343.64, "note": "Sabato"}, {"id": 1800000120, "data": "2026-05-10", "giorno": "Domenica", "lordo": 1712.6, "netto": 1556.91, "note": "Domenica"}, {"id": 1800000121, "data": "2026-05-11", "giorno": "Lunedì", "lordo": 17.0, "netto": 15.45, "note": "Lunedì"}, {"id": 1800000122, "data": "2026-05-12", "giorno": "Martedì", "lordo": 133.0, "netto": 120.91, "note": "Martedì"}, {"id": 1800000123, "data": "2026-05-13", "giorno": "Mercoledì", "lordo": 192.0, "netto": 174.55, "note": "Mercoledì"}, {"id": 1800000124, "data": "2026-05-14", "giorno": "Giovedì", "lordo": 682.5, "netto": 620.45, "note": "Giovedì"}, {"id": 1800000125, "data": "2026-05-15", "giorno": "Venerdì", "lordo": 1007.5, "netto": 915.91, "note": "Venerdì"}, {"id": 1800000126, "data": "2026-05-16", "giorno": "Sabato", "lordo": 1970.21, "netto": 1791.1, "note": "Sabato"}, {"id": 1800000127, "data": "2026-05-17", "giorno": "Domenica", "lordo": 1123.5, "netto": 1021.36, "note": "Domenica"}, {"id": 1800000128, "data": "2026-05-18", "giorno": "Lunedì", "lordo": 8.0, "netto": 7.27, "note": "Lunedì"}, {"id": 1800000129, "data": "2026-05-19", "giorno": "Martedì", "lordo": 348.0, "netto": 316.36, "note": "Martedì"}, {"id": 1800000130, "data": "2026-05-20", "giorno": "Mercoledì", "lordo": 228.5, "netto": 207.73, "note": "Mercoledì"}, {"id": 1800000131, "data": "2026-05-21", "giorno": "Giovedì", "lordo": 736.48, "netto": 669.53, "note": "Giovedì"}, {"id": 1800000132, "data": "2026-05-22", "giorno": "Venerdì", "lordo": 355.0, "netto": 322.73, "note": "Venerdì"}, {"id": 1800000133, "data": "2026-05-23", "giorno": "Sabato", "lordo": 1179.5, "netto": 1072.27, "note": "Sabato"}, {"id": 1800000134, "data": "2026-05-24", "giorno": "Domenica", "lordo": 2648.3, "netto": 2407.55, "note": "Domenica"}, {"id": 1800000135, "data": "2026-05-25", "giorno": "Lunedi", "lordo": 384.0, "netto": 349.09, "note": "Lunedi"}];
 const INIT_CFG={"energia": 3};
 
 // ════════════════════════════════════════════════════════════════════
 //  DATI & STORAGE
 // ════════════════════════════════════════════════════════════════════
-const KI='edf12_i',KR='edf12_r',KP='edf12_p',KF='edf12_f',KH='edf12_hm',KS='edf12_st',KC='edf12_cfg';
-let I=[],R=[],P={},F=[],HM=[],ST=[],CFG={energia:3};
+const KI='edf12_i',KR='edf12_r',KP='edf12_p',KF='edf12_f',KH='edf12_hm',KS='edf12_st',KC='edf12_cfg',KW='edf12_wp',KCF='edf12_cf',KFATT='edf12_fatt',KINC='edf12_inc';
+let I=[],R=[],P={},F=[],HM=[],ST=[],CFG={energia:3},WP={},FATT=[],INC=[],CF={affitto:0,social:0,commercialista:0,altro:0,giorni:26,coperti:0,scontrino:0,personale:[],utenze:[],extra:[]};
 
 const DEF_I=[{"id": 1780573271598, "nome": "BRACCA FRIZZANTE 1LT", "cat": "Soft drink / Mixer", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 0.3239, "storico": [{"data": "2026-03-01", "costo": 0.33, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.3239, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271599, "nome": "BRACCA NATURALE 1LT", "cat": "Soft drink / Mixer", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 0.3239, "storico": [{"data": "2026-03-01", "costo": 0.34, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.3239, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271600, "nome": "BRACCA NATURALE PET 50CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 0.19, "storico": [{"data": "2026-03-01", "costo": 0.19, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271601, "nome": "BRACCA FRIZZANTE PET 50CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 0.19, "storico": [{"data": "2026-03-01", "costo": 0.19, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271602, "nome": "PANNA NATURALE 75CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 0.7, "storico": [{"data": "2026-03-01", "costo": 0.72, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.7, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271603, "nome": "SANPELLEGRINO FRIZZANTE 75CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 0.7, "storico": [{"data": "2026-03-01", "costo": 0.72, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.7, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271604, "nome": "MOOD FRIZZANTE PET 50CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 0.3275, "storico": [{"data": "2026-03-01", "costo": 0.33, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.3275, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271605, "nome": "MOOD NATURALE PET 50CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 0.3277, "storico": [{"data": "2026-03-01", "costo": 0.33, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.3277, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271606, "nome": "CRODINO XL 17CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 170, "fornitore": "Cuni Bevande", "costo": 1.14, "storico": [{"data": "2026-03-01", "costo": 1.14, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271607, "nome": "SPUMADOR BIONDA 1LT", "cat": "Soft drink / Mixer", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 0.6, "storico": [{"data": "2026-03-01", "costo": 0.6, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271608, "nome": "RECOARO BRILLANTE 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.6133, "storico": [{"data": "2026-03-01", "costo": 0.63, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.6133, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271609, "nome": "COCA COLA 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 0.83, "storico": [{"data": "2026-03-01", "costo": 0.83, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271610, "nome": "COCA ZERO 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 0.83, "storico": [{"data": "2026-03-01", "costo": 0.83, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271611, "nome": "COCA COLA LATTINA 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 0.6433, "storico": [{"data": "2026-03-01", "costo": 0.67, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.6433, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271612, "nome": "GALVANINA GASSOSA BIO 35CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 350, "fornitore": "Cuni Bevande", "costo": 1.34, "storico": [{"data": "2026-03-01", "costo": 1.34, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271613, "nome": "GALVANINA TONICA CLASSICA BIO 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.9229, "storico": [{"data": "2026-03-01", "costo": 0.92, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.9229, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271614, "nome": "GALVANINA SODA PELMO ROSA BIO 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 1.06, "storico": [{"data": "2026-03-01", "costo": 1.06, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271615, "nome": "SANPELLEGRINO TONICA AGRUMI 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.7935, "storico": [{"data": "2026-03-01", "costo": 0.81, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.7935, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271616, "nome": "ESTATHE LIMONE 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Cuni Bevande", "costo": 0.94, "storico": [{"data": "2026-03-01", "costo": 0.94, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271617, "nome": "SANPELLEGRINO AMARA 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.6058, "storico": [{"data": "2026-03-01", "costo": 0.73, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.6058, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271618, "nome": "SANPELLEGRINO CHINO 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.73, "storico": [{"data": "2026-03-01", "costo": 0.73, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271619, "nome": "REDBULL ORGANICS TONIC 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Cuni Bevande", "costo": 0.9779, "storico": [{"data": "2026-03-01", "costo": 0.98, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.9779, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271620, "nome": "REDBULL ORGANICS LEMON 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Cuni Bevande", "costo": 0.98, "storico": [{"data": "2026-03-01", "costo": 0.98, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271621, "nome": "REDBULL ORGANICS GINGERBEER 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Cuni Bevande", "costo": 0.98, "storico": [{"data": "2026-03-01", "costo": 0.98, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271622, "nome": "REDBULL ORGANICS ORANGE 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Cuni Bevande", "costo": 0.98, "storico": [{"data": "2026-03-01", "costo": 0.98, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271623, "nome": "REDBULL LATTINA 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Cuni Bevande", "costo": 1.05, "storico": [{"data": "2026-03-01", "costo": 1.05, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 1.05, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271624, "nome": "FEVER TREE INDIAN TONIC WATER 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.95, "storico": [{"data": "2026-03-01", "costo": 0.95, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271625, "nome": "WAR FRANCO LATTINA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 2.07, "storico": [{"data": "2026-03-01", "costo": 2.07, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271626, "nome": "WAR AMEN GLUTEN FREE LATTINA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 2.2021, "storico": [{"data": "2026-03-01", "costo": 2.25, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 2.2021, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271627, "nome": "WAR TUTTO FATTO LATTINA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 2.71, "storico": [{"data": "2026-03-01", "costo": 2.71, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271628, "nome": "WAR MEZZO FATTO LATTINA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 2.5558, "storico": [{"data": "2026-03-01", "costo": 2.61, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 2.5558, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271629, "nome": "WAR OSANNA LATTINA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 2.025, "storico": [{"data": "2026-03-01", "costo": 2.07, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 2.025, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271630, "nome": "NOAM 34CL", "cat": "Birra", "um": "ml", "qty": 340, "fornitore": "Cuni Bevande", "costo": 1.5769, "storico": [{"data": "2026-03-01", "costo": 1.71, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 1.5769, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271631, "nome": "MENABREA ANNIVERSARIO BIONDA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 0.954, "storico": [{"data": "2026-03-01", "costo": 0.97, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 0.954, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271632, "nome": "BIRRIFICIO ITALIANO AMBER SHOCK 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Cuni Bevande", "costo": 2.99, "storico": [{"data": "2026-03-01", "costo": 2.99, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 2.99, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271633, "nome": "POGGIARELLO VENTO SAUVIGNON 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 8.1, "storico": [{"data": "2026-03-01", "costo": 8.1, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271634, "nome": "HENRIET CHAMPAGNE TRADITION BRUT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 23.92, "storico": [{"data": "2026-03-01", "costo": 23.92, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271635, "nome": "CITARI LUGANA TERRE BIANCHE 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 6.6, "storico": [{"data": "2026-03-01", "costo": 7.46, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 6.6, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271636, "nome": "CA DEI FRATI LUGANA 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 9.1267, "storico": [{"data": "2026-03-01", "costo": 9.28, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 9.1267, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271637, "nome": "SCHOLA SARMENTI CUBARDI MAGNUM 1,5LT", "cat": "Vino", "um": "ml", "qty": 1500, "fornitore": "Cuni Bevande", "costo": 24.65, "storico": [{"data": "2026-03-01", "costo": 25.93, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 24.65, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271638, "nome": "ST PAULS GEWURZTRAMINER IUSTUS 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 9.52, "storico": [{"data": "2026-03-01", "costo": 9.84, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 9.52, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271639, "nome": "SCHOLA SARMENTI PRIMIT CRITERA 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 6.63, "storico": [{"data": "2026-03-01", "costo": 7.06, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 6.63, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271640, "nome": "SCHOLA SARMENTI PRIM RIS CUBARDI 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 11.05, "storico": [{"data": "2026-03-01", "costo": 11.05, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271641, "nome": "RADISE SPUMANTE MILL EXTRA DRY 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 2.28, "storico": [{"data": "2026-03-01", "costo": 2.28, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271642, "nome": "RADISE PROSECCO VALDOBBIADENE 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 5.33, "storico": [{"data": "2026-03-01", "costo": 5.33, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271643, "nome": "AMAVEL COSTA PORTO RUBY 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 11.48, "storico": [{"data": "2026-03-01", "costo": 11.48, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271644, "nome": "CLEEBOURG CREMANT D ALSACE 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 8.56, "storico": [{"data": "2026-03-01", "costo": 8.56, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271645, "nome": "PLOSE MELA SUCCO BIO 20CL", "cat": "Succhi / Puree", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 1.27, "storico": [{"data": "2026-03-01", "costo": 1.27, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271646, "nome": "CIRIO POMODORO SUCCO 20CL", "cat": "Succhi / Puree", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.93, "storico": [{"data": "2026-03-01", "costo": 0.93, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271647, "nome": "PAGO PERA SUCCO 20CL", "cat": "Succhi / Puree", "um": "ml", "qty": 200, "fornitore": "Cuni Bevande", "costo": 0.9, "storico": [{"data": "2026-03-01", "costo": 0.9, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271648, "nome": "JEFFERSON AMARO IMPORTANTE 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 23.55, "storico": [{"data": "2026-03-01", "costo": 23.55, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271649, "nome": "RABARBARO ZUCCA GRAN RISERVA 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 13.52, "storico": [{"data": "2026-03-01", "costo": 13.52, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271650, "nome": "FERNET BRANCA MENTA 1LT", "cat": "Liquori", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 16.58, "storico": [{"data": "2026-03-01", "costo": 16.58, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271651, "nome": "APEROL 1LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 12.11, "storico": [{"data": "2026-03-01", "costo": 12.11, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271652, "nome": "BITTER CAMPARI CASK TALES 1LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 44.2, "storico": [{"data": "2026-03-01", "costo": 44.2, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271653, "nome": "PUNT E MES APERITIVO 1LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 8.56, "storico": [{"data": "2026-03-01", "costo": 8.56, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271654, "nome": "BITTER FUSETTI CACAO 70CL", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 15.55, "storico": [{"data": "2026-03-01", "costo": 15.55, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271655, "nome": "SORBOLE APERITIVO 70CL", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 12.67, "storico": [{"data": "2026-03-01", "costo": 12.67, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271656, "nome": "BAG IN BOX BITTER FUSETTI 3LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 3000, "fornitore": "Cuni Bevande", "costo": 37.84, "storico": [{"data": "2026-03-01", "costo": 37.84, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 37.84, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271657, "nome": "BITTER FUSETTI MEXICO 70CL", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 18.8, "storico": [{"data": "2026-03-01", "costo": 18.8, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271658, "nome": "GRAPPA ANTHOLOGY VIOLA CLASSICA 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 16.48, "storico": [{"data": "2026-03-01", "costo": 16.48, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271659, "nome": "GRAPPA MAROLO BAROLO BARRIQUE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 26.48, "storico": [{"data": "2026-03-01", "costo": 26.48, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271660, "nome": "GRAPPA MARZADRO GIARE AMARONE RIS 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 31.36, "storico": [{"data": "2026-03-01", "costo": 31.36, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271661, "nome": "GIN LONDON DRY NO 3 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 27.53, "storico": [{"data": "2026-03-01", "costo": 27.53, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 27.53, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271662, "nome": "GIN MONKEY 47 50CL", "cat": "Spirits base", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 30.68, "storico": [{"data": "2026-03-01", "costo": 30.68, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271663, "nome": "GIN BEEFEATER 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 13.065, "storico": [{"data": "2026-03-01", "costo": 16.08, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 13.065, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271664, "nome": "GIN PLYMOUTH 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 17.02, "storico": [{"data": "2026-03-01", "costo": 17.02, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271665, "nome": "GIN KINOBI KYOTO DRY 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 43.28, "storico": [{"data": "2026-03-01", "costo": 43.28, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271666, "nome": "GIN MALFY POMPELMO ROSA 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 18.915, "storico": [{"data": "2026-03-01", "costo": 20.66, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 18.915, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271667, "nome": "GIN HAYMANS SLOE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 18.8, "storico": [{"data": "2026-03-01", "costo": 17.6, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 18.8, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271668, "nome": "GIN PLYMOUTH NAVY STRENGHT 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 31.57, "storico": [{"data": "2026-03-01", "costo": 31.57, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 31.57, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271669, "nome": "GIN GIN ARTE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 24.56, "storico": [{"data": "2026-03-01", "costo": 24.56, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271670, "nome": "GIN BEEFEATER 00 NOALCOL 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 8.48, "storico": [{"data": "2026-03-01", "costo": 10.64, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 8.48, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271671, "nome": "GIN HOLYWATER 50CL", "cat": "Spirits base", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 29.64, "storico": [{"data": "2026-03-01", "costo": 29.64, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271672, "nome": "GIN ARTE MAGNUM 150CL", "cat": "Spirits base", "um": "ml", "qty": 1500, "fornitore": "Cuni Bevande", "costo": 62.9, "storico": [{"data": "2026-03-01", "costo": 62.9, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271673, "nome": "GIN MALFY LIMONE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 22.12, "storico": [{"data": "2026-03-01", "costo": 22.12, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271674, "nome": "GIN PORTOFINO DRY 50CL", "cat": "Spirits base", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 36.4, "storico": [{"data": "2026-03-01", "costo": 36.4, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271675, "nome": "FEE FOAM FEE BROTHERS 15CL", "cat": "Liquori", "um": "ml", "qty": 150, "fornitore": "Cuni Bevande", "costo": 14.64, "storico": [{"data": "2026-03-01", "costo": 14.64, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271676, "nome": "SAINT GERMAIN LIQUORE 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 29.52, "storico": [{"data": "2026-03-01", "costo": 30.48, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 29.52, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271677, "nome": "NATYS POLPA BLUE AGAVE 75CL", "cat": "Liquori", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 15.28, "storico": [{"data": "2026-03-01", "costo": 15.28, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271678, "nome": "ROSOLIO ITALICUS 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 26.3633, "storico": [{"data": "2026-03-01", "costo": 26.36, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 26.3633, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271679, "nome": "GIFFARD CREMA LAMPONE 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 12.15, "storico": [{"data": "2026-03-01", "costo": 12.15, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271680, "nome": "GIFFARD LIQ TRIPLE SEC 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 10.8, "storico": [{"data": "2026-03-01", "costo": 10.8, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271681, "nome": "GIFFARD CREMA CASSIS D ANJOU 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 9.98, "storico": [{"data": "2026-03-01", "costo": 9.98, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271682, "nome": "GIFFARD SIROP COCCO 1LT", "cat": "Sciroppi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 10.88, "storico": [{"data": "2026-03-01", "costo": 11.44, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 10.88, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271683, "nome": "GIFFARD SIROP FIORI DI SAMBUCO 1LT", "cat": "Sciroppi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 12.56, "storico": [{"data": "2026-03-01", "costo": 12.56, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271684, "nome": "PALLINI SCIROPPO DI AGAVE 50CL", "cat": "Sciroppi", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 11.56, "storico": [{"data": "2026-03-01", "costo": 11.56, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271685, "nome": "GIFFARD SIROP ZENZERO 1LT", "cat": "Sciroppi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 11.78, "storico": [{"data": "2026-03-01", "costo": 11.78, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271686, "nome": "MEZCAL DEL MAGUEY VIDA 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 33.84, "storico": [{"data": "2026-03-01", "costo": 33.84, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271687, "nome": "TEQUILA OLMECA ALTOS 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 15.1467, "storico": [{"data": "2026-03-01", "costo": 18.17, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 15.1467, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271688, "nome": "TEQUILA CLASE AZUL REPOSADO 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 173.95, "storico": [{"data": "2026-03-01", "costo": 173.95, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271689, "nome": "TEQUILA CODIGO 1530 BLANCO 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 36.88, "storico": [{"data": "2026-03-01", "costo": 36.88, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271690, "nome": "VODKA WYBOROVA 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 10.2417, "storico": [{"data": "2026-03-01", "costo": 10.24, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 10.2417, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271691, "nome": "WHISKY JAMESON IRISH WHISKEY 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 21.37, "storico": [{"data": "2026-03-01", "costo": 21.37, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271692, "nome": "WHISKY BOURBON EZRA BROOKS RYE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 22.56, "storico": [{"data": "2026-03-01", "costo": 22.56, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271693, "nome": "WHISKY FOUR ROSES BOURBON 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 17.55, "storico": [{"data": "2026-03-01", "costo": 17.55, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271694, "nome": "VERMOUTH CARPANO CLASSICO 1LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 8.1117, "storico": [{"data": "2026-03-01", "costo": 7.72, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 8.1117, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271695, "nome": "VERMOUTH CARPANO BIANCO 1LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 9.28, "storico": [{"data": "2026-03-01", "costo": 9.28, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 9.28, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271696, "nome": "VERMOUTH CARPANO ANTICA FORMULA 1LT", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 23.84, "storico": [{"data": "2026-03-01", "costo": 23.84, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 23.84, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271697, "nome": "VERMOUTH LILLET BIANCO 75CL", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 11.84, "storico": [{"data": "2026-03-01", "costo": 11.84, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 11.84, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271698, "nome": "VERMOUTH LILLET ROSSO 75CL", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 750, "fornitore": "Cuni Bevande", "costo": 11.84, "storico": [{"data": "2026-03-01", "costo": 11.84, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271699, "nome": "VERMOUTH COCCHI EXTRA DRY 50CL", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 500, "fornitore": "Cuni Bevande", "costo": 13.78, "storico": [{"data": "2026-03-01", "costo": 13.78, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271700, "nome": "RUM HAVANA 3Y 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 12.61, "storico": [{"data": "2026-03-01", "costo": 15.13, "qta": 1, "forn": "Cuni Bevande"}, {"data": "2025-10-31", "costo": 12.61, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271701, "nome": "RUM HAVANA 7Y 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 21.47, "storico": [{"data": "2026-03-01", "costo": 21.47, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271702, "nome": "RUM HAVANA ANEJO ESPECIAL 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 16.79, "storico": [{"data": "2026-03-01", "costo": 16.79, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271703, "nome": "RUM FLOR DE CANA 12Y 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 24.64, "storico": [{"data": "2026-03-01", "costo": 24.64, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780573271704, "nome": "RUM FLOR DE CANA 18Y 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 38.4, "storico": [{"data": "2026-03-01", "costo": 38.4, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1780575174274, "nome": "QUAGLIA LAMPONE 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 14.3, "storico": [{"data": "2025-10-17", "costo": 14.3, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174275, "nome": "GIN SIPSMITH NAVY 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 30.16, "storico": [{"data": "2025-10-17", "costo": 30.16, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174276, "nome": "REDBULL ORGANICS GINGER BEER 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "BM Group", "costo": 0.87, "storico": [{"data": "2025-10-17", "costo": 0.71, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-16", "costo": 0.87, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174277, "nome": "POLOT SCIROPPO AGAVE 70CL", "cat": "Sciroppi", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 6.2, "storico": [{"data": "2025-10-17", "costo": 6.2, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174278, "nome": "GIN PORTOFINO 50CL", "cat": "Spirits base", "um": "ml", "qty": 500, "fornitore": "BM Group", "costo": 34.4, "storico": [{"data": "2025-10-17", "costo": 28.2, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 34.4, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174279, "nome": "BULLEIT BOURBON 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 13.11, "storico": [{"data": "2025-10-17", "costo": 13.11, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174280, "nome": "BULLEIT RYE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 17.87, "storico": [{"data": "2025-10-17", "costo": 17.87, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174281, "nome": "GIN GINEPRAIO 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 20.08, "storico": [{"data": "2025-10-17", "costo": 20.08, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174282, "nome": "SILENT POOL GIN 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 24.59, "storico": [{"data": "2025-10-17", "costo": 24.59, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174283, "nome": "GIN ROKU 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 20.16, "storico": [{"data": "2025-10-17", "costo": 20.16, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174284, "nome": "AMORES VERDE MEZCAL 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 25.5, "storico": [{"data": "2025-10-17", "costo": 20.9, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-16", "costo": 25.5, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174285, "nome": "SPUMANTE BRUT SANDILIANO 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "BM Group", "costo": 2.46, "storico": [{"data": "2025-10-17", "costo": 2.46, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174286, "nome": "REDBULL ORGANICS BITTER LEMON 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "BM Group", "costo": 1.1521, "storico": [{"data": "2025-10-17", "costo": 0.71, "qta": 1, "forn": "BM Group"}, {"data": "2026-05-20", "costo": 1.1521, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174287, "nome": "REDBULL ORGANICS TONICA CAN 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "BM Group", "costo": 0.71, "storico": [{"data": "2025-10-17", "costo": 0.71, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174288, "nome": "SAKE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 11.27, "storico": [{"data": "2025-10-17", "costo": 11.27, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174289, "nome": "FRANGELICO 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 12.5, "storico": [{"data": "2025-10-17", "costo": 10.25, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 12.5, "qta": 1, "forn": "BM Group"}, {"data": "2026-05-20", "costo": 12.5, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174290, "nome": "COCA COLA NRG 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "BM Group", "costo": 0.79, "storico": [{"data": "2025-10-17", "costo": 0.61, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 0.79, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174291, "nome": "COCA COLA ZERO NRG 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "BM Group", "costo": 0.79, "storico": [{"data": "2025-10-17", "costo": 0.61, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 0.79, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174292, "nome": "LAGAVULIN 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 49.18, "storico": [{"data": "2025-10-17", "costo": 49.18, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174293, "nome": "FEVER TREE INDIAN TONIC 20CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 200, "fornitore": "BM Group", "costo": 0.98, "storico": [{"data": "2025-10-17", "costo": 0.98, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174294, "nome": "REDBULL 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "BM Group", "costo": 0.46, "storico": [{"data": "2025-10-17", "costo": 0.75, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 0.9, "qta": 1, "forn": "BM Group"}, {"data": "2026-05-20", "costo": 0.46, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174295, "nome": "GIN NORDEST 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 25.96, "storico": [{"data": "2025-10-17", "costo": 21.28, "qta": 1, "forn": "BM Group"}, {"data": "2026-05-20", "costo": 25.96, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174296, "nome": "ACQ SAN BENEDETTO NAT PET 50CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 500, "fornitore": "BM Group", "costo": 0.11, "storico": [{"data": "2025-10-17", "costo": 0.11, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174297, "nome": "BENEDICTINE DOM 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 14.59, "storico": [{"data": "2025-10-17", "costo": 14.59, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174298, "nome": "BIRRA MENABREA 33CL", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "BM Group", "costo": 0.87, "storico": [{"data": "2025-10-17", "costo": 0.87, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174299, "nome": "BOLS TRIPLE SEC 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 11.99, "storico": [{"data": "2025-10-17", "costo": 9.83, "qta": 1, "forn": "BM Group"}, {"data": "2026-05-20", "costo": 11.99, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174300, "nome": "AMARO CYNAR 1LT", "cat": "Liquori", "um": "ml", "qty": 1000, "fornitore": "BM Group", "costo": 9.51, "storico": [{"data": "2025-10-17", "costo": 9.51, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174301, "nome": "CHARTREUSE GIALLA 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 25.41, "storico": [{"data": "2025-10-17", "costo": 25.41, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174302, "nome": "QUAGLIA CHINOTTO 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 14.3, "storico": [{"data": "2025-10-17", "costo": 14.3, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174303, "nome": "ASSENZIO LA FEE PARISIENNE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 29.1, "storico": [{"data": "2025-10-17", "costo": 29.1, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174304, "nome": "GIFFARD LIQUORE SAMBUCO 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 13.48, "storico": [{"data": "2025-10-17", "costo": 13.48, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174305, "nome": "MIRTO PILLONI 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 14, "storico": [{"data": "2025-10-17", "costo": 11.48, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 14, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174306, "nome": "MONIN SCIROPPO ORZATA 70CL", "cat": "Sciroppi", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 7.21, "storico": [{"data": "2025-10-17", "costo": 7.21, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174307, "nome": "MONIN CARAMELLO SALATO 70CL", "cat": "Sciroppi", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 9.6, "storico": [{"data": "2025-10-17", "costo": 7.87, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-16", "costo": 9.6, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174308, "nome": "GIFFARD GINGER OF THE INDIES 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 13.61, "storico": [{"data": "2025-10-17", "costo": 13.61, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174309, "nome": "LAGG KILMORY 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 41.8, "storico": [{"data": "2025-10-17", "costo": 41.8, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174310, "nome": "LAGG CORRIECRAVIE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 59.02, "storico": [{"data": "2025-10-17", "costo": 59.02, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174311, "nome": "COCA COLA SLEEK 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "BM Group", "costo": 0.55, "storico": [{"data": "2025-10-17", "costo": 0.45, "qta": 1, "forn": "BM Group"}, {"data": "2026-05-20", "costo": 0.55, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174312, "nome": "GIN SABATINI 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 23.98, "storico": [{"data": "2025-10-17", "costo": 23.98, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174313, "nome": "GIN HENDRICKS 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 20.08, "storico": [{"data": "2025-10-17", "costo": 20.08, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174314, "nome": "RIVO GIN 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 21.64, "storico": [{"data": "2025-10-17", "costo": 21.64, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174315, "nome": "GIL GIN 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 23.77, "storico": [{"data": "2025-10-17", "costo": 23.77, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174316, "nome": "GIN BROCKMANS 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 27, "storico": [{"data": "2025-10-17", "costo": 22.13, "qta": 1, "forn": "BM Group"}, {"data": "2026-03-26", "costo": 27, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174317, "nome": "TANQUERAY SEVILLA 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 13.07, "storico": [{"data": "2025-10-17", "costo": 13.07, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174318, "nome": "PETER IN FLORENCE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 21.85, "storico": [{"data": "2025-10-17", "costo": 21.85, "qta": 1, "forn": "BM Group"}]}, {"id": 1780575174319, "nome": "AMARO MANDRAGOLA 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 12.05, "storico": [{"data": "2025-10-17", "costo": 12.05, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590000000, "nome": "AMARETTO DISARONNO 1750ML", "cat": "Liquori", "um": "ml", "qty": 1750, "fornitore": "Maxi C+C", "costo": 21.23, "storico": [{"data": "2026-03-12", "costo": 21.23, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000001, "nome": "AMARO MONTENEGRO 1500ML", "cat": "Liquori", "um": "ml", "qty": 1500, "fornitore": "Maxi C+C", "costo": 26, "storico": [{"data": "2025-12-22", "costo": 26.06, "qta": 1, "forn": "Maxi C+C"}, {"data": "2026-03-12", "costo": 26, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000002, "nome": "BRANDY RENEBRIAND 700ML", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Maxi C+C", "costo": 6.77, "storico": [{"data": "2025-12-17", "costo": 6.77, "qta": 1, "forn": "Maxi C+C"}, {"data": "2026-03-12", "costo": 6.77, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000003, "nome": "COCA COLA ZERO VAP 330ML", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "Maxi C+C", "costo": 0.7837, "storico": [{"data": "2026-03-12", "costo": 0.7837, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000004, "nome": "LIQANIMA NERA MARZADRO 700ML", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Maxi C+C", "costo": 12.58, "storico": [{"data": "2026-03-12", "costo": 12.58, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000005, "nome": "JEFFERSON AMARO 700ML", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Maxi C+C", "costo": 21.5, "storico": [{"data": "2026-03-12", "costo": 21.5, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000006, "nome": "RABARBARO ZUCCA 700ML", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "Maxi C+C", "costo": 7.09, "storico": [{"data": "2026-03-12", "costo": 7.09, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000007, "nome": "SUCCO POMPELMO SKIPPER 1LT", "cat": "Succhi / Puree", "um": "ml", "qty": 1000, "fornitore": "Maxi C+C", "costo": 1.39, "storico": [{"data": "2025-12-17", "costo": 1.39, "qta": 1, "forn": "Maxi C+C"}, {"data": "2026-03-12", "costo": 1.39, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000008, "nome": "SUCCO ACE SKIPPER 1LT", "cat": "Succhi / Puree", "um": "ml", "qty": 1000, "fornitore": "Maxi C+C", "costo": 1.39, "storico": [{"data": "2026-03-12", "costo": 1.39, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000009, "nome": "SUCCO BIO CAROTA PFANNER 500ML", "cat": "Succhi / Puree", "um": "ml", "qty": 500, "fornitore": "Maxi C+C", "costo": 1.54, "storico": [{"data": "2026-03-12", "costo": 1.54, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000010, "nome": "AMARO JAGERMEISTER 1LT", "cat": "Liquori", "um": "ml", "qty": 1000, "fornitore": "Maxi C+C", "costo": 12.2, "storico": [{"data": "2025-12-22", "costo": 12.2, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000011, "nome": "CAMPARI SODA 98ML x10", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 980, "fornitore": "Maxi C+C", "costo": 6.79, "storico": [{"data": "2025-12-22", "costo": 6.79, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000012, "nome": "APERITIVO RICARD 700ML", "cat": "Vermouth / Aperitivi", "um": "ml", "qty": 700, "fornitore": "Maxi C+C", "costo": 8.7, "storico": [{"data": "2025-12-22", "costo": 8.7, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000013, "nome": "BACARDI CARTA BLANCA 1LT", "cat": "Spirits base", "um": "ml", "qty": 1000, "fornitore": "Maxi C+C", "costo": 10.99, "storico": [{"data": "2025-12-22", "costo": 10.99, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000014, "nome": "BIRRA MORETTI 330ML", "cat": "Birra", "um": "ml", "qty": 330, "fornitore": "Maxi C+C", "costo": 1.19, "storico": [{"data": "2025-12-22", "costo": 1.19, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000015, "nome": "COCA COLA REGULAR PET 1500ML", "cat": "Soft drink / Mixer", "um": "ml", "qty": 1500, "fornitore": "Maxi C+C", "costo": 1.63, "storico": [{"data": "2025-12-22", "costo": 1.63, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000016, "nome": "KEGLEVICH MENTA 1LT", "cat": "Liquori", "um": "ml", "qty": 1000, "fornitore": "Maxi C+C", "costo": 7.59, "storico": [{"data": "2025-12-22", "costo": 7.59, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000017, "nome": "LIMONCELLO VILLA ARIANNA 1500ML", "cat": "Liquori", "um": "ml", "qty": 1500, "fornitore": "Maxi C+C", "costo": 6.35, "storico": [{"data": "2025-12-22", "costo": 6.35, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000018, "nome": "RED BULL ENERGY 250ML", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Maxi C+C", "costo": 0.85, "storico": [{"data": "2025-12-22", "costo": 0.85, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000019, "nome": "SAMBUCA BIANCA MOLINARI 1500ML", "cat": "Liquori", "um": "ml", "qty": 1500, "fornitore": "Maxi C+C", "costo": 21.7, "storico": [{"data": "2025-12-22", "costo": 21.7, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000020, "nome": "TONIC WATER SCHWEPPES 1LT", "cat": "Soft drink / Mixer", "um": "ml", "qty": 1000, "fornitore": "Maxi C+C", "costo": 0.98, "storico": [{"data": "2025-12-22", "costo": 0.98, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000021, "nome": "ESTATHE LIMONE 250ML", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Maxi C+C", "costo": 0.76, "storico": [{"data": "2025-12-17", "costo": 0.76, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 1780590000022, "nome": "ESTATHE PESCA 250ML", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "Maxi C+C", "costo": 0.76, "storico": [{"data": "2025-12-17", "costo": 0.76, "qta": 1, "forn": "Maxi C+C"}]}, {"id": 100001, "nome": "LIME FRESCO SUCCO (cassa 4,5kg → ~1100ml succo)", "cat": "Succhi / Puree", "um": "ml", "qty": 1100, "fornitore": "Mercato", "costo": 10, "storico": [{"data": "2026-01-01", "costo": 10, "qta": 1, "forn": "Mercato"}]}, {"id": 100002, "nome": "ARANCIA FRESCA", "cat": "Freschi", "um": "g", "qty": 1000, "fornitore": "Mercato", "costo": 1.25, "storico": [{"data": "2026-01-01", "costo": 1.25, "qta": 1, "forn": "Mercato"}]}, {"id": 100003, "nome": "GHIACCIO (produzione interna)", "cat": "Altro", "um": "g", "qty": 1000, "fornitore": "Produzione interna", "costo": 0.75, "storico": [{"data": "2026-01-01", "costo": 0.75, "qta": 1, "forn": "Produzione interna"}]}, {"id": 1780590001022, "nome": "MASTIHA ROOTS 70CL", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 23.3, "storico": [{"data": "2026-03-26", "costo": 23.3, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001023, "nome": "SAINT GERMAIN LIQUORE 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 25.5, "storico": [{"data": "2026-03-26", "costo": 25.5, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001024, "nome": "GIN GOLD 999 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 36.9, "storico": [{"data": "2026-05-20", "costo": 36.9, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001025, "nome": "SCHWEPPES SODA VAP 33CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 330, "fornitore": "BM Group", "costo": 0.7, "storico": [{"data": "2026-05-20", "costo": 0.7, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001026, "nome": "REDBULL YELLOW 25CL", "cat": "Soft drink / Mixer", "um": "ml", "qty": 250, "fornitore": "BM Group", "costo": 0.85, "storico": [{"data": "2026-05-20", "costo": 0.85, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001027, "nome": "SILENT POOL CITRUS 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 39.5, "storico": [{"data": "2026-03-16", "costo": 39.5, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001028, "nome": "GIN HENDRICKS GRAN CABARET 70CL", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 30, "storico": [{"data": "2026-03-26", "costo": 30, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001029, "nome": "MONIN SCIROPPO COCCO 70CL", "cat": "Sciroppi", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 8.8, "storico": [{"data": "2026-03-26", "costo": 8.8, "qta": 1, "forn": "BM Group"}]}, {"id": 1780590001030, "nome": "MONIN SCIROPPO ELDERFLOWER 70CL", "cat": "Sciroppi", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 8.8, "storico": [{"data": "2026-03-26", "costo": 8.8, "qta": 1, "forn": "BM Group"}]}, {"id": 1780600000001, "nome": "MUNI EPOCHE DOSAGGIO ZERO MET.CLASSICO 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 16.435, "storico": [{"data": "2024-11-01", "costo": 17.3, "qta": 1, "forn": "ViNé"}, {"data": "2025-04-30", "costo": 16.435, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000002, "nome": "REBULI VALDOBBIADENE PROSECCO SUP EXTRA BRUT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 8.712, "storico": [{"data": "2024-11-01", "costo": 9.9, "qta": 1, "forn": "ViNé"}, {"data": "2026-02-23", "costo": 8.712, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000003, "nome": "MUNI LARION BIANCO VENETO IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 10.9, "storico": [{"data": "2024-11-01", "costo": 10.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000004, "nome": "BATTISTELLA UN PINO GRIGIO BIANCO VENETO IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 8.455, "storico": [{"data": "2024-11-01", "costo": 8.9, "qta": 1, "forn": "ViNé"}, {"data": "2025-04-30", "costo": 8.455, "qta": 1, "forn": "ViNé"}, {"data": "2026-02-23", "costo": 8.455, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000005, "nome": "ANNESANTI COLLE FREGIARA ANFORA UMBRIA IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 18.2, "storico": [{"data": "2024-11-01", "costo": 18.2, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000006, "nome": "BATTISTELLA FLORA BIANCO VENETO IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 8.455, "storico": [{"data": "2024-11-01", "costo": 8.9, "qta": 1, "forn": "ViNé"}, {"data": "2025-03-19", "costo": 8.455, "qta": 1, "forn": "ViNé"}, {"data": "2025-04-30", "costo": 8.455, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000007, "nome": "LE DRIADI DRIADE FELICE BERGAMASCA MERLOT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 9.405, "storico": [{"data": "2024-11-01", "costo": 9.9, "qta": 1, "forn": "ViNé"}, {"data": "2025-03-19", "costo": 9.405, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000008, "nome": "ADALIA LAUTE VALPOLICELLA DOC 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 8.4, "storico": [{"data": "2024-11-01", "costo": 8.4, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000009, "nome": "CORTI CUGINI MOKAB VINO FRIZZANTE ROSATO 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 12.9, "storico": [{"data": "2024-11-01", "costo": 12.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000010, "nome": "ANNESANTI CELO BIANCO FRIZZANTE UMBRIA IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 8.5, "storico": [{"data": "2024-11-01", "costo": 8.5, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000011, "nome": "ANNESANTI RASPATO ROSATO FRIZZANTE UMBRIA IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 10.355, "storico": [{"data": "2024-11-01", "costo": 10.9, "qta": 1, "forn": "ViNé"}, {"data": "2025-04-30", "costo": 10.355, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000012, "nome": "LE DRIADI TILAMORE BIANCO MACERATO 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 15.8, "storico": [{"data": "2024-11-01", "costo": 15.8, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000013, "nome": "LA CORNASELLA MOSCATO ROSSO IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 11.9, "storico": [{"data": "2024-11-01", "costo": 11.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000014, "nome": "ANDI ASCARO BARBERA IGT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 12.92, "storico": [{"data": "2024-11-01", "costo": 13.6, "qta": 1, "forn": "ViNé"}, {"data": "2026-02-23", "costo": 12.92, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000015, "nome": "LE DRIADI BARLINET BERGAMASCA CABERNET FRANC 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 15.9, "storico": [{"data": "2024-11-01", "costo": 15.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000016, "nome": "ADALIA BALT VALPOLICELLA RIPASSO DOC SUP 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 12.9, "storico": [{"data": "2024-11-01", "costo": 12.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000017, "nome": "ADALIA RUVALN AMARONE VALPOLICELLA DOCG 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 29.9, "storico": [{"data": "2024-11-01", "costo": 29.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000018, "nome": "SAN CRISTOFORO BRUT FRANCIACORTA DOCG MAGNUM 150CL", "cat": "Vino", "um": "ml", "qty": 1500, "fornitore": "ViNé", "costo": 34.3, "storico": [{"data": "2026-02-23", "costo": 34.3, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000019, "nome": "SAN CRISTOFORO ND FRANCIACORTA DOCG MAGNUM 150CL", "cat": "Vino", "um": "ml", "qty": 1500, "fornitore": "ViNé", "costo": 35.8, "storico": [{"data": "2026-02-23", "costo": 35.8, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000020, "nome": "SAN CRISTOFORO FRANCIACORTA BRUT 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 17, "storico": [{"data": "2026-02-23", "costo": 17, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000021, "nome": "SAN CRISTOFORO FRANCIACORTA ND 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 17.9, "storico": [{"data": "2026-02-23", "costo": 17.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000022, "nome": "LEFEVRE CUVEE DE RESERVE BRUT NATURE 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 29, "storico": [{"data": "2025-03-19", "costo": 29, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000023, "nome": "MOET GRAND VINTAGE EXTRA BRUT 2015 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "Altro", "costo": 75, "storico": [{"data": "2026-01-01", "costo": 75, "qta": 1, "forn": "Altro"}]}, {"id": 1780600000024, "nome": "RASCIONIO ROTULAIA IGT CILIEGIOLO BIO 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 9.9, "storico": [{"data": "2026-01-01", "costo": 9.9, "qta": 1, "forn": "ViNé"}]}, {"id": 1780600000025, "nome": "TOSCA ROSSO DEL LUPO MERLOT CAB SAUV 75CL", "cat": "Vino", "um": "ml", "qty": 750, "fornitore": "ViNé", "costo": 0, "storico": []}, {"id": 1781009572646, "nome": "ZUCCHERO SEMOLATO", "cat": "Altro", "um": "g", "qty": 1000, "fornitore": "MD", "costo": 1, "storico": [{"data": "2026-06-09", "costo": 1, "qta": 1, "forn": "MD"}]}, {"id": 1781009709703, "nome": "ACQUA RUBINETTO", "cat": "Soft drink / Mixer", "um": "ml", "qty": 1000, "fornitore": "Produzione interna", "costo": 0.02, "storico": [{"data": "2026-06-09", "costo": 0.02, "qta": 1, "forn": "Produzione interna"}]}, {"id": 1781010024510, "nome": "BASILICO FRESCO", "cat": "Freschi", "um": "g", "qty": 500, "fornitore": "METRO", "costo": 7, "storico": [{"data": "2026-06-09", "costo": 7, "qta": 1, "forn": "METRO"}]}, {"id": 1781085758264, "nome": "ANGOSTURA BITTER", "cat": "Freschi", "um": "ml", "qty": 20, "fornitore": "METRO", "costo": 15, "storico": [{"data": "2026-06-09", "costo": 15, "qta": 1, "forn": "METRO"}]}, {"id": 1781086993264, "nome": "MENTA FRESCA", "cat": "Freschi", "um": "g", "qty": 400, "fornitore": "METRO", "costo": 6.2, "storico": [{"data": "2026-06-10", "costo": 6.2, "qta": 1, "forn": "METRO"}]}, {"id": 1781087183472, "nome": "ALBUME D'UOVO", "cat": "Freschi", "um": "g", "qty": 500, "fornitore": "MD", "costo": 0.99, "storico": [{"data": "2026-06-10", "costo": 0.99, "qta": 1, "forn": "MD"}]}, {"id": 1781088703004, "nome": "QUAGLIA PINO MUGO", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 14.3, "storico": [{"data": "2026-06-10", "costo": 14.3, "qta": 1, "forn": "BM Group"}]}, {"id": 1781088887409, "nome": "ST. GERMAIN", "cat": "Liquori", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 25.5, "storico": [{"data": "2026-06-10", "costo": 25.5, "qta": 1, "forn": "BM Group"}]}, {"id": 1781089249005, "nome": "SPUMA BIANCA", "cat": "Soft drink / Mixer", "um": "ml", "qty": 1000, "fornitore": "Cuni Bevande", "costo": 0.6, "storico": [{"data": "2026-06-10", "costo": 0.6, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1781089363410, "nome": "CIRIO POMODORO SUCCO", "cat": "Succhi / Puree", "um": "cl", "qty": 20, "fornitore": "Cuni Bevande", "costo": 0.88, "storico": [{"data": "2026-06-10", "costo": 0.88, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1781089769908, "nome": "ACETO CALAMANSI", "cat": "Succhi / Puree", "um": "ml", "qty": 1000, "fornitore": "Altro", "costo": 21, "storico": [{"data": "2026-06-10", "costo": 21, "qta": 1, "forn": "Altro"}]}, {"id": 1781090006982, "nome": "MELE", "cat": "Succhi / Puree", "um": "g", "qty": 1000, "fornitore": "Mercato", "costo": 2, "storico": [{"data": "2026-06-10", "costo": 2, "qta": 1, "forn": "Mercato"}]}, {"id": 1781090048799, "nome": "ACETO PRUGNOLO", "cat": "Altro", "um": "ml", "qty": 1000, "fornitore": "Altro", "costo": 20, "storico": [{"data": "2026-06-10", "costo": 20, "qta": 1, "forn": "Altro"}]}, {"id": 1781090352530, "nome": "RIBES NERO INFUSO", "cat": "Freschi", "um": "g", "qty": 100, "fornitore": "Altro", "costo": 7, "storico": [{"data": "2026-06-10", "costo": 7, "qta": 1, "forn": "Altro"}]}, {"id": 1781090521114, "nome": "PASSION FRUIT PONTHIER", "cat": "Freschi", "um": "g", "qty": 1000, "fornitore": "METRO", "costo": 10.99, "storico": [{"data": "2026-06-10", "costo": 10.99, "qta": 1, "forn": "METRO"}]}, {"id": 1781090539799, "nome": "LAMPONE PONTHIER", "cat": "Freschi", "um": "g", "qty": 1000, "fornitore": "METRO", "costo": 12.99, "storico": [{"data": "2026-06-10", "costo": 12.99, "qta": 1, "forn": "METRO"}]}, {"id": 1781090600055, "nome": "PEPERONI", "cat": "Freschi", "um": "g", "qty": 1000, "fornitore": "METRO", "costo": 2.2, "storico": [{"data": "2026-06-10", "costo": 2.2, "qta": 1, "forn": "METRO"}]}, {"id": 1781090673305, "nome": "SACCO SOTTOVUOTO 30*40", "cat": "Altro", "um": "pz", "qty": 1, "fornitore": "METRO", "costo": 0.15, "storico": [{"data": "2026-06-10", "costo": 0.15, "qta": 1, "forn": "METRO"}, {"data": "2026-06-10", "costo": 0.24, "qta": 1, "forn": "METRO"}]}, {"id": 1781090759648, "nome": "SACCO SOTTOVUOTO 20*30", "cat": "Altro", "um": "pz", "qty": 1, "fornitore": "METRO", "costo": 0.13, "storico": [{"data": "2026-06-10", "costo": 0.13, "qta": 1, "forn": "METRO"}]}, {"id": 1781092501851, "nome": "RUM FLOR DE CANA 12Y", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 24.64, "storico": [{"data": "2026-06-10", "costo": 24.64, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1781092538357, "nome": "RUM FLOR DE CANA 18Y", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "Cuni Bevande", "costo": 38.4, "storico": [{"data": "2026-06-10", "costo": 38.4, "qta": 1, "forn": "Cuni Bevande"}]}, {"id": 1781092703336, "nome": "MASTIHA ROOTS", "cat": "Spirits base", "um": "ml", "qty": 700, "fornitore": "BM Group", "costo": 23.3, "storico": [{"data": "2026-06-10", "costo": 23.3, "qta": 1, "forn": "BM Group"}]}, {"id": 1781093043338, "nome": "MINI BOMBOLA AZOTO", "cat": "Altro", "um": "pz", "qty": 1, "fornitore": "METRO", "costo": 2, "storico": [{"data": "2026-06-10", "costo": 2, "qta": 1, "forn": "METRO"}]}, {"id": 1781093088208, "nome": "GELATINA", "cat": "Altro", "um": "g", "qty": 500, "fornitore": "METRO", "costo": 16.99, "storico": [{"data": "2026-06-10", "costo": 16.99, "qta": 1, "forn": "METRO"}]}, {"id": 1781260038575, "nome": "CANNELLA IN STECCA", "cat": "Guarnizioni", "um": "g", "qty": 500, "fornitore": "METRO", "costo": 32.17, "storico": [{"data": "2026-06-12", "costo": 32.17, "qta": 1, "forn": "METRO"}]}, {"id": 1781260558905, "nome": "AMARENA KG.1 TOSCHI LATTA", "cat": "Sciroppi", "um": "g", "qty": 1000, "fornitore": "Sogegross", "costo": 10.61, "storico": [{"data": "2026-06-12", "costo": 10.61, "qta": 1, "forn": "Sogegross"}]}, {"id": 1781718897563, "nome": "SUCCO ANANAS PFANNER 2L", "cat": "Succhi / Puree", "um": "ml", "qty": 2000, "fornitore": "METRO", "costo": 2.65, "storico": [{"data": "2026-06-17", "costo": 2.65, "qta": 1, "forn": "METRO"}]}, {"id": 1781719144344, "nome": "SUCCO ARANCIA", "cat": "Succhi / Puree", "um": "ml", "qty": 400, "fornitore": "Mercato", "costo": 1, "storico": [{"data": "2026-06-17", "costo": 1, "qta": 1, "forn": "Mercato"}]}];
 
@@ -1110,6 +1280,777 @@ function upCFReport(){
   w.innerHTML=html;
 }
 
+// ════════════════════════════════════════════════════════════════════
+//  TAB INGREDIENTI
+// ════════════════════════════════════════════════════════════════════
+function switchIngTab(tab){
+  const mag=document.getElementById('sub-mag');
+  const wine=document.getElementById('sub-wine');
+  const tM=document.getElementById('tab-mag');
+  const tW=document.getElementById('tab-wine');
+  if(!mag||!wine)return;
+  if(tab==='mag'){
+    mag.style.display='';wine.style.display='none';
+    tM.style.cssText='background:none;border:none;border-bottom:3px solid var(--gold);margin-bottom:-2px;padding:8px 20px;font-weight:600;color:var(--gold);cursor:pointer;font-size:13px;font-family:var(--f)';
+    tW.style.cssText='background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:8px 20px;font-weight:400;color:var(--t2);cursor:pointer;font-size:13px;font-family:var(--f)';
+  } else {
+    mag.style.display='none';wine.style.display='';
+    tW.style.cssText='background:none;border:none;border-bottom:3px solid var(--gold);margin-bottom:-2px;padding:8px 20px;font-weight:600;color:var(--gold);cursor:pointer;font-size:13px;font-family:var(--f)';
+    tM.style.cssText='background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:8px 20px;font-weight:400;color:var(--t2);cursor:pointer;font-size:13px;font-family:var(--f)';
+    upWineFF();rWine();
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  VINI AL CALICE
+// ════════════════════════════════════════════════════════════════════
+function upWineFF(){
+  const sel=document.getElementById('wine-ff');
+  if(sel){const v=sel.value;const vini=I.filter(i=>i.cat==='Vino');const fs=[...new Set(vini.map(i=>i.fornitore).filter(Boolean))];sel.innerHTML='<option value="">Tutti i fornitori</option>'+fs.map(f=>`<option ${f===v?'selected':''}>${f}</option>`).join('');}
+  const fs2=document.getElementById('wine-forn');
+  if(fs2){const v2=fs2.value;fs2.innerHTML='<option value="">-- seleziona --</option>'+F.map(f=>`<option ${f.nome===v2?'selected':''}>${f.nome}</option>`).join('');}
+  const wd=document.getElementById('wine-data');if(wd&&!wd.value)wd.value=T;
+  // Popola pick da magazzino
+  const pk=document.getElementById('wine-pick');
+  if(pk){const cv=pk.value;const vini=[...I].filter(i=>i.cat==='Vino').sort((a,b)=>a.nome.localeCompare(b.nome));pk.innerHTML='<option value="">— oppure scegli un vino già presente nel magazzino —</option>'+vini.map(i=>`<option value="${i.id}" ${String(i.id)===String(cv)?'selected':''}>${i.nome} (${i.fornitore||'—'})</option>`).join('');}
+}
+
+function pickWineFromMag(){
+  const pk=document.getElementById('wine-pick');
+  if(!pk||!pk.value)return;
+  const i=findIng(pk.value);if(!i)return;
+  const p=px(i);
+  document.getElementById('wine-nome').value=i.nome;
+  document.getElementById('wine-ml').value=i.qty||750;
+  document.getElementById('wine-costo').value=p.ul||i.costo||0;
+  document.getElementById('wine-data').value=T;
+  const wp=WP[i.id]||{};
+  document.getElementById('wine-prezzo').value=wp.c||'';
+  document.getElementById('wine-prezzo-bott').value=wp.b||'';
+  upWineFF();
+  setTimeout(()=>{const s=document.getElementById('wine-forn');if(s)s.value=i.fornitore||'';},60);
+  // Metti id in edit per aggiornare invece di duplicare
+  document.getElementById('wine-edit-id').value=i.id;
+  document.getElementById('wine-form-tit').textContent='Aggiorna prezzi: '+i.nome;
+  document.getElementById('wine-btn').textContent='✓ Salva';
+  document.getElementById('wine-can').style.display='inline-flex';
+  upWinePreview();
+}
+
+function upWinePreview(){
+  const costo=parseFloat(document.getElementById('wine-costo')?.value)||0;
+  const ml=parseInt(document.getElementById('wine-ml')?.value)||750;
+  const pv=parseFloat(document.getElementById('wine-prezzo')?.value)||0;
+  const pvb=parseFloat(document.getElementById('wine-prezzo-bott')?.value)||0;
+  const cal=Math.floor(ml/125);const cc=cal>0?costo/cal:0;
+  const pn=pv?pv/1.10:0;const pnb=pvb?pvb/1.10:0;
+  const prev=document.getElementById('wine-preview');
+  if(!prev)return;
+  if(cc>0||pv||pvb){prev.style.display='block';}else{prev.style.display='none';return;}
+  document.getElementById('wprev-cc').textContent=cc>0?'€'+cc.toFixed(3):'—';
+  const bcpC=pn&&cc>0?(cc/pn*100):null;
+  const ricC=pn&&cc>0?(pn/cc):null;
+  const mgC=pn&&cc>0?pn-cc:null;
+  const el=document.getElementById('wprev-bc');
+  el.textContent=bcpC!==null?(ricC.toFixed(1)+'x · '+(pn&&cc>0?((pn-cc)/pn*100).toFixed(0):'')+'% marg.'):'—';
+  el.style.color=bcpC===null?'inherit':bcpC<=33?'var(--green)':bcpC<=40?'var(--amb)':'var(--red)';
+  document.getElementById('wprev-mg').textContent=mgC!==null?'€'+mgC.toFixed(2):'—';
+  const bcpB=pnb&&costo>0?(costo/pnb*100):null;
+  const ricB=pnb&&costo>0?(pnb/costo):null;
+  const elb=document.getElementById('wprev-bcb');
+  elb.textContent=bcpB!==null?(ricB.toFixed(1)+'x · '+(pnb&&costo>0?((pnb-costo)/pnb*100).toFixed(0):'')+'% marg.'):'—';
+  elb.style.color=bcpB===null?'inherit':bcpB<=33?'var(--green)':bcpB<=40?'var(--amb)':'var(--red)';
+}
+
+function setWPC(id,v){if(!WP[id])WP[id]={};WP[id].c=parseFloat(v)||0;sv('wp');rWine();}
+function setWPB(id,v){if(!WP[id])WP[id]={};WP[id].b=parseFloat(v)||0;sv('wp');rWine();}
+
+function saveWine(){
+  const eid=document.getElementById('wine-edit-id').value;
+  const nome=document.getElementById('wine-nome').value.trim();
+  const forn=document.getElementById('wine-forn').value;
+  const ml=parseInt(document.getElementById('wine-ml').value)||750;
+  const costo=parseFloat(document.getElementById('wine-costo').value);
+  const data=document.getElementById('wine-data').value||T;
+  const prezzo=parseFloat(document.getElementById('wine-prezzo').value)||0;
+  const prezzob=parseFloat(document.getElementById('wine-prezzo-bott').value)||0;
+  if(!nome||!forn||isNaN(costo)){alert('Inserisci nome, fornitore e costo.');return;}
+  let nid;
+  if(eid){
+    const x=findIng(eid);
+    if(x){x.nome=nome;x.fornitore=forn;x.qty=ml;if(!x.storico)x.storico=[];if(costo>0)x.storico.push({data,costo,qta:1,forn});}
+    nid=String(eid);
+    cancelWine();
+  } else {
+    nid=Date.now();
+    I.push({id:nid,nome,cat:'Vino',um:'ml',qty:ml,fornitore:forn,costo,storico:[{data,costo,qta:1,forn}]});
+    document.getElementById('wine-nome').value='';
+    document.getElementById('wine-costo').value='';
+    document.getElementById('wine-prezzo').value='';
+    document.getElementById('wine-prezzo-bott').value='';
+    document.getElementById('wine-forn').value='';
+    document.getElementById('wine-pick').value='';
+  }
+  if(!WP[nid])WP[nid]={};
+  if(prezzo>0)WP[nid].c=prezzo;
+  if(prezzob>0)WP[nid].b=prezzob;
+  sv('i');sv('wp');fl('wine-ok');rWine();upWineFF();rI();
+}
+
+function editWine(id){
+  const i=findIng(id);if(!i)return;
+  const p=px(i);const wp=WP[id]||{};
+  document.getElementById('wine-edit-id').value=id;
+  document.getElementById('wine-nome').value=i.nome;
+  document.getElementById('wine-ml').value=i.qty||750;
+  document.getElementById('wine-costo').value=p.ul||i.costo||0;
+  document.getElementById('wine-data').value=T;
+  document.getElementById('wine-prezzo').value=wp.c||'';
+  document.getElementById('wine-prezzo-bott').value=wp.b||'';
+  upWineFF();
+  setTimeout(()=>{const s=document.getElementById('wine-forn');if(s)s.value=i.fornitore||'';},60);
+  document.getElementById('wine-form-tit').textContent='Modifica: '+i.nome;
+  document.getElementById('wine-btn').textContent='✓ Salva';
+  document.getElementById('wine-can').style.display='inline-flex';
+  document.getElementById('sub-wine').scrollIntoView({behavior:'smooth'});
+  upWinePreview();
+}
+
+function cancelWine(){
+  document.getElementById('wine-edit-id').value='';
+  document.getElementById('wine-nome').value='';
+  document.getElementById('wine-costo').value='';
+  document.getElementById('wine-prezzo').value='';
+  document.getElementById('wine-prezzo-bott').value='';
+  const s=document.getElementById('wine-forn');if(s)s.value='';
+  const pk=document.getElementById('wine-pick');if(pk)pk.value='';
+  const prev=document.getElementById('wine-preview');if(prev)prev.style.display='none';
+  document.getElementById('wine-form-tit').textContent='Aggiungi vino al calice';
+  document.getElementById('wine-btn').textContent='+ Aggiungi';
+  document.getElementById('wine-can').style.display='none';
+}
+
+function delWine(id){
+  if(!confirm('Eliminare questo vino?'))return;
+  I=I.filter(x=>String(x.id)!==String(id));
+  delete WP[id];
+  sv('i');sv('wp');rWine();rI();
+}
+
+function rWine(){
+  const s=(document.getElementById('wine-s')?.value||'').toLowerCase();
+  const ff=document.getElementById('wine-ff')?.value||'';
+  const vini=I.filter(i=>i.cat==='Vino'&&((!s||(i.nome+' '+(i.fornitore||'')).toLowerCase().includes(s))&&(!ff||i.fornitore===ff)));
+  const w=document.getElementById('wine-wrap');if(!w)return;
+  if(!vini.length){w.innerHTML='<div class="em">Nessun vino trovato.</div>';return;}
+  let h='<table><thead><tr><th>Vino</th><th>Fornitore</th><th>Bottiglia</th><th>Costo acq.</th><th>Calici</th><th>Costo calice</th><th>Prezzo calice € (IVA10%)</th><th>Prezzo bottiglia € (IVA10%)</th><th>Bev.cost calice</th><th>Bev.cost bott.</th><th>Margine calice</th><th></th></tr></thead><tbody>';
+  vini.forEach(i=>{
+    const p=px(i);const cb=p.mp;const ml=i.qty||750;const cal=Math.floor(ml/125);const cc=cal>0?cb/cal:0;
+    const wp=WP[i.id]||{};const pv=wp.c||'';const pvb=wp.b||'';
+    const pn=pv?parseFloat(pv)/1.10:0;const pnb=pvb?parseFloat(pvb)/1.10:0;
+    // Calice
+    const ricC=pn&&cc>0?(pn/cc):null;
+    const mgC=pn&&cc>0?pn-cc:null;
+    const mgpC=pn&&cc>0?((pn-cc)/pn*100):null;
+    // Bottiglia
+    const ricB=pnb&&cb>0?(pnb/cb):null;
+    const mgB=pnb&&cb>0?pnb-cb:null;
+    const mgpB=pnb&&cb>0?((pnb-cb)/pnb*100):null;
+    // Soglia: se ho costi fissi uso quella, altrimenti default 33%
+    const soglia=margineMinRequired()||33;
+    function wineTag(mgp,ric){
+      if(mgp===null)return '—';
+      const ok=mgp>=(100-soglia);
+      return ok
+        ? '<span class="bx bg">✓ '+mgp.toFixed(0)+'% · '+ric.toFixed(1)+'x</span>'
+        : '<span class="bx br">✗ '+mgp.toFixed(0)+'% · '+ric.toFixed(1)+'x</span>';
+    }
+    const fb=i.fornitore==='BM Group'?'bb':i.fornitore==='Maxi C+C'?'bw':i.fornitore==='ViNé'?'bp':'bg';
+    h+=`<tr>
+      <td style="font-weight:500">${i.nome}</td>
+      <td><span class="bx ${fb}" style="font-size:9px">${i.fornitore||'—'}</span></td>
+      <td style="font-family:var(--m);font-size:11px">${ml}ml</td>
+      <td style="font-family:var(--m)">€${cb.toFixed(2)}</td>
+      <td style="font-family:var(--m);color:var(--t2)">${cal}×125ml</td>
+      <td style="font-family:var(--m);font-weight:600;color:var(--gold)">${cc>0?'€'+cc.toFixed(3):'—'}</td>
+      <td><input type="number" value="${pv}" min="0" step="0.5" placeholder="6.00" style="width:72px;font-family:var(--m)" onchange="setWPC(${i.id},this.value)"/></td>
+      <td>${wineTag(mgpC,ricC)}</td>
+      <td><input type="number" value="${pvb}" min="0" step="0.5" placeholder="25.00" style="width:72px;font-family:var(--m)" onchange="setWPB(${i.id},this.value)"/></td>
+      <td>${wineTag(mgpB,ricB)}</td>
+      <td><div style="display:flex"><button class="ib" onclick="editWine(${i.id})">✏️</button><button class="ib d" onclick="delWine(${i.id})">🗑</button></div></td>
+    </tr>`;
+  });
+  w.innerHTML=h+'</tbody></table>';
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  EXPORT VINI AL CALICE
+// ════════════════════════════════════════════════════════════════════
+function getWineRows(){
+  return I.filter(i=>i.cat==='Vino').map(i=>{
+    const p=px(i);const cb=p.mp;const ml=i.qty||750;const cal=Math.floor(ml/125);const cc=cal>0?cb/cal:0;
+    const wp=WP[i.id]||{};
+    const pv=wp.c||0;const pvb=wp.b||0;
+    const pn=pv?parseFloat(pv)/1.10:0;const pnb=pvb?parseFloat(pvb)/1.10:0;
+    const ricC=pn&&cc>0?(pn/cc):null;const mgpC=pn&&cc>0?((pn-cc)/pn*100):null;const bcpC=pn&&cc>0?(cc/pn*100):null;
+    const ricB=pnb&&cb>0?(pnb/cb):null;const mgpB=pnb&&cb>0?((pnb-cb)/pnb*100):null;const bcpB=pnb&&cb>0?(cb/pnb*100):null;
+    const valC=bcpC===null?'—':bcpC<=33?'Ottimo':bcpC<=40?'Nella norma':'Attenzione';
+    const valB=bcpB===null?'—':bcpB<=33?'Ottimo':bcpB<=40?'Nella norma':'Attenzione';
+    return{nome:i.nome,fornitore:i.fornitore||'',ml,cb,cal,cc,pv,pvb,ricC,mgpC,bcpC,valC,ricB,mgpB,bcpB,valB};
+  });
+}
+
+function exportWineXLSX(){
+  const rows=getWineRows();
+  const hdr=['Vino','Fornitore','Formato','Costo acq. €','Calici','Costo calice €','Prezzo calice €','Ricarico calice','Margine calice %','Valutazione calice','Prezzo bottiglia €','Ricarico bottiglia','Margine bottiglia %','Valutazione bottiglia'];
+  const lines=[hdr.join('\t')];
+  rows.forEach(r=>lines.push([
+    r.nome,r.fornitore,r.ml+'ml',r.cb.toFixed(2),r.cal,
+    r.cc>0?r.cc.toFixed(3):'',
+    r.pv?r.pv.toFixed(2):'',r.ricC!==null?r.ricC.toFixed(2)+'x':'',r.mgpC!==null?r.mgpC.toFixed(1)+'%':'',r.valC,
+    r.pvb?r.pvb.toFixed(2):'',r.ricB!==null?r.ricB.toFixed(2)+'x':'',r.mgpB!==null?r.mgpB.toFixed(1)+'%':'',r.valB
+  ].join('\t')));
+  const blob=new Blob(['\uFEFF'+lines.join('\n')],{type:'application/vnd.ms-excel;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='vini_calice_'+new Date().toISOString().split('T')[0]+'.xls';a.click();
+}
+
+function exportWinePDF(){
+  const rows=getWineRows();
+  const d=new Date().toLocaleDateString('it-IT');
+  let html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><style>
+    body{font-family:Arial,sans-serif;font-size:10px;margin:20px;color:#111}
+    h1{font-size:15px;margin-bottom:3px}
+    .sub{font-size:9px;color:#666;margin-bottom:14px}
+    table{width:100%;border-collapse:collapse}
+    th{background:#222;color:#fff;padding:5px 7px;text-align:left;font-size:9px;text-transform:uppercase}
+    td{padding:4px 7px;border-bottom:1px solid #eee}
+    tr:nth-child(even) td{background:#f9f9f9}
+    .num{font-family:monospace;text-align:right}
+    .gold{color:#9a6e1a;font-weight:600}
+    .g{background:#e6f5ee;color:#1a7a45;padding:1px 5px;border-radius:3px}
+    .w{background:#fff3e0;color:#b56a00;padding:1px 5px;border-radius:3px}
+    .r{background:#fdecea;color:#c0392b;padding:1px 5px;border-radius:3px}
+    @media print{body{margin:10px}}
+  </style></head><body>
+  <h1>Easy Drink & Food — Vini al Calice</h1>
+  <div class="sub">Generato il ${d} · 125ml/calice · 6 calici da 750ml · 12 da Magnum</div>
+  <table><thead><tr><th>Vino</th><th>Forn.</th><th>Formato</th><th>Costo</th><th>Cal.</th><th>Costo cal.</th><th>P.calice</th><th>Ricarico</th><th>Marg%</th><th>Valutaz.</th><th>P.bottiglia</th><th>Ricarico</th><th>Marg%</th><th>Valutaz.</th></tr></thead><tbody>`;
+  rows.forEach(r=>{
+    const vc=r.valC==='Ottimo'?'g':r.valC==='Nella norma'?'w':r.valC==='Attenzione'?'r':'';
+    const vb=r.valB==='Ottimo'?'g':r.valB==='Nella norma'?'w':r.valB==='Attenzione'?'r':'';
+    const vcTag=vc?`<span class="${vc}">${r.valC}</span>`:'—';
+    const vbTag=vb?`<span class="${vb}">${r.valB}</span>`:'—';
+    html+=`<tr><td style="font-weight:600">${r.nome}</td><td>${r.fornitore}</td><td class="num">${r.ml}ml</td><td class="num">€${r.cb.toFixed(2)}</td><td class="num">${r.cal}</td><td class="num gold">${r.cc>0?'€'+r.cc.toFixed(3):'—'}</td><td class="num">${r.pv?'€'+r.pv.toFixed(2):'—'}</td><td class="num">${r.ricC!==null?r.ricC.toFixed(1)+'x':'—'}</td><td class="num">${r.mgpC!==null?r.mgpC.toFixed(0)+'%':'—'}</td><td>${vcTag}</td><td class="num">${r.pvb?'€'+r.pvb.toFixed(2):'—'}</td><td class="num">${r.ricB!==null?r.ricB.toFixed(1)+'x':'—'}</td><td class="num">${r.mgpB!==null?r.mgpB.toFixed(0)+'%':'—'}</td><td>${vbTag}</td></tr>`;
+  });
+  html+=`</tbody></table><div style="margin-top:10px;font-size:8px;color:#999">Easy Drink and Food · Beverage Cost v4.0 · Capriate S.G. (BG)</div></body></html>`;
+  const w=window.open('','_blank');w.document.write(html);w.document.close();setTimeout(()=>w.print(),400);
+}
+
+
+// ════════════════════════════════════════════════════════════════════
+//  COSTI FISSI
+// ════════════════════════════════════════════════════════════════════
+function saveCF(){
+  CF.affitto=parseFloat(document.getElementById('cf-affitto')?.value)||0;
+  CF.social=parseFloat(document.getElementById('cf-social')?.value)||0;
+  CF.commercialista=parseFloat(document.getElementById('cf-commercialista')?.value)||0;
+  CF.altro=parseFloat(document.getElementById('cf-altro')?.value)||0;
+  CF.giorni=parseInt(document.getElementById('cf-giorni')?.value)||26;
+  CF.coperti=parseInt(document.getElementById('cf-coperti')?.value)||0;
+  CF.scontrino=parseFloat(document.getElementById('cf-scontrino')?.value)||0;
+  sv('cf');
+  // Aggiorna stats dopo un piccolo delay per dare tempo a Supabase
+  setTimeout(upCFStats, 100);
+}
+
+function cfMediaPersonale(){
+  if(!CF.personale||!CF.personale.length)return 0;
+  const ult=CF.personale.slice(-3);
+  return ult.reduce((s,r)=>s+r.val,0)/ult.length;
+}
+function cfMediaUtenze(){
+  if(!CF.utenze||!CF.utenze.length)return 0;
+  const ult=CF.utenze.slice(-3);
+  return ult.reduce((s,r)=>s+r.val,0)/ult.length;
+}
+
+function cfTotale(){
+  const extra=(CF.extra||[]).reduce((s,r)=>s+(r.val||0),0);
+  return (CF.affitto||0)+cfMediaPersonale()+cfMediaUtenze()+(CF.social||0)+(CF.commercialista||0)+(CF.altro||0)+extra;
+}
+
+
+function addCFExtra(){
+  const nome=document.getElementById('cf-extra-nome')?.value.trim();
+  const mese=document.getElementById('cf-extra-mese')?.value||'';
+  const val=parseFloat(document.getElementById('cf-extra-val')?.value)||0;
+  const note=document.getElementById('cf-extra-note')?.value.trim()||'';
+  if(!nome||!val){alert('Inserisci nome e importo.');return;}
+  // mese opzionale - se vuoto vale 'tutto l anno'
+  if(!CF.extra)CF.extra=[];
+  CF.extra.push({id:Date.now(),nome,mese:mese||'tutto l\'anno',val,note});
+  CF.extra.sort((a,b)=>b.mese.localeCompare(a.mese));
+  document.getElementById('cf-extra-nome').value='';
+  document.getElementById('cf-extra-val').value='';
+  document.getElementById('cf-extra-note').value='';
+  sv('cf');fl('cf-extra-ok');upCFExtraList();upCFStats();
+}
+
+function delCFExtra(id){
+  if(!confirm('Eliminare questa voce?'))return;
+  CF.extra=(CF.extra||[]).filter(r=>String(r.id)!==String(id));
+  sv('cf');upCFExtraList();upCFStats();
+}
+
+function editCFExtra(id){
+  const r=(CF.extra||[]).find(x=>String(x.id)===String(id));if(!r)return;
+  const nuovoNome=prompt('Nome voce:',r.nome);if(nuovoNome===null)return;
+  const nuovoVal=parseFloat(prompt('Importo €/mese:',r.val));if(isNaN(nuovoVal))return;
+  const nuovaNota=prompt('Note / riferimento:',r.note||'');
+  r.nome=nuovoNome.trim()||r.nome;
+  r.val=nuovoVal;
+  r.note=nuovaNota||'';
+  sv('cf');upCFExtraList();upCFStats();
+}
+
+function upCFExtraList(){
+  const w=document.getElementById('cf-extra-list');if(!w)return;
+  const extra=CF.extra||[];
+  if(!extra.length){w.innerHTML='<div class="em">Nessuna voce aggiuntiva.</div>';return;}
+  const tot=extra.reduce((s,r)=>s+(r.val||0),0);
+  let h='<table><thead><tr><th>Voce di spesa</th><th>Mese</th><th>Importo €</th><th>Note / riferimento</th><th></th></tr></thead><tbody>';
+  extra.forEach(r=>{
+    h+=`<tr>
+      <td style="font-weight:500">${r.nome}</td>
+      <td style="font-family:var(--m);color:var(--t2)">${r.mese||'—'}</td>
+      <td style="font-family:var(--m);font-weight:600">€ ${(r.val||0).toFixed(0)}</td>
+      <td style="color:var(--t2);font-size:12px">${r.note||'—'}</td>
+      <td><div style="display:flex"><button class="ib" onclick="editCFExtra(${r.id})">✏️</button><button class="ib d" onclick="delCFExtra(${r.id})">🗑</button></div></td>
+    </tr>`;
+  });
+  h+=`</tbody></table><div style="font-size:11px;color:var(--t2);margin-top:8px;font-family:var(--m)">Totale voci extra: <strong>€ ${tot.toFixed(0)}/mese</strong></div>`;
+  w.innerHTML=h;
+}
+
+function addCFRow(tipo){
+  const meseEl=document.getElementById('cf-'+tipo.substring(0,4)+'-mese');
+  const valEl=document.getElementById('cf-'+tipo.substring(0,4)+'-val');
+  if(!meseEl||!valEl)return;
+  const mese=meseEl.value;const val=parseFloat(valEl.value)||0;
+  if(!mese||!val){alert('Inserisci mese e importo.');return;}
+  if(!CF[tipo])CF[tipo]=[];
+  // Aggiorna se mese già presente, altrimenti aggiungi
+  const idx=CF[tipo].findIndex(r=>r.mese===mese);
+  if(idx>-1)CF[tipo][idx].val=val;
+  else CF[tipo].push({mese,val});
+  CF[tipo].sort((a,b)=>a.mese.localeCompare(b.mese));
+  valEl.value='';
+  sv('cf');upCFLists();upCFStats();
+}
+
+function delCFRow(tipo,mese){
+  if(!confirm('Eliminare voce '+mese+'?'))return;
+  CF[tipo]=CF[tipo].filter(r=>r.mese!==mese);
+  sv('cf');upCFLists();upCFStats();
+}
+
+function upCFLists(){
+  // Personale
+  const pw=document.getElementById('cf-pers-list');
+  if(pw){
+    if(!CF.personale||!CF.personale.length){pw.innerHTML='<div class="em">Nessun dato inserito.</div>';}
+    else{
+      const media=cfMediaPersonale();
+      let h='<table><thead><tr><th>Mese</th><th>Costo lordo €</th><th>vs media</th><th></th></tr></thead><tbody>';
+      [...CF.personale].reverse().forEach(r=>{
+        const diff=r.val-media;const pct=media>0?(diff/media*100):0;
+        h+=`<tr><td style="font-family:var(--m)">${r.mese}</td><td style="font-family:var(--m);font-weight:500">€ ${r.val.toFixed(0)}</td><td>${media>0?`<span style="color:${diff>0?'var(--red)':'var(--green)'};">${diff>0?'+':''}${pct.toFixed(0)}%</span>`:'—'}</td><td><button class="ib d" onclick="delCFRow('personale','${r.mese}')">🗑</button></td></tr>`;
+      });
+      h+=`</tbody></table><div style="font-size:11px;color:var(--t2);margin-top:8px;font-family:var(--m)">Media ultimi 3 mesi: <strong>€ ${media.toFixed(0)}</strong></div>`;
+      pw.innerHTML=h;
+    }
+  }
+  // Utenze
+  const uw=document.getElementById('cf-uten-list');
+  if(uw){
+    if(!CF.utenze||!CF.utenze.length){uw.innerHTML='<div class="em">Nessun dato inserito.</div>';}
+    else{
+      const media=cfMediaUtenze();
+      let h='<table><thead><tr><th>Mese</th><th>Totale utenze €</th><th>vs media</th><th></th></tr></thead><tbody>';
+      [...CF.utenze].reverse().forEach(r=>{
+        const diff=r.val-media;const pct=media>0?(diff/media*100):0;
+        h+=`<tr><td style="font-family:var(--m)">${r.mese}</td><td style="font-family:var(--m);font-weight:500">€ ${r.val.toFixed(0)}</td><td>${media>0?`<span style="color:${diff>0?'var(--red)':'var(--green)'};">${diff>0?'+':''}${pct.toFixed(0)}%</span>`:'—'}</td><td><button class="ib d" onclick="delCFRow('utenze','${r.mese}')">🗑</button></td></tr>`;
+      });
+      h+=`</tbody></table><div style="font-size:11px;color:var(--t2);margin-top:8px;font-family:var(--m)">Media ultimi 3 mesi: <strong>€ ${media.toFixed(0)}</strong></div>`;
+      uw.innerHTML=h;
+    }
+  }
+}
+
+function upCFExtraMeseSelect(){
+  const sel=document.getElementById('cf-extra-mese');if(!sel)return;
+  const cur=sel.value;
+  // Genera lista mesi: ultimi 24 mesi + prossimi 3
+  const opts=['<option value="">Tutto l\'anno</option>'];
+  const oggi=new Date();
+  for(let i=-3;i<=24;i++){
+    const d=new Date(oggi.getFullYear(),oggi.getMonth()-i,1);
+    const val=d.toISOString().slice(0,7);
+    const lbl=d.toLocaleDateString('it-IT',{month:'long',year:'numeric'});
+    opts.push(`<option value="${val}" ${val===cur?'selected':''}>${lbl}</option>`);
+  }
+  sel.innerHTML=opts.join('');
+}
+
+function upCFForm(){
+  ['affitto','social','commercialista','altro','giorni','coperti','scontrino'].forEach(k=>{
+    const el=document.getElementById('cf-'+k);if(el)el.value=CF[k]||'';
+  });
+  // Imposta mese corrente nei picker
+  const oggi=new Date().toISOString().slice(0,7);
+  const pm=document.getElementById('cf-pers-mese');if(pm&&!pm.value)pm.value=oggi;
+  const um=document.getElementById('cf-uten-mese');if(um&&!um.value)um.value=oggi;
+  upCFLists();upCFExtraList();upCFExtraMeseSelect();upCFStats();
+}
+
+function upCFStats(){
+  const tot=cfTotale();
+  const day=CF.giorni>0?tot/CF.giorni:0;
+  const el=document.getElementById('cf-tot');if(el)el.textContent='€ '+tot.toFixed(0);
+  const el2=document.getElementById('cf-day');if(el2)el2.textContent='€ '+day.toFixed(0);
+  const stats=document.getElementById('cf-stats');if(!stats)return;
+  if(!tot){stats.innerHTML='<div class="em" style="padding:.5rem">Inserisci i costi fissi per vedere le analisi.</div>';return;}
+  const coperti=CF.coperti||0;const scontrino=CF.scontrino||0;
+  const ricavoMese=coperti*scontrino*(CF.giorni||26);
+  const pctCosti=ricavoMese>0?(tot/ricavoMese*100):null;
+  const costoPerCoperto=coperti>0&&CF.giorni>0?(day/coperti):null;
+  stats.innerHTML=`<div class="g3">
+    <div class="met"><div class="ml">Ricavo stimato/mese</div><div class="mv">${ricavoMese>0?'€ '+ricavoMese.toFixed(0):'—'}</div><div style="font-size:9px;color:var(--t3);margin-top:2px;font-family:var(--m)">${coperti} cop. × €${scontrino} × ${CF.giorni}gg</div></div>
+    <div class="met"><div class="ml">Costi fissi su ricavo</div><div class="mv ${pctCosti!==null?(pctCosti<30?'g':pctCosti<50?'w':'r'):''}">${pctCosti!==null?pctCosti.toFixed(1)+'%':'—'}</div><div style="font-size:9px;color:var(--t3);margin-top:2px;font-family:var(--m)">ottimo &lt;30%</div></div>
+    <div class="met"><div class="ml">Costo fisso per cliente</div><div class="mv">${costoPerCoperto!==null?'€ '+costoPerCoperto.toFixed(2):'—'}</div><div style="font-size:9px;color:var(--t3);margin-top:2px;font-family:var(--m)">minimo da coprire</div></div>
+  </div>
+  <div style="margin-top:1rem;font-size:11px;color:var(--t2);font-family:var(--m)">
+    Dettaglio: Affitto €${(CF.affitto||0).toFixed(0)} · Personale €${cfMediaPersonale().toFixed(0)} · Utenze €${cfMediaUtenze().toFixed(0)} · Social €${(CF.social||0).toFixed(0)} · Commercialista €${(CF.commercialista||0).toFixed(0)} · Altro €${(CF.altro||0).toFixed(0)}${(CF.extra||[]).length?' · Voci extra €'+(CF.extra||[]).reduce((s,r)=>s+(r.val||0),0).toFixed(0):''}
+  </div>`;
+}
+
+function margineMinRequired(){
+  const tot=cfTotale();if(!tot)return null;
+  const ricavo=(CF.coperti||0)*(CF.scontrino||0)*(CF.giorni||26);
+  if(!ricavo)return null;
+  return tot/ricavo*100;
+}
+
+
+// ════════════════════════════════════════════════════════════════════
+//  BACKUP EXPORT / IMPORT
+// ════════════════════════════════════════════════════════════════════
+function exportBackup(){
+  const backup = {
+    version: '4.0',
+    data: new Date().toISOString(),
+    I, R, P, F, HM, ST, CFG, WP, CF
+  };
+  const json = JSON.stringify(backup, null, 2);
+  const blob = new Blob([json], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const oggi = new Date().toISOString().split('T')[0];
+  a.download = 'easy_drink_backup_' + oggi + '.json';
+  a.click();
+  const ok = document.getElementById('backup-ok');
+  if(ok){ok.textContent='✓ Backup salvato';ok.classList.add('s');setTimeout(()=>{ok.classList.remove('s');ok.textContent='';},3000);}
+}
+
+function importBackup(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try {
+      const backup = JSON.parse(e.target.result);
+      if(!backup.I || !backup.R){alert('File non valido o danneggiato.');return;}
+      if(!confirm('Vuoi caricare il backup del ' + (backup.data?new Date(backup.data).toLocaleDateString('it-IT'):'?') + '? I dati attuali verranno sostituiti.')){return;}
+      if(backup.I) I = backup.I;
+      if(backup.R) R = backup.R;
+      if(backup.P) P = backup.P;
+      if(backup.F) F = backup.F;
+      if(backup.HM) HM = backup.HM;
+      if(backup.ST) ST = backup.ST;
+      if(backup.CFG) CFG = backup.CFG;
+      if(backup.WP) WP = backup.WP;
+      if(backup.CF) CF = backup.CF;
+      sv();
+      rAll();
+      const ok = document.getElementById('backup-ok');
+      if(ok){ok.textContent='✓ Backup caricato!';ok.classList.add('s');setTimeout(()=>{ok.classList.remove('s');ok.textContent='';},3000);}
+      input.value = '';
+    } catch(err){
+      alert('Errore nel leggere il file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+
+// ════════════════════════════════════════════════════════════════════
+//  REPORT MENSILE COSTI
+// ════════════════════════════════════════════════════════════════════
+function upCFReport(){
+  const mese=document.getElementById('cf-report-mese')?.value;
+  const w=document.getElementById('cf-report-wrap');
+  if(!w)return;
+  if(!mese){w.innerHTML='<div class="em">Seleziona un mese.</div>';return;}
+
+  const meseLbl=new Date(mese+'-01').toLocaleDateString('it-IT',{month:'long',year:'numeric'});
+
+  // Costi fissi (si ripetono ogni mese)
+  const affitto=CF.affitto||0;
+  const social=CF.social||0;
+  const comm=CF.commercialista||0;
+  const altro=CF.altro||0;
+  const totFissi=affitto+social+comm+altro;
+
+  // Personale del mese
+  const persRow=(CF.personale||[]).find(r=>r.mese===mese);
+  const persVal=persRow?persRow.val:null;
+
+  // Utenze del mese
+  const utenRow=(CF.utenze||[]).find(r=>r.mese===mese);
+  const utenVal=utenRow?utenRow.val:null;
+
+  // Spese extra del mese
+  const extraMese=(CF.extra||[]).filter(r=>r.mese===mese);
+  const totExtra=extraMese.reduce((s,r)=>s+(r.val||0),0);
+
+  // Totale
+  const totale=totFissi+(persVal||0)+(utenVal||0)+totExtra;
+
+  let html=`<div style="margin-bottom:1rem;font-size:13px;font-weight:600;color:var(--text)">📅 ${meseLbl}</div>`;
+
+  // Tabella voci
+  html+=`<table><thead><tr><th>Voce</th><th>Tipo</th><th>Importo €</th><th>Note</th></tr></thead><tbody>`;
+
+  // Fissi
+  if(affitto>0)html+=`<tr><td style="font-weight:500">Affitto</td><td><span class="bx bg" style="font-size:9px">Fisso</span></td><td style="font-family:var(--m)">€ ${affitto.toFixed(0)}</td><td style="color:var(--t3)">—</td></tr>`;
+  if(social>0)html+=`<tr><td style="font-weight:500">Social media</td><td><span class="bx bg" style="font-size:9px">Fisso</span></td><td style="font-family:var(--m)">€ ${social.toFixed(0)}</td><td style="color:var(--t3)">—</td></tr>`;
+  if(comm>0)html+=`<tr><td style="font-weight:500">Commercialista</td><td><span class="bx bg" style="font-size:9px">Fisso</span></td><td style="font-family:var(--m)">€ ${comm.toFixed(0)}</td><td style="color:var(--t3)">—</td></tr>`;
+  if(altro>0)html+=`<tr><td style="font-weight:500">Altro (fisso)</td><td><span class="bx bg" style="font-size:9px">Fisso</span></td><td style="font-family:var(--m)">€ ${altro.toFixed(0)}</td><td style="color:var(--t3)">—</td></tr>`;
+
+  // Personale
+  if(persVal!==null){
+    html+=`<tr><td style="font-weight:500">Personale</td><td><span class="bx bw" style="font-size:9px">Variabile</span></td><td style="font-family:var(--m)">€ ${persVal.toFixed(0)}</td><td style="color:var(--t3)">Costo lordo mese</td></tr>`;
+  } else {
+    const mediaPers=cfMediaPersonale();
+    if(mediaPers>0)html+=`<tr style="opacity:.6"><td style="font-weight:500">Personale</td><td><span class="bx bw" style="font-size:9px">Variabile</span></td><td style="font-family:var(--m);color:var(--t2)">€ ${mediaPers.toFixed(0)} <span style="font-size:9px">(media)</span></td><td style="color:var(--t3)">Dato non inserito per questo mese</td></tr>`;
+  }
+
+  // Utenze
+  if(utenVal!==null){
+    html+=`<tr><td style="font-weight:500">Utenze</td><td><span class="bx bw" style="font-size:9px">Variabile</span></td><td style="font-family:var(--m)">€ ${utenVal.toFixed(0)}</td><td style="color:var(--t3)">Luce, gas, acqua</td></tr>`;
+  } else {
+    const mediaUten=cfMediaUtenze();
+    if(mediaUten>0)html+=`<tr style="opacity:.6"><td style="font-weight:500">Utenze</td><td><span class="bx bw" style="font-size:9px">Variabile</span></td><td style="font-family:var(--m);color:var(--t2)">€ ${mediaUten.toFixed(0)} <span style="font-size:9px">(media)</span></td><td style="color:var(--t3)">Dato non inserito per questo mese</td></tr>`;
+  }
+
+  // Spese extra del mese
+  extraMese.forEach(r=>{
+    html+=`<tr><td style="font-weight:500">${r.nome}</td><td><span class="bx bp" style="font-size:9px">Extra</span></td><td style="font-family:var(--m)">€ ${(r.val||0).toFixed(0)}</td><td style="color:var(--t3)">${r.note||'—'}</td></tr>`;
+  });
+
+  html+=`</tbody></table>`;
+
+  // Totale
+  html+=`<div style="margin-top:1rem;padding:1rem;background:var(--bg3);border-radius:var(--r);border:1px solid var(--bo)">
+    <div class="g3">
+      <div class="met" style="border-color:var(--gold)">
+        <div class="ml">Totale costi ${meseLbl}</div>
+        <div class="mv" style="font-size:28px">€ ${totale.toFixed(0)}</div>
+      </div>
+      <div class="met">
+        <div class="ml">Fissi</div>
+        <div class="mv">€ ${totFissi.toFixed(0)}</div>
+      </div>
+      <div class="met">
+        <div class="ml">Variabili + extra</div>
+        <div class="mv">€ ${((persVal||cfMediaPersonale())+(utenVal||cfMediaUtenze())+totExtra).toFixed(0)}</div>
+      </div>
+    </div>
+  </div>`;
+
+  w.innerHTML=html;
+}
+
+
+// ════════════════════════════════════════════════════════════════════
+//  GESTIONE ECONOMICA
+// ════════════════════════════════════════════════════════════════════
+function upEcoFornSelect(){
+  const sel=document.getElementById('eco-fatt-forn');if(!sel)return;
+  const cur=sel.value;
+  // Fornitori dal sistema + fornitori food standard
+  const fornSistema=F.map(f=>f.nome).filter(Boolean);
+  const fornExtra=['Metro','Macelleria','Mercato Frutta e Verdura','Altro fornitore food'];
+  const tutti=[...new Set([...fornSistema,...fornExtra])].sort();
+  sel.innerHTML='<option value="">-- seleziona --</option>'+tutti.map(f=>`<option value="${f}" ${f===cur?'selected':''}>${f}</option>`).join('');
+}
+
+function switchEcoTab(tab){
+  ['fatture','incassi','saldo'].forEach(t=>{
+    const el=document.getElementById('eco-sub-'+t);
+    if(el)el.style.display=t===tab?'':'none';
+    const btn=document.getElementById('eco-tab-'+(t==='fatture'?'fatt':t==='incassi'?'inc':'sal'));
+    if(btn){btn.style.borderBottomColor=t===tab?'var(--gold)':'transparent';btn.style.color=t===tab?'var(--gold)':'var(--t2)';btn.style.fontWeight=t===tab?'600':'400';}
+  });
+  if(tab==='fatture'){const fd=document.getElementById('eco-fatt-data');if(fd&&!fd.value)fd.value=new Date().toISOString().split('T')[0];upEcoFornSelect();rFatture();}
+  if(tab==='incassi'){const m=document.getElementById('eco-inc-mese');if(m&&!m.value)m.value=new Date().toISOString().slice(0,7);const fd=document.getElementById('eco-inc-data');if(fd&&!fd.value)fd.value=new Date().toISOString().split('T')[0];rIncassi();}
+  if(tab==='saldo'){const m=document.getElementById('eco-sal-mese');if(m&&!m.value)m.value=new Date().toISOString().slice(0,7);upSaldo();}
+}
+
+function addFattura(){
+  const forn=document.getElementById('eco-fatt-forn').value;
+  const cat=document.getElementById('eco-fatt-cat').value;
+  const data=document.getElementById('eco-fatt-data').value;
+  const imp=parseFloat(document.getElementById('eco-fatt-imp').value)||0;
+  const num=document.getElementById('eco-fatt-num').value.trim();
+  const note=document.getElementById('eco-fatt-note').value.trim();
+  if(!forn||!data||!imp){alert('Seleziona fornitore, inserisci data e importo.');return;}
+  FATT.push({id:Date.now(),forn,cat,data,imp,num,note});
+  FATT.sort((a,b)=>b.data.localeCompare(a.data));
+  ['eco-fatt-imp','eco-fatt-num','eco-fatt-note'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  sv('fatt');fl('eco-fatt-ok');rFatture();
+}
+
+function delFattura(id){
+  if(!confirm('Eliminare?'))return;
+  FATT=FATT.filter(f=>String(f.id)!==String(id));
+  sv('fatt');rFatture();
+}
+
+function rFatture(){
+  const s=(document.getElementById('eco-fatt-s')?.value||'').toLowerCase();
+  const fc=document.getElementById('eco-fatt-fc')?.value||'';
+  const mese=document.getElementById('eco-fatt-mese')?.value||'';
+  const f=FATT.filter(x=>{
+    const tm=(x.forn+' '+x.cat+' '+(x.num||'')).toLowerCase();
+    return(!s||tm.includes(s))&&(!fc||x.cat===fc)&&(!mese||x.data.startsWith(mese));
+  });
+  const w=document.getElementById('eco-fatt-wrap');if(!w)return;
+  if(!f.length){w.innerHTML='<div class="em">Nessuna fattura trovata.</div>';return;}
+  const tot=f.reduce((s,x)=>s+x.imp,0);
+  const byCat={};f.forEach(x=>{byCat[x.cat]=(byCat[x.cat]||0)+x.imp;});
+  let h='<div style="margin-bottom:.9rem;display:flex;gap:8px;flex-wrap:wrap">';
+  Object.entries(byCat).sort((a,b)=>b[1]-a[1]).forEach(([cat,val])=>{
+    const cl=cat.startsWith('Beverage')?'bg':cat.startsWith('Food')?'bw':'bb';
+    h+=`<span class="bx ${cl}">${cat}: <strong>€${val.toFixed(2)}</strong></span>`;
+  });
+  h+=`<span class="bx br" style="margin-left:auto">Totale: <strong>€${tot.toFixed(2)}</strong></span></div>`;
+  h+='<table><thead><tr><th>Data</th><th>Fornitore</th><th>Categoria</th><th>N. Fattura</th><th>Importo</th><th>Note</th><th></th></tr></thead><tbody>';
+  f.forEach(x=>{
+    const cl=x.cat.startsWith('Beverage')?'bg':x.cat.startsWith('Food')?'bw':'bb';
+    h+=`<tr><td style="font-family:var(--m)">${x.data}</td><td style="font-weight:500">${x.forn}</td><td><span class="bx ${cl}" style="font-size:9px">${x.cat}</span></td><td style="font-family:var(--m);font-size:11px;color:var(--t2)">${x.num||'---'}</td><td style="font-family:var(--m);font-weight:600">€${x.imp.toFixed(2)}</td><td style="font-size:11px;color:var(--t2)">${x.note||'---'}</td><td><button class="ib d" onclick="delFattura(${x.id})">&#128465;</button></td></tr>`;
+  });
+  w.innerHTML=h+'</tbody></table>';
+}
+
+function exportFattureXLSX(){
+  const hdr=['Data','Fornitore','Categoria','N. Fattura','Importo EUR','Note'];
+  const lines=[hdr.join('\t')];
+  FATT.forEach(x=>lines.push([x.data,x.forn,x.cat,x.num||'',x.imp.toFixed(2),x.note||''].join('\t')));
+  const blob=new Blob(['\uFEFF'+lines.join('\n')],{type:'application/vnd.ms-excel;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='fatture_'+new Date().toISOString().split('T')[0]+'.xls';a.click();
+}
+
+function upIncPreview(){
+  const lordo=parseFloat(document.getElementById('eco-inc-lordo')?.value)||0;
+  const el=document.getElementById('eco-inc-netto');if(el)el.value=(lordo/1.10).toFixed(2);
+}
+
+function addIncasso(){
+  const data=document.getElementById('eco-inc-data').value;
+  const lordo=parseFloat(document.getElementById('eco-inc-lordo').value)||0;
+  const note=document.getElementById('eco-inc-note').value.trim();
+  if(!data||!lordo){alert('Inserisci data e incasso.');return;}
+  INC.push({id:Date.now(),data,lordo,netto:lordo/1.10,note});
+  INC.sort((a,b)=>b.data.localeCompare(a.data));
+  ['eco-inc-lordo','eco-inc-netto','eco-inc-note'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  sv('inc');fl('eco-inc-ok');rIncassi();
+}
+
+function delIncasso(id){
+  if(!confirm('Eliminare?'))return;
+  INC=INC.filter(x=>String(x.id)!==String(id));
+  sv('inc');rIncassi();
+}
+
+function rIncassi(){
+  const mese=document.getElementById('eco-inc-mese')?.value||'';
+  const f=INC.filter(x=>!mese||x.data.startsWith(mese));
+  const w=document.getElementById('eco-inc-wrap');if(!w)return;
+  if(!f.length){w.innerHTML='<div class="em">Nessun incasso trovato.</div>';return;}
+  const totL=f.reduce((s,x)=>s+x.lordo,0);
+  const totN=f.reduce((s,x)=>s+x.netto,0);
+  let h=`<div style="margin-bottom:.9rem;display:flex;gap:8px;flex-wrap:wrap"><span class="bx bg">Netto: <strong>€${totN.toFixed(2)}</strong></span><span class="bx bb">Lordo: <strong>€${totL.toFixed(2)}</strong></span><span class="bx bw">Media/gg: <strong>€${f.length>0?(totN/f.length).toFixed(2):'0'}</strong></span><span class="bx bg" style="margin-left:auto">${f.length} giorni</span></div>`;
+  h+='<table><thead><tr><th>Data</th><th>Lordo EUR</th><th>Netto EUR</th><th>Note</th><th></th></tr></thead><tbody>';
+  f.forEach(x=>{
+    h+=`<tr><td style="font-family:var(--m)">${x.data}</td><td style="font-family:var(--m)">€${x.lordo.toFixed(2)}</td><td style="font-family:var(--m);font-weight:600;color:var(--green)">€${x.netto.toFixed(2)}</td><td style="font-size:11px;color:var(--t2)">${x.note||'---'}</td><td><button class="ib d" onclick="delIncasso(${x.id})">&#128465;</button></td></tr>`;
+  });
+  w.innerHTML=h+'</tbody></table>';
+}
+
+function exportIncassiXLSX(){
+  const hdr=['Data','Incasso lordo EUR','Incasso netto EUR','Note'];
+  const lines=[hdr.join('\t')];
+  INC.forEach(x=>lines.push([x.data,x.lordo.toFixed(2),x.netto.toFixed(2),x.note||''].join('\t')));
+  const blob=new Blob(['\uFEFF'+lines.join('\n')],{type:'application/vnd.ms-excel;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='incassi_'+new Date().toISOString().split('T')[0]+'.xls';a.click();
+}
+
+function upSaldo(){
+  const mese=document.getElementById('eco-sal-mese')?.value;
+  const w=document.getElementById('eco-sal-wrap');if(!w)return;
+  if(!mese){w.innerHTML='<div class="em">Seleziona un mese.</div>';return;}
+  const meseLbl=new Date(mese+'-01').toLocaleDateString('it-IT',{month:'long',year:'numeric'});
+  const incMese=INC.filter(x=>x.data.startsWith(mese));
+  const totN=incMese.reduce((s,x)=>s+x.netto,0);
+  const fattMese=FATT.filter(x=>x.data.startsWith(mese));
+  const totF=fattMese.reduce((s,x)=>s+x.imp,0);
+  const byCat={};fattMese.forEach(x=>{byCat[x.cat]=(byCat[x.cat]||0)+x.imp;});
+  const cfFissi=(CF.affitto||0)+(CF.social||0)+(CF.commercialista||0)+(CF.altro||0);
+  const persRow=(CF.personale||[]).find(r=>r.mese===mese);
+  const utenRow=(CF.utenze||[]).find(r=>r.mese===mese);
+  const extraMese=(CF.extra||[]).filter(r=>!r.mese||r.mese===mese||r.mese==="tutto l'anno");
+  const cfPers=persRow?persRow.val:(typeof cfMediaPersonale==='function'?cfMediaPersonale():0);
+  const cfUten=utenRow?utenRow.val:(typeof cfMediaUtenze==='function'?cfMediaUtenze():0);
+  const cfExtra=extraMese.reduce((s,r)=>s+(r.val||0),0);
+  const totCF=cfFissi+cfPers+cfUten+cfExtra;
+  const totUscite=totF+totCF;
+  const saldo=totN-totUscite;
+  const sc=saldo>=0?'g':'r';
+  let html=`<div class="card"><div class="ct">&#128197; ${meseLbl}</div>`;
+  html+=`<div class="g4" style="margin-bottom:1rem">
+    <div class="met" style="border-color:var(--green)"><div class="ml">Incassi netti</div><div class="mv g">€${totN.toFixed(0)}</div><div style="font-size:9px;color:var(--t3);margin-top:2px;font-family:var(--m)">${incMese.length} giorni</div></div>
+    <div class="met"><div class="ml">Fatture acquisto</div><div class="mv r">€${totF.toFixed(0)}</div><div style="font-size:9px;color:var(--t3);margin-top:2px;font-family:var(--m)">${fattMese.length} fatture</div></div>
+    <div class="met"><div class="ml">Costi fissi</div><div class="mv r">€${totCF.toFixed(0)}</div></div>
+    <div class="met" style="border-color:var(--${sc==='g'?'green':'red'})"><div class="ml">Saldo</div><div class="mv ${sc}" style="font-size:26px">${saldo>=0?'+':''}€${saldo.toFixed(0)}</div></div>
+  </div>`;
+  if(Object.keys(byCat).length){
+    html+=`<div class="sep"></div><div style="font-size:11px;font-weight:600;margin-bottom:8px;color:var(--t2)">ACQUISTI PER CATEGORIA</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.9rem">`;
+    Object.entries(byCat).sort((a,b)=>b[1]-a[1]).forEach(([cat,val])=>{
+      const cl=cat.startsWith('Beverage')?'bg':cat.startsWith('Food')?'bw':'bb';
+      html+=`<div class="met" style="flex:1;min-width:120px"><div class="ml">${cat}</div><div class="mv" style="font-size:16px">€${val.toFixed(0)}</div></div>`;
+    });
+    html+='</div>';
+  }
+  html+=`<div style="margin-top:1rem;padding:.9rem;border-radius:var(--r);background:var(--${sc==='g'?'green2':'red2'});color:var(--${sc==='g'?'green':'red'});font-size:13px;font-weight:500">`;
+  html+=saldo>=0?`&#10003; Mese positivo! Guadagno netto: €${saldo.toFixed(0)}.`:`&#10007; Mese in perdita di €${Math.abs(saldo).toFixed(0)}. Rivedi le spese o aumenta gli incassi.`;
+  html+='</div></div>';
+  w.innerHTML=html;
+}
+
 async function load(){
   try{
     for(const [k,setter] of [[KI,'I'],[KR,'R'],[KP,'P'],[KF,'F'],[KH,'HM'],[KS,'ST'],[KC,'CFG'],[KW,'WP'],[KCF,'CF']]){
@@ -1128,6 +2069,16 @@ async function load(){
     const cf=lsG(KCF);if(cf)CF=cf;
   }
   {const defIds=new Set(DEF_I.map(x=>String(x.id)));const uO=I.filter(x=>!defIds.has(String(x.id)));I=[...DEF_I,...uO];sv('i');}
+  // Carica dati iniziali se storage vuoto
+  if(!R.length&&INIT_R&&INIT_R.length){R=INIT_R;sv('r');}
+  if(!Object.keys(P).length&&INIT_P&&Object.keys(INIT_P).length){P=INIT_P;sv('p');}
+  if(!F.length&&INIT_F&&INIT_F.length){F=INIT_F;sv('f');}
+  if(!HM.length&&INIT_HM&&INIT_HM.length){HM=INIT_HM;sv('hm');}
+  if(!ST.length&&INIT_ST&&INIT_ST.length){ST=INIT_ST;sv('st');}
+  if(!Object.keys(WP).length&&INIT_WP&&Object.keys(INIT_WP).length){WP=INIT_WP;sv('wp');}
+  if(!CF.affitto&&INIT_CF&&INIT_CF.affitto){CF=INIT_CF;sv('cf');}
+  if(!FATT.length&&INIT_FATT&&INIT_FATT.length){FATT=INIT_FATT;sv('fatt');}
+  if(!INC.length&&INIT_INC&&INIT_INC.length){INC=INIT_INC;sv('inc');}
   if(!R.length&&INIT_R.length){R=INIT_R;sv('r');}
   if(!Object.keys(P).length&&Object.keys(INIT_P).length){P=INIT_P;sv('p');}
   if(!Object.keys(WP).length&&Object.keys(INIT_WP).length){WP=INIT_WP;sv('wp');}
@@ -1166,7 +2117,7 @@ function go(n,el){
   document.querySelectorAll('.ni').forEach(b=>b.classList.remove('on'));
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.getElementById('pg-'+n).classList.add('on');el.classList.add('on');
-  if(n==='list')rL();if(n==='dash')rD();if(n==='anal')rA();if(n==='costi'){upCFForm();upCFStats();}if(n==='ing'){switchIngTab('mag');}
+  if(n==='list')rL();if(n==='dash')rD();if(n==='anal')rA();if(n==='economia'){upEcoFornSelect();switchEcoTab('fatture');}if(n==='costi'){upCFForm();upCFStats();}if(n==='costi'){upCFForm();upCFStats();}if(n==='ing'){switchIngTab('mag');}
   if(n==='home'){rHM();rStaff();upStaffSel();}
 }
 function rAll(){rI();rR();rF();rHM();rStaff();upFF();upStaffSel();upCFForm();}
