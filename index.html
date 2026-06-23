@@ -527,7 +527,16 @@ tr:hover td{background:var(--bg3)}
   <!-- FATTURE -->
   <div id="eco-sub-fatture">
     <div class="card">
-      <div class="ct">Aggiungi fattura acquisto</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem">
+        <div class="ct" style="margin-bottom:0">Aggiungi fattura acquisto</div>
+        <button onclick="document.getElementById('pdf-import-input').click()" style="background:var(--blue2);border-color:var(--blue);color:var(--blue);font-weight:500">
+          📄 Importa da PDF
+        </button>
+        <input type="file" id="pdf-import-input" accept="application/pdf" style="display:none" onchange="importaPDF(this)"/>
+      </div>
+      <div id="pdf-import-status" style="display:none;padding:10px 14px;border-radius:var(--r);background:var(--blue2);color:var(--blue);font-size:12px;margin-bottom:.9rem;font-family:var(--m)">
+        ⏳ Lettura PDF in corso...
+      </div>
       <div class="g4">
         <div><label>Fornitore</label><select id="eco-fatt-forn"><option value="">-- seleziona --</option></select></div>
         <div><label>Categoria</label><select id="eco-fatt-cat">
@@ -2769,6 +2778,99 @@ function genRep(){
     ${HM.length?`<div class="sep"></div><div class="ct">Homemade</div><table><thead><tr><th>Preparazione</th><th>Tipo</th><th>Costo ing.</th><th>Lavoro</th><th>Energia</th><th>Totale</th><th>Costo/u</th></tr></thead><tbody>${HM.map(h=>{const ci=hmCostoIng(h);const cl=hmCostoLav(h);const ce=hmCostoEn(h);const tot=ci+cl+ce;const cu=h.resa>0?tot/h.resa:0;return`<tr><td style="font-weight:500">${h.nome}</td><td><span class="bx bp" style="font-size:9px">${h.tipo}</span></td><td style="font-family:var(--m)">€${ci.toFixed(3)}</td><td style="font-family:var(--m);color:var(--amb)">€${cl.toFixed(3)}</td><td style="font-family:var(--m)">€${ce.toFixed(3)}</td><td style="font-family:var(--m)">€${tot.toFixed(3)}</td><td style="font-family:var(--m);color:var(--gold)">€${cu.toFixed(4)}/${h.resaUm||'ml'}</td></tr>`;}).join('')}</tbody></table>`:''}
     <div class="sep"></div><div class="ct">Ricette con prezzo impostato</div>
     <table><thead><tr><th>Cocktail</th><th>Costo classico</th><th>Prezzo cliente</th><th>Bev.cost %</th><th>Margine €</th></tr></thead><tbody>${cp.map(r=>{const c=cRclassico(r);const pn=P[r.id]/1.10;const b=c/pn*100;return`<tr><td style="font-weight:500">${r.nome}</td><td style="font-family:var(--m);color:var(--gold)">€${c.toFixed(3)}</td><td style="font-family:var(--m)">€${P[r.id].toFixed(2)}</td><td><span class="bx ${b<20?'bg':b<30?'bw':'br'}">${b.toFixed(1)}%</span></td><td style="font-family:var(--m)">€${(pn-c).toFixed(2)}</td></tr>`;}).join('')}</tbody></table></div>`;
+}
+
+
+// ════════════════════════════════════════════════════════════════════
+//  IMPORTA FATTURA DA PDF
+// ════════════════════════════════════════════════════════════════════
+async function importaPDF(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+
+  const status = document.getElementById('pdf-import-status');
+  status.style.display = 'block';
+  status.innerHTML = '⏳ Lettura PDF in corso...';
+
+  try {
+    // Converti PDF in base64
+    const base64 = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result.split(',')[1]);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+
+    // Chiama Claude API con il PDF
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'document',
+              source: { type: 'base64', media_type: 'application/pdf', data: base64 }
+            },
+            {
+              type: 'text',
+              text: `Sei un assistente che legge fatture italiane. Estrai queste informazioni dalla fattura e rispondi SOLO con un JSON valido, senza testo aggiuntivo, senza markdown:
+{
+  "fornitore": "nome del fornitore (es. Metro, Cuni Bevande, BM Group, ViNe)",
+  "data": "data fattura in formato YYYY-MM-DD",
+  "importo": numero imponibile senza IVA (solo cifra numerica),
+  "numero": "numero fattura (es. 194-234810 oppure FT001/2026)",
+  "note": "breve descrizione tipo Delivery, Seriate, Cinisello oppure prodotti principali"
+}`
+            }
+          ]
+        }]
+      })
+    });
+
+    const data = await resp.json();
+    const text = data.content?.map(i => i.text || '').join('') || '';
+
+    let parsed;
+    try {
+      const clean = text.replace(/```json|```/g, '').trim();
+      parsed = JSON.parse(clean);
+    } catch(e) {
+      throw new Error('Risposta AI non valida: ' + text);
+    }
+
+    // Compila il form
+    if (parsed.fornitore) {
+      const sel = document.getElementById('eco-fatt-forn');
+      const opt = [...sel.options].find(o => o.value.toLowerCase().includes(parsed.fornitore.toLowerCase()));
+      if (opt) sel.value = opt.value;
+    }
+    if (parsed.data) document.getElementById('eco-fatt-data').value = parsed.data;
+    if (parsed.importo) document.getElementById('eco-fatt-imp').value = parseFloat(parsed.importo).toFixed(2);
+    if (parsed.numero) document.getElementById('eco-fatt-num').value = parsed.numero;
+    if (parsed.note) document.getElementById('eco-fatt-note').value = parsed.note;
+
+    // Imposta categoria automatica
+    const forn = (parsed.fornitore || '').toLowerCase();
+    const cat = document.getElementById('eco-fatt-cat');
+    if (forn.includes('metro')) cat.value = 'Food - Metro';
+    else if (forn.includes('cuni') || forn.includes('bm group') || forn.includes('vine')) cat.value = 'Beverage';
+
+    status.style.background = 'var(--green2)';
+    status.style.color = 'var(--green)';
+    status.innerHTML = '✓ PDF letto! Controlla i dati e clicca "+ Aggiungi"';
+    setTimeout(() => { status.style.display = 'none'; status.style.background = 'var(--blue2)'; status.style.color = 'var(--blue)'; }, 4000);
+
+  } catch(err) {
+    status.style.background = 'var(--red2)';
+    status.style.color = 'var(--red)';
+    status.innerHTML = '✗ Errore: ' + err.message;
+    setTimeout(() => { status.style.display = 'none'; status.style.background = 'var(--blue2)'; status.style.color = 'var(--blue)'; }, 5000);
+  }
 }
 
 load();
